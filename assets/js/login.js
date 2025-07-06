@@ -29,6 +29,30 @@ function handleError(error, container) {
     }
 }
 
+function login(formData){
+    ApiCall('login', 'POST', formData)
+    .then(data => {
+        if (data.status === 'success') {
+            sessionStorage.setItem('user', JSON.stringify(data.user));
+            sessionStorage.setItem('csrf_token', data.user.csrf_token);
+            
+            if (document.getElementById('rememberMe').checked) {
+                localStorage.setItem('rememberedEmail', formData.email);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+            setTimeout(() => {
+                window.location.href = 'vues/clients/home.html';
+            }, 1200);
+        } else {
+            handleError(data.message, document.getElementById('loginMessage'));
+        }
+    })
+    .catch(error => {
+        handleError('Une erreur est survenue lors de la connexion', document.getElementById('loginMessage'));
+    })
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Gestion connexion
     const loginForm = document.getElementById('loginForm');
@@ -57,21 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('loader').style.display = 'block';
 
             try {
-                const response = await fetch(`${API_URL}/login.php`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
+                const response = await login(formData);
                 document.getElementById('loader').style.display = 'none';
 
-                if (data.status === 'success') {
-                    sessionStorage.setItem('user', JSON.stringify(data.user));
-                    sessionStorage.setItem('csrf_token', data.user.csrf_token);
+                if (response.status === 'success') {
+                    sessionStorage.setItem('user', JSON.stringify(response.user));
+                    sessionStorage.setItem('csrf_token', response.user.csrf_token);
                     
                     if (document.getElementById('rememberMe').checked) {
                         localStorage.setItem('rememberedEmail', formData.email);
@@ -82,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.location.href = 'vues/clients/home.html';
                     }, 1200);
                 } else {
-                    handleError(data.message, document.getElementById('loginMessage'));
+                    handleError(response.message, document.getElementById('loginMessage'));
                 }
                 
                 
@@ -103,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 });
+
 
 document.querySelectorAll('.togglePassword').forEach(button => {
     button.addEventListener('click', function () {
