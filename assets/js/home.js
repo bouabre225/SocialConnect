@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
+    var chatBtn = document.getElementById('go-to-chat');
+    if(chatBtn) {
+        chatBtn.addEventListener('click', function() {
+            window.location.href = 'chat.html';
+        });
+    }
+
     // Contacts data
     const contacts = [
         { name: 'Thomas Chen', avatar: 'photo-1507003211169-0a1dd7228f2d', online: true },

@@ -1,150 +1,179 @@
 
-<header class="facebook-header">
-    <div class="container-fluid">
-        <div class="row align-items-center header-row">
-            <!-- Logo et recherche -->
-            <div class="col-lg-4 col-md-5 d-flex align-items-center logo-search-container">
-                <div class="facebook-logo">SocialConnect</div>
-                <div class="search-box">
-                    <i class="bi bi-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Rechercher sur SocialConnect">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialConnect</title>
+    <link href="../../assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../assets/css/home.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="facebook-header">
+        <div class="container-fluid">
+            <div class="row align-items-center header-row">
+                <!-- Logo et recherche -->
+                <div class="col-lg-4 col-md-5 d-flex align-items-center logo-search-container">
+                    <div class="facebook-logo">SocialConnect</div>
+                    <div class="search-box">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Rechercher sur SocialConnect">
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Navigation principale -->
-            <div class="col-lg-4 col-md-2 d-none d-md-flex justify-content-center nav-buttons">
-                <button class="nav-btn active" title="Accueil">
-                    <i class="bi bi-house-door-fill"></i>
-                </button>
-                <button class="nav-btn" title="Amis">
-                    <i class="bi bi-people-fill"></i>
-                </button>
-                <button class="nav-btn" title="Watch">
-                    <i class="bi bi-camera-reels-fill"></i>
-                </button>
-                <button class="nav-btn" title="Marketplace">
-                    <i class="bi bi-shop-fill"></i>
-                </button>
-            </div>
-            
-            <!-- Actions utilisateur -->
-            <div class="col-lg-4 col-md-5 d-flex justify-content-end user-actions">
-                <button class="action-btn menu-toggle d-md-none">
-                    <i class="bi bi-list"></i>
-                </button>
-                <div class="d-none d-md-flex align-items-center action-buttons">
-                    <button class="action-btn" title="Menu">
+                
+                <!-- Navigation principale -->
+                <div class="col-lg-4 col-md-2 d-none d-md-flex justify-content-center nav-buttons">
+                    <button class="nav-btn active" title="Accueil">
+                        <i class="bi bi-house-door-fill"></i>
+                    </button>
+                    <button class="nav-btn" title="Amis">
+                        <i class="bi bi-people-fill"></i>
+                    </button>
+                    <button class="nav-btn" title="Watch">
+                        <i class="bi bi-camera-reels-fill"></i>
+                    </button>
+                    <button class="nav-btn" title="Marketplace">
+                        <i class="bi bi-shop-fill"></i>
+                    </button>
+                </div>
+                
+                <!-- Actions utilisateur -->
+                <div class="col-lg-4 col-md-5 d-flex justify-content-end user-actions">
+                    <button class="action-btn menu-toggle d-md-none">
                         <i class="bi bi-list"></i>
                     </button>
-                    <button class="action-btn" title="Messenger">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </button>
-                    <button class="action-btn" title="Notifications">
-                        <i class="bi bi-bell-fill"></i>
-                    </button>
-                    <button class="btn btn-danger" onclick="logout()">Déconnexion</button>
+                    <div class="d-none d-md-flex align-items-center action-buttons">
+                        <button class="action-btn" title="Menu">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <button class="action-btn" title="Messenger" id="go-to-chat">
+                            <i class="bi bi-chat-dots-fill"></i>
+                        </button>
+                        <button class="action-btn" title="Notifications">
+                            <i class="bi bi-bell-fill"></i>
+                        </button>
+                        <div class="user-avatar" title="Profil">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profil">
+                        </div>
+                    </div>
+                    <div class="user-avatar d-md-none">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profil">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<main class="facebook-main">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-3 d-none d-lg-block facebook-left-sidebar">
-                <div class="sidebar-content">
-                    <div class="sidebar-menu">
-                        <div class="profile-item">
-                            <div class="user-avatar-small"></div>
-                            <span class="profile-name">Votre profil</span>
-                        </div>
-                        
-                        <div class="menu-items"></div>
-                    </div>
-
-                    <div class="shortcuts-section">
-                        <h3 class="section-title">RACCOURCIS</h3>
-                        <div class="shortcuts-items"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Main Feed -->
-            <div class="col-lg-6 main-feed">
-                <!-- Stories Section -->
-                <div class="stories-container">
-                    <div class="stories-scroll"></div>
-                </div>
-                
-                <!-- Create Post -->
-                <div class="create-post-container">
-                    <form>
-                        <div class="create-post">
-                            <div class="post-input-container">
-                                <div class="user-avatar-small"></div>
-                                <input type="text" class="post-input" placeholder="Que voulez-vous dire ?">
+    <!-- Main Content -->
+    <main class="facebook-main">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Left Sidebar -->
+                <div class="col-lg-3 d-none d-lg-block facebook-left-sidebar">
+                    <div class="sidebar-content">
+                        <div class="sidebar-menu">
+                            <div class="profile-item">
+                                <div class="user-avatar-small">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profil">
+                                </div>
+                                <span class="profile-name">Votre profil</span>
                             </div>
                             
-                            <div class="post-actions">
-                                <div class="action-buttons">
-                                    <button class="action-button photo-action">
-                                        <div class="action-icon photo-icon">
-                                            <i class="bi bi-image"></i>
-                                        </div>
-                                        <span class="action-text">Photo/vidéo</span>
+                            <div class="menu-items"></div>
+                        </div>
+
+                        <div class="shortcuts-section">
+                            <h3 class="section-title">RACCOURCIS</h3>
+                            <div class="shortcuts-items"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Feed -->
+                <div class="col-lg-6 main-feed">
+                    <!-- Stories Section -->
+                    <div class="stories-container">
+                        <div class="stories-scroll"></div>
+                    </div>
+                    
+                    <!-- Create Post -->
+                    <div class="create-post-container">
+                        <form>
+                            <div class="create-post">
+                                <div class="post-input-container">
+                                    <div class="user-avatar-small">
+                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profil">
+                                    </div>
+                                    <input type="text" class="post-input" placeholder="Que voulez-vous dire ?">
+                                </div>
+                                
+                                <div class="post-actions">
+                                    <div class="action-buttons">
+                                        <button class="action-button photo-action">
+                                            <div class="action-icon photo-icon">
+                                                <i class="bi bi-image"></i>
+                                            </div>
+                                            <span class="action-text">Photo/vidéo</span>
+                                        </button>
+                                        
+                                        <button class="action-button feeling-action">
+                                            <div class="action-icon feeling-icon">
+                                                <i class="bi bi-emoji-smile"></i>
+                                            </div>
+                                            <span class="action-text">Humeur</span>
+                                        </button>
+                                        
+                                        <button class="action-button location-action">
+                                            <div class="action-icon location-icon">
+                                                <i class="bi bi-geo-alt"></i>
+                                            </div>
+                                            <span class="action-text">Lieu</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Le bouton "Publier" sera injecté ici par JS -->
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Feed Posts -->
+                    <div class="feed-posts"></div>
+                </div>
+                
+                <!-- Right Sidebar -->
+                <div class="col-lg-3 d-none d-xl-block facebook-right-sidebar">
+                    <div class="sidebar-content">
+                        <!-- Contacts -->
+                        <div class="contacts-section mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="section-title">CONTACTS</h3>
+                                <div class="contact-actions">
+                                    <button class="action-btn" title="Appel vidéo">
+                                        <i class="bi bi-camera-video"></i>
                                     </button>
-                                    
-                                    <button class="action-button feeling-action">
-                                        <div class="action-icon feeling-icon">
-                                            <i class="bi bi-emoji-smile"></i>
-                                        </div>
-                                        <span class="action-text">Humeur</span>
-                                    </button>
-                                    
-                                    <button class="action-button location-action">
-                                        <div class="action-icon location-icon">
-                                            <i class="bi bi-geo-alt"></i>
-                                        </div>
-                                        <span class="action-text">Lieu</span>
+                                    <button class="action-btn" title="Rechercher">
+                                        <i class="bi bi-search"></i>
                                     </button>
                                 </div>
                             </div>
-                            <!-- Le bouton "Publier" sera injecté ici par JS -->
+                            
+                            <div class="contacts-list"></div>
                         </div>
-                    </form>
-                </div>
-                
-                <!-- Feed Posts -->
-                <div class="feed-posts"></div>
-            </div>
-            
-            <!-- Right Sidebar -->
-            <div class="col-lg-3 d-none d-xl-block facebook-right-sidebar">
-                <div class="sidebar-content">
-                    <!-- Contacts -->
-                    <div class="contacts-section mb-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="section-title">CONTACTS</h3>
-                            <div class="contact-actions">
-                                <button class="action-btn" title="Appel vidéo">
-                                    <i class="bi bi-camera-video"></i>
-                                </button>
-                                <button class="action-btn" title="Rechercher">
-                                    <i class="bi bi-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="contacts-list"></div>
-                    </div>
 
-                    <!-- Suggestions d'amis -->
-                    <div class="suggestions-section">
-                        <h3 class="section-title mb-3">SUGGESTIONS</h3>
-                        <div class="suggestions-list"></div>
+                        <!-- Suggestions d'amis -->
+                        <div class="suggestions-section">
+                            <h3 class="section-title mb-3">SUGGESTIONS</h3>
+                            <div class="suggestions-list"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
+    <script src="../../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/js/home.js"></script>
+
+</body>
+</html>
