@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>SocialConnect - Admin</title>
+<link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/icons/bootstrap-icons.css" rel="stylesheet">
+<style>
+body {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    min-height: 100vh;
+}
+.container-flex {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-login {
+    display: flex;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    max-width: 950px;
+    width: 100%;
+}
+.left-panel {
+    background: #007bff;
+    color: white;
+    padding: 40px;
+    flex: 1;
+}
+.left-panel h2 {
+    font-weight: 800;
+}
+.left-panel p {
+    margin-top: 10px;
+}
+.left-panel .feature {
+    margin-top: 30px;
+}
+.left-panel .feature i {
+    font-size: 28px;
+    margin-right: 10px;
+}
+.right-panel {
+    background: #fff;
+    padding: 50px;
+    flex: 1;
+}
+.right-panel h3 {
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+.input-group-text {
+    background: #f0f0f0;
+}
+footer {
+    margin-top: 20px;
+    color: white;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="container-flex">
+    <div class="card-login">
+        <div class="left-panel d-flex flex-column justify-content-center">
+            <h2 class="text-center">SocialConnect</h2>
+            <p>Accedez à la page Admin de SocialConnect</p>
+            <div class="feature"><i class="bi bi-people-fill"></i> Restez connecté</div>
+        </div>
+
+        <div class="right-panel">
+            <div id="activationMessage"></div>
+            <div id="loginMessage"></div>
+            <h3 class="text-center">Se connecter</h3>
+            <form id="loginForm">
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                    <input type="email" class="form-control" name="email" placeholder="Adresse e-mail" required>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    <input type="password" class="form-control password-field" name="password" placeholder="Mot de passe" required>
+                    <button type="button" class="btn btn-outline-secondary togglePassword">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <div class="form-check">
+                        <input type="checkbox" id="rememberMe" class="form-check-input">
+                        <label for="rememberMe" class="form-check-label">Se souvenir de moi</label>
+                    </div>
+                    <a href="vues/clients/forgot_password.html" class="text-decoration-none">Mot de passe oublié ?</a>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3">Se connecter</button>
+            </form>
+
+            <div class="text-center mt-5">
+                <p>Pas de compte ? <a href="register.html" class="text-decoration-none">Créer un compte</a></p>
+            </div>
+            <div id="loader" class="text-center my-3" style="display:none;">
+                <div class="spinner-border text-primary"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/login_register.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('activated')) {
+        document.getElementById('activationMessage').innerHTML = `
+            <div class="alert alert-success">
+                ✅ Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.
+            </div>
+        `;
+    }
+});
+
+// Gestion de l'ouverture/fermeture du mot de passe
+document.querySelectorAll('.togglePassword').forEach(button => {
+    button.addEventListener('click', function () {
+        // Cherche le champ password dans le même input-group que le bouton
+        const passwordInput = this.closest('.input-group').querySelector('.password-field');
+        const icon = this.querySelector('i');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+});
+
+
+</script>
+<footer>
+    <p>&copy; 2025 SocialConnect</p>
+</footer>
+</body>
+</html>

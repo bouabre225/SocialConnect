@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application de messagerie</title>
+    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/chat.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-title">Messages</h1>
+                <div class="search-container">
+                    <input type="text" placeholder="Rechercher..." class="search-input">
+                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Contact List -->
+            <div class="contact-list">
+                <!-- Contact 1 (selected) -->
+                <div class="contact selected">
+                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face" alt="Sophie Martin" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">Sophie Martin</div>
+                        <div class="contact-last-message">À bientôt ! 👋</div>
+                    </div>
+                    <div class="contact-status">
+                        <div class="status-indicator"></div>
+                        <div class="last-seen">maintenant</div>
+                    </div>
+                </div>
+
+                <!-- Contact 2 -->
+                <div class="contact">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" alt="Alexandre Dubois" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">Alexandre Dubois</div>
+                        <div class="contact-last-message">Parfait, merci beaucoup</div>
+                    </div>
+                    <div class="contact-status">
+                        <div class="status-indicator"></div>
+                        <div class="last-seen">maintenant</div>
+                    </div>
+                </div>
+
+                <!-- Contact 3 -->
+                <div class="contact">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face" alt="Emma Rousseau" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">Emma Rousseau</div>
+                        <div class="contact-last-message">Je regarde ça demain</div>
+                    </div>
+                    <div class="contact-status">
+                        <div class="status-indicator offline"></div>
+                        <div class="last-seen">il y a 5 min</div>
+                    </div>
+                </div>
+
+                <!-- Contact 4 -->
+                <div class="contact">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" alt="Lucas Bernard" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">Lucas Bernard</div>
+                        <div class="contact-last-message">Photo partagée</div>
+                    </div>
+                    <div class="contact-status">
+                        <div class="status-indicator offline"></div>
+                        <div class="last-seen">il y a 1 h</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-window col-12 col-md-8 col-lg-9 d-flex flex-column p-0" style="background:#f8f9fa; min-height:100vh;">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face" alt="Sophie Martin" class="chat-avatar">
+                <div class="chat-user-info">
+                    <div class="chat-user-name">Sophie Martin</div>
+                </div>
+                <div class="chat-actions" style="margin-left:auto; display:flex; gap:8px;">
+                    <button class="chat-action-button" title="Appel audio">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a21caf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3 5.18 2 2 0 0 1 5 3h2.09a2 2 0 0 1 2 1.72c.13 1.05.37 2.07.72 3.06a2 2 0 0 1-.45 2.11l-.27.27a16 16 0 0 0 6.29 6.29l.27-.27a2 2 0 0 1 2.11-.45c.99.35 2.01.59 3.06.72a2 2 0 0 1 1.72 2z"/></svg>
+                    </button>
+                    <button class="chat-action-button" title="Appel vidéo">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a21caf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="15" height="10" rx="2"/><polygon points="23 7 16 12 23 17 23 7"/></svg>
+                    </button>
+                    <button class="chat-action-button" title="Infos">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a21caf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="messages-container" style="flex:1; overflow-y:auto; background:#f8f9fa; padding:24px 16px; min-height:0;">
+                <!-- Received message -->
+                <div class="message received">
+                    <div class="message-content">
+                        Salut ! Comment ça va ?
+                        <div class="message-time">10:30</div>
+                    </div>
+                </div>
+                <!-- Sent message -->
+                <div class="message sent">
+                    <div class="message-content">
+                        Très bien merci ! Et toi ?
+                        <div class="message-time">10:32</div>
+                    </div>
+                </div>
+
+                <!-- Received message -->
+                <div class="message received">
+                    <div class="message-content">
+                        Ça va super ! Tu es libre ce weekend ?
+                        <div class="message-time">10:35</div>
+                    </div>
+                </div>
+
+                <!-- Sent message -->
+                <div class="message sent">
+                    <div class="message-content">
+                        Oui pourquoi pas ! Tu proposes quoi ?
+                        <div class="message-time">10:38</div>
+                    </div>
+                </div>
+
+                <!-- Received message -->
+                <div class="message received">
+                    <div class="message-content">
+                        À bientôt ! 👋
+                        <div class="message-time">10:55</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Input -->
+            <div class="message-input-container">
+                <div class="message-input-wrapper">
+                    <div class="input-icons" style="margin-left:0;">
+                        <span class="input-icon" title="Ajouter"><svg width="32" height="32" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#fff"/><path d="M12 7v10M7 12h10" stroke="#1877f2" stroke-width="2" stroke-linecap="round"/></svg></span>
+                        <span class="input-icon" title="Photo"><svg width="32" height="32" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#fff"/><path d="M7 17V7h10v10H7zm5-7a2 2 0 110 4 2 2 0 010-4z" fill="#1877f2"/></svg></span>
+                        <span class="input-icon" title="Sticker"><svg width="32" height="32" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#fff"/><path d="M8 15c1.333-2 6.667-2 8 0" stroke="#1877f2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="10" r="1" fill="#1877f2"/><circle cx="15" cy="10" r="1" fill="#1877f2"/></svg></span>
+                        <span class="input-icon" title="GIF"><svg width="32" height="32" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#fff"/><text x="6" y="17" font-size="8" fill="#1877f2" font-family="Arial, sans-serif">GIF</text></svg></span>
+                    </div>
+                    <input type="text" placeholder="Aa" class="message-input" style="background:transparent;">
+                    <div class="input-icons">
+                        <span class="input-icon" title="Emoji"><svg width="32" height="32" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#fff"/><path d="M8 15c1.333 2 6.667 2 8 0" stroke="#1877f2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="10" r="1" fill="#1877f2"/><circle cx="15" cy="10" r="1" fill="#1877f2"/></svg></span>
+                    </div>
+                    <button class="send-button" title="Envoyer">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#1877f2" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="12" fill="#fff"/>
+                            <path d="M8 12l8-4-4 8-1-3-3-1z" fill="#1877f2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Envoi de message dynamique
+    const input = document.querySelector('.message-input');
+    const sendBtn = document.querySelector('.send-button');
+    const messagesContainer = document.querySelector('.messages-container');
+
+    function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+        const now = new Date();
+        const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        const msg = document.createElement('div');
+        msg.className = 'message sent';
+        msg.innerHTML = `<div class="message-content">${text}<div class="message-time">${time}</div></div>`;
+        messagesContainer.appendChild(msg);
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
