@@ -1,0 +1,4 @@
+# Ignore les fichiers de configuration
+config.php
+config/phpmailer.php
+vendor
