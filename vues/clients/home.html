@@ -1,17 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="../../assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../assets/icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="../../assets/css/style.css" rel="stylesheet">
-  <link rel="shortcut icon" href="#" type="image/x-icon">
-  <title>SocialConnect - Fil d'actualité</title>
-</head>
-<body>
-  <!-- Header -->
-  <header class="facebook-header">
+
+<header class="facebook-header">
     <div class="container-fluid">
         <div class="row align-items-center header-row">
             <!-- Logo et recherche -->
@@ -54,19 +42,16 @@
                     <button class="action-btn" title="Notifications">
                         <i class="bi bi-bell-fill"></i>
                     </button>
-                    <div class="user-avatar" title="Profil"></div>
+                    <button class="btn btn-danger" onclick="logout()">Déconnexion</button>
                 </div>
-                <div class="user-avatar d-md-none"></div>
             </div>
         </div>
     </div>
 </header>
 
-<!-- Main Content -->
 <main class="facebook-main">
     <div class="container-fluid">
         <div class="row">
-            <!-- Left Sidebar -->
             <div class="col-lg-3 d-none d-lg-block facebook-left-sidebar">
                 <div class="sidebar-content">
                     <div class="sidebar-menu">
@@ -163,11 +148,3 @@
             </div>
         </div>
     </div>
-</main>
-
-<!-- Bootstrap JS Bundle with Popper -->
-<script src="../../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- Notre JS -->
-<script src="../../assets/js/home.js"></script>
-</body>
-</html>

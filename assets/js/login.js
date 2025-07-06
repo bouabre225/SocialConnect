@@ -1,34 +1,3 @@
-// Configuration de l'API
-const API_URL = 'http://localhost/ReseauSocial/api';
-
-// Validation des formulaires
-function validateForm(formData) {
-    const errors = [];
-
-    if (!formData.email || !formData.email.trim()) {
-        errors.push('L\'email est requis');
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        errors.push('Email invalide');
-    }
-
-    if (!formData.password || formData.password.length < 8) {
-        errors.push('Le mot de passe doit contenir au moins 8 caractères');
-    }
-
-    return errors;
-}
-
-// Affichage des erreurs 
-function handleError(error, container) {
-    if (container) {
-        container.innerHTML = `
-            <div class="alert alert-danger">
-                <strong>Erreur :</strong> ${error}
-            </div>
-        `;
-    }
-}
-
 function login(formData){
     ApiCall('login', 'POST', formData)
     .then(data => {
@@ -42,14 +11,14 @@ function login(formData){
                 localStorage.removeItem('rememberedEmail');
             }
             setTimeout(() => {
-                window.location.href = 'vues/clients/home.html';
+                navigated('home');
             }, 1200);
         } else {
-            handleError(data.message, document.getElementById('loginMessage'));
+            displayMessage(data.message, 'danger', 'loginMessage');
         }
     })
     .catch(error => {
-        handleError('Une erreur est survenue lors de la connexion', document.getElementById('loginMessage'));
+        displayMessage('Une erreur est survenue lors de la connexion', 'danger', 'loginMessage');
     })
 }
 
@@ -74,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const errors = validateForm(formData, 'login');
             if (errors.length > 0) {
-                handleError(errors.join('<br>'), document.getElementById('loginMessage'));
+                displayMessage(errors.join('<br>'), 'danger', 'loginMessage');
                 return;
             }
 
@@ -94,16 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.removeItem('rememberedEmail');
                     }
                     setTimeout(() => {
-                        window.location.href = 'vues/clients/home.html';
+                        navigated('home');
                     }, 1200);
                 } else {
-                    handleError(response.message, document.getElementById('loginMessage'));
+                    displayMessage(response.message, 'danger', 'loginMessage');
                 }
                 
                 
 
             } catch (error) {
-                handleError('Une erreur est survenue lors de la connexion', document.getElementById('loginMessage'));
+                displayMessage('Une erreur est survenue lors de la connexion', 'danger', 'loginMessage');
                 document.getElementById('loader').style.display = 'none';
             }
         });
