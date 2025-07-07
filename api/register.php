@@ -144,7 +144,17 @@
         }
 
 
-        echo json_encode(['status' => 'success', 'message' => 'Inscription réussie.']);
+        echo json_encode(['status' => 'success', 
+        'message' => 'Inscription réussie.', 
+        'user' => [
+            'firstname' => $firstname,
+            'lastname'  => $lastname,
+            'email'     => $email,
+            'csrf_token'=> $csrf_token
+        ],
+        'activation_token' => $activation_token,
+        'status' => 'pending',
+        ]);
     } catch (Exception $e) {
         error_log("Erreur d'inscription: " . $e->getMessage());
         echo json_encode(['status' => 'error', 'message' => 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.']);

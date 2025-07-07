@@ -1,83 +1,41 @@
 const API_URL = 'http://localhost/ReseauSocial';
+export {API_URL}
+import {login} from './login.js';
+import { register } from './register.js';
 
-
-//gestion du loader
-function loader(state){
+// Gestion du loader
+export async function loader(state) {
     const loader = document.getElementById('loader');
-    if (state) loader.style.display = 'block';
-    else loader.style.display = 'none';
-}
-
-
-//Appel Api php depuis une page
-function ApiCall(url, method, data = {}){
-    loader(true);
-    return fetch(`${API_URL}/api/${url}.php`, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        loader(false);
-        return data;
-    })
-    .catch(error => {
-        console.log(error);
-        loader(false);
-        return error;
-    })
-    .finally(() => loader(false));
-}
-
-// Gestion des routes et chargement des pages
-function navigated(page){
-    // Gestion des routes protégées
-    const protectedPages = ['home', 'profile', 'settings'];
-    const token = sessionStorage.getItem('csrf_token');
-    if (protectedPages.includes(page) && !token) {
-        navigated('login');
-        return;
+    if (loader) {
+        loader.style.display = state ? 'block' : 'none';
     }
-    loader(true);
-    //charger le html
-    fetch(`./vues/clients/${page}.html`)
-    .then(response => response.text())
-    .then(data => {
-        loader(false);
-        document.querySelector('.container-flex').innerHTML = data;
-        //charger le css
-        document.getElementById('loginCSS').href = `./assets/css/${page}.css`;
-
-        // Supprimer les anciens scripts spécifiques
-        const oldScript = document.getElementById('page-js');
-        if (oldScript) oldScript.remove();
-
-        //charger le js
-        const script = document.createElement('script');
-        script.src = `./assets/js/${page}.js`;
-        script.id = 'page-js';
-        document.body.appendChild(script);
-
-        //ajouter l'element de navigation dans l'historique
-        history.pushState({page: page}, '', `/${page}`);
-    })
-    .finally(() => loader(false));
 }
 
-// Logout simple
-function logout(){
-    sessionStorage.clear();
-    localStorage.clear();
-    navigated('login');
+// Appel API générique
+export async function ApiCall(url, method, data = {}) {
+    try {
+        const response = await fetch(`${API_URL}/api/${url}.php`, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erreur réseau : ' + response.status);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Erreur API:', error);
+        throw error;
+    }
 }
 
-window.onpopstate = (e) => e.state && navigated(e.state.page);
-window.onload = () => navigated('login');
-
-function validateForm(formData, type) {
+// Validation de formulaire
+export async function validateForm(formData, type) {
     const errors = [];
     if (!formData.email?.trim()) errors.push("L'email est requis");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errors.push("Email invalide");
@@ -93,8 +51,122 @@ function validateForm(formData, type) {
     return errors;
 }
 
-function handleError(message, container){
-    if (container) {
-        container.innerHTML = `<div class="alert alert-danger"><strong>Erreur :</strong> ${message}</div>`;
+// Gestion des erreurs
+export async function handleError(message, container) {
+    const containerElement = document.getElementById(container);
+    if (containerElement) {
+        containerElement.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show">
+                <strong>Erreur :</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
     }
 }
+
+// Gestion des routes protégées et chargement des pages
+export async function navigated(page) {
+    const protectedPages = ['home', 'profile', 'settings'];
+    const token = sessionStorage.getItem('csrf_token');
+    if (protectedPages.includes(page) && !token) {
+        await loadAuthView('login');
+        return;
+    }
+
+    try {
+        const response = await fetch(`./vues/clients/${page}.html`);
+        if (!response.ok) throw new Error('Erreur chargement page');
+        const data = await response.text();
+        document.querySelector('.container-flex').innerHTML = data;
+
+        // Charger le CSS
+        const cssLink = document.getElementById('loginCSS');
+        if (cssLink) {
+            cssLink.href = `./assets/css/${page}.css`;
+        }
+
+        // Charger le JavaScript spécifique
+        const existingScript = document.getElementById('page-js');
+        if (existingScript) existingScript.remove();
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = `./assets/js/${page}.js`;
+        script.id = 'page-js';
+        document.body.appendChild(script);
+
+        // Ajouter à l'historique
+        history.pushState({ page: page }, '', `/${page}`);
+    } catch (error) {
+        console.error('Erreur navigation:', error);
+        await handleError('Erreur lors du chargement de la page', 'errorContainer');
+    }
+}
+
+// Fonction pour charger la vue d'authentification (login/register)
+export async function loadAuthView(view) {
+    try {
+        await navigated(view); // Charger la vue correspondante
+        const form = document.getElementById(view === 'login' ? 'loginForm' : 'registerForm');
+        const submitButton = form?.querySelector('[type="submit"]');
+
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = view === 'login' ? {
+                    email: form.email.value.trim(),
+                    password: form.password.value
+                } : {
+                    firstname: form.firstname?.value.trim(),
+                    lastname: form.lastname?.value.trim(),
+                    email: form.email.value.trim(),
+                    password: form.password.value,
+                    confirm_password: form.confirm_password?.value
+                };
+
+                const errors = await validateForm(formData, view);
+                if (errors.length > 0) {
+                    await handleError(errors.join('<br>'), `${view}Message`);
+                    return;
+                }
+
+                // Appeler la méthode appropriée
+                if (view === 'login') {
+                    await login(formData, submitButton);
+                } else {
+                    await register(formData, submitButton);
+                }
+            });
+
+            // Gestion du toggle password
+            document.querySelectorAll('.togglePassword').forEach(button => {
+                button.addEventListener('click', function () {
+                    const passwordInput = this.closest('.input-group').querySelector('.password-field');
+                    const icon = this.querySelector('i');
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('bi-eye');
+                        icon.classList.add('bi-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('bi-eye-slash');
+                        icon.classList.add('bi-eye');
+                    }
+                });
+            });
+        }
+    } catch (error) {
+        console.error('Erreur chargement vue auth:', error);
+        await handleError('Erreur lors du chargement de la vue', `${view}Message`);
+    }
+}
+
+// Logout
+export async function logout() {
+    sessionStorage.clear();
+    localStorage.clear();
+    await loadAuthView('login');
+}
+
+window.onpopstate = (e) => e.state && loadAuthView(e.state.page);
+window.onload = () => loadAuthView('login');
+window.navigated = navigated;

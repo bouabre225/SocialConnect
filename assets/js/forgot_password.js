@@ -1,3 +1,5 @@
+import { ApiCall } from "./main.js";
+
 // Validation email basique
 function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
