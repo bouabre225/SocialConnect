@@ -23,7 +23,7 @@ try {
     $update = $pdo->prepare("UPDATE users SET status = 'active', activation_token = NULL WHERE activation_token = ?");
     $update->execute([$token]);
 
-    header('Location: ../index.html?activated=1');
+    header('Location: ../../vues/clients/login.html?activated=1');
     exit;
     
 } catch (Exception $e) {

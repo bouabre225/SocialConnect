@@ -9,11 +9,12 @@ const routes = {
 };
 
 // Fonction pour charger un script dynamiquement
-function loadScript(url){
+function loadScript(url, callback){
     document.querySelectorAll('script.dynamic').forEach(script => script.remove());
     const script = document.createElement('script');
     script.src = url;
     script.classList.add('dynamic');
+    if (callback) script.onload = callback;
     document.body.appendChild(script);
 }
 
@@ -48,27 +49,31 @@ async function loadView(url){
             break;
     }
 
-    //charger le js de la vue
-    switch(url){
-        case '/vues/clients/home.html':
-            loadScript('../../assets/js/home.js');
-            break;
-        case '/vues/clients/login.html':
-            loadScript('../../assets/js/login_register.js');
-            break;
-        case '/vues/clients/register.html':
-            loadScript('../../assets/js/login_register.js');
-            break;
-        case '/vues/clients/forgot_password.html':
-            loadScript('../../assets/js/forgot.js');
-            break;
-        case '/vues/clients/reset_password.html':
-            loadScript('../../assets/js/reset.js');
-            break;
-        case '/vues/clients/chat.html':
-            loadScript('../../assets/js/chat.js');
-            break;
-    }
+    return new Promise(resolve =>{
+        //charger le js de la vue
+        switch(url){
+            case '/vues/clients/home.html':
+                loadScript('../../assets/js/home.js', resolve);
+                break;
+            case '/vues/clients/login.html':
+                loadScript('../../assets/js/login_register.js', resolve);
+                break;
+            case '/vues/clients/register.html':
+                loadScript('../../assets/js/login_register.js', resolve);
+                break;
+            case '/vues/clients/forgot_password.html':
+                loadScript('../../assets/js/forgot.js', resolve);
+                break;
+            case '/vues/clients/reset_password.html':
+                loadScript('../../assets/js/reset.js', resolve);
+                break;
+            case '/vues/clients/chat.html':
+                loadScript('../../assets/js/chat.js', resolve);
+                break;
+            default:
+                resolve();
+        }
+    });
 }
 
 // Gestion du routage basé sur l'URL
@@ -76,7 +81,16 @@ function router(){
     const path = window.location.pathname;
     const route = routes[path];
     if(route){
-        loadView(route);
+        loadView(route).then(() =>{
+            if (route === '/vues/clients/home.html') {
+                console.log(API_URL);
+
+                checkAuth();
+                //setupPublishCreation();
+                //setupEmojiCreation();
+                //setupPhotoCreation();
+            }
+        });
     }else{
         loadView(routes['/login']);
     }

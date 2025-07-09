@@ -2,9 +2,7 @@
     //const API_URL = 'http://localhost/api/users';
     //let localStorage.getItem('token');
     //let currentUser = null;
-    document.addEventListener('DOMContentLoaded', ()=>{
-        checkAuth();
-    });
+
     //verifier l'authentification
     async function checkAuth(){
         if (!localStorage.getItem('token')){
@@ -59,6 +57,10 @@
     // Récupérer et afficher les contacts (amis)
     async function fetchContacts() {
         const contactsList = document.querySelector('.contacts-list');
+        if (!contactsList) {
+            console.warn('contacts-list introuvable dans le DOM');
+            return;
+        }
         contactsList.innerHTML = '';
         const friends = await fetchApi('/friends?status=accepted');
         friends.forEach(contact => {
@@ -312,59 +314,67 @@
         });
     }
 
-    // Gestion de la publication
-    const createPostForm = document.querySelector('.create-post-container form');
-    const postInput = document.querySelector('.post-input');
-    let selectedPostMediaFile = null;
-    let selectedEmoji = '';
-    let selectedLocation = '';
-    let selectedLatLng = null;
+    function setupPublishCreation() {
+        // Gestion de la publication
+        const createPostForm = document.querySelector('.create-post-container form');
+        const postInput = document.querySelector('.post-input');
+        let selectedPostMediaFile = null;
+        let selectedEmoji = '';
+        let selectedLocation = '';
+        let selectedLatLng = null;
 
-        // Ajouter le bouton "Publier" au formulaire
-        if (createPostForm) {
-            const submitButton = document.createElement('button');
-            submitButton.type = 'submit';
-            submitButton.className = 'btn btn-primary btn-sm';
-            submitButton.textContent = 'Publier';
-            createPostForm.querySelector('.create-post').appendChild(submitButton);
-        }
-    
-    // Publication avec média, emoji et localisation
-    createPostForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('content', postInput.value);
-        if (selectedEmoji) formData.append('content', postInput.value + ' ' + selectedEmoji);
-        if (selectedLocation) formData.append('location_name', selectedLocation);
-        if (selectedLatLng) {
-            formData.append('latitude', selectedLatLng.lat);
-            formData.append('longitude', selectedLatLng.lng);
-        }
-        if (selectedPostMediaFile) formData.append('media', selectedPostMediaFile);
+            // Ajouter le bouton "Publier" au formulaire
+            if (createPostForm) {
+                const submitButton = document.createElement('button');
+                submitButton.type = 'submit';
+                submitButton.className = 'btn btn-primary btn-sm';
+                submitButton.textContent = 'Publier';
+                createPostForm.querySelector('.create-post').appendChild(submitButton);
+            }
         
-        try {
-            await fetchApi('/posts', 'POST', formData, true);
-            postInput.value = '';
-            selectedPostMediaFile = null;
-            selectedEmoji = '';
-            selectedLocation = '';
-            selectedLatLng = null;
-            document.getElementById('postMediaPreview')?.remove();
-            document.getElementById('postEmojiPreview')?.remove();
-            document.getElementById('postLocationPreview')?.remove();
-            fetchPosts();
-        } catch (error) {
-            alert('Erreur lors de la publication: ' + error.message);
-        }
-    });
+        // Publication avec média, emoji et localisation
+        createPostForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('content', postInput.value);
+            if (selectedEmoji) formData.append('content', postInput.value + ' ' + selectedEmoji);
+            if (selectedLocation) formData.append('location_name', selectedLocation);
+            if (selectedLatLng) {
+                formData.append('latitude', selectedLatLng.lat);
+                formData.append('longitude', selectedLatLng.lng);
+            }
+            if (selectedPostMediaFile) formData.append('media', selectedPostMediaFile);
+            
+            try {
+                await fetchApi('/posts', 'POST', formData, true);
+                postInput.value = '';
+                selectedPostMediaFile = null;
+                selectedEmoji = '';
+                selectedLocation = '';
+                selectedLatLng = null;
+                document.getElementById('postMediaPreview')?.remove();
+                document.getElementById('postEmojiPreview')?.remove();
+                document.getElementById('postLocationPreview')?.remove();
+                fetchPosts();
+            } catch (error) {
+                alert('Erreur lors de la publication: ' + error.message);
+            }
+        });
+    }
 
     // Gestion du bouton photo/vidéo
-    document.querySelector('.photo-action').addEventListener('click', (e) => {
-        e.preventDefault();
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*,video/*';
-        input.onchange = (ev) => {
+    function setupPhotoCreation() {
+        const photoButton = document.querySelector('.photo-action');
+        if (!photoButton) {
+            console.warn('photo-action introuvable');
+            return;
+        }
+        photoButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            input.onchange = (ev) => {
             selectedPostMediaFile = ev.target.files[0];
             let preview = document.getElementById('postMediaPreview');
             if (!preview) {
@@ -377,62 +387,71 @@
             const isVideo = selectedPostMediaFile.type.startsWith('video');
             preview.innerHTML = isVideo ? `<video src="${url}" controls style="max-width:100%;max-height:200px;"></video>` : 
                                         `<img src="${url}" style="max-width:100%;max-height:200px;">`;
-        };
-        input.click();
-    });
+            };
+            input.click();
+        });
+    }
 
     // Gestion du bouton humeur
-    document.querySelector('.feeling-action').addEventListener('click', (e) => {
-        e.preventDefault();
-        let modal = document.getElementById('emojiModal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'emojiModal';
-            modal.style.position = 'fixed';
-            modal.style.top = 0;
-            modal.style.left = 0;
-            modal.style.width = '100vw';
-            modal.style.height = '100vh';
-            modal.style.background = 'rgba(0,0,0,0.4)';
-            modal.style.display = 'flex';
-            modal.style.alignItems = 'center';
-            modal.style.justifyContent = 'center';
-            modal.style.zIndex = 9999;
-            const emojis = ['😀','😃','😄','😁','😆','😅','😂','😊','😇','🙂','🙃','😉','😍','🥰','😘','😜','🤩','😎','😔','😢','😭','😡','😱','😴','🤒','🤕','🤧','🥳','😇','🤠','😶‍🌫️','😬','🥶','🥵','🤯','😤','😩','😳','🥺','😤','😐','😑','😶'];
-            modal.innerHTML = `
-                <div style="background:#fff;padding:2rem 1.5rem;border-radius:1rem;min-width:320px;max-width:95vw;box-shadow:0 2px 16px #0002;">
-                    <h5>Choisissez votre humeur</h5>
-                    <div style="display:flex;flex-wrap:wrap;gap:8px;max-width:350px;">
-                        ${emojis.map(e => `<span class="emoji-choice" style="font-size:2rem;cursor:pointer;">${e}</span>`).join('')}
-                    </div>
-                    <div class="d-flex gap-2 justify-content-end mt-3">
-                        <button class="btn btn-secondary btn-sm" id="closeEmojiModal">Annuler</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        } else {
-            modal.style.display = 'flex';
+    function setupEmojiCreation() {
+        const feelingButton = document.querySelector('.feeling-action');
+        if (!feelingButton) {
+            console.warn('Bouton humeur non trouvé');
+            return;
         }
-        modal.querySelector('#closeEmojiModal').onclick = () => modal.style.display = 'none';
-        modal.querySelectorAll('.emoji-choice').forEach(span => {
-            span.onclick = () => {
-                selectedEmoji = span.textContent;
-                let emojiPreview = document.getElementById('postEmojiPreview');
-                if (!emojiPreview) {
-                    emojiPreview = document.createElement('span');
-                    emojiPreview.id = 'postEmojiPreview';
-                    emojiPreview.style.fontSize = '2rem';
-                    emojiPreview.style.marginLeft = '10px';
-                    document.querySelector('.post-input-container').appendChild(emojiPreview);
-                }
-                emojiPreview.textContent = selectedEmoji;
-                modal.style.display = 'none';
-            };
+        feelingButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            let modal = document.getElementById('emojiModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'emojiModal';
+                modal.style.position = 'fixed';
+                modal.style.top = 0;
+                modal.style.left = 0;
+                modal.style.width = '100vw';
+                modal.style.height = '100vh';
+                modal.style.background = 'rgba(0,0,0,0.4)';
+                modal.style.display = 'flex';
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modal.style.zIndex = 9999;
+                const emojis = ['😀','😃','😄','😁','😆','😅','😂','😊','😇','🙂','🙃','😉','😍','🥰','😘','😜','🤩','😎','😔','😢','😭','😡','😱','😴','🤒','🤕','🤧','🥳','😇','🤠','😶‍🌫️','😬','🥶','🥵','🤯','😤','😩','😳','🥺','😤','😐','😑','😶'];
+                modal.innerHTML = `
+                    <div style="background:#fff;padding:2rem 1.5rem;border-radius:1rem;min-width:320px;max-width:95vw;box-shadow:0 2px 16px #0002;">
+                        <h5>Choisissez votre humeur</h5>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px;max-width:350px;">
+                            ${emojis.map(e => `<span class="emoji-choice" style="font-size:2rem;cursor:pointer;">${e}</span>`).join('')}
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end mt-3">
+                            <button class="btn btn-secondary btn-sm" id="closeEmojiModal">Annuler</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            } else {
+                modal.style.display = 'flex';
+            }
+            modal.querySelector('#closeEmojiModal').onclick = () => modal.style.display = 'none';
+            modal.querySelectorAll('.emoji-choice').forEach(span => {
+                span.onclick = () => {
+                    selectedEmoji = span.textContent;
+                    let emojiPreview = document.getElementById('postEmojiPreview');
+                    if (!emojiPreview) {
+                        emojiPreview = document.createElement('span');
+                        emojiPreview.id = 'postEmojiPreview';
+                        emojiPreview.style.fontSize = '2rem';
+                        emojiPreview.style.marginLeft = '10px';
+                        document.querySelector('.post-input-container').appendChild(emojiPreview);
+                    }
+                    emojiPreview.textContent = selectedEmoji;
+                    modal.style.display = 'none';
+                };
+            });
         });
-    });
+    }
 
     // Gestion du bouton lieu
+
     document.querySelector('.location-action')?.addEventListener('click', (e) => {
         e.preventDefault();
         let modal = document.getElementById('locationModal');
@@ -541,13 +560,13 @@ document.getElementById('go-to-chat')?.addEventListener('click', () => {
     redirect('/chat');
 });
 
-// Charger les données initiales
-if (checkAuth()) {
-    Promise.all([
-        fetchContacts(),
-        fetchSuggestions(),
-        fetchStories(),
-        fetchPosts()
-    ]);
-}
+fetchContacts();
+fetchSuggestions();
+fetchStories();
+fetchPosts();
+//fetchNotifications();
+setupPublishCreation();
+setupEmojiCreation();
+setupPhotoCreation();
+
 //});

@@ -51,97 +51,124 @@
 
 <!-- Main Content -->
 <main class="facebook-main">
-<div class="container-fluid">
-    <div class="row">
-        <!-- Left Sidebar -->
-        <div class="col-lg-3 d-none d-lg-block facebook-left-sidebar">
-            <div class="sidebar-content">
-                <div class="sidebar-menu">
-                    <div class="profile-item">
-                        <div class="user-avatar-small"></div>
-                        <span class="profile-name">Votre profil</span>
-                    </div>                       
-                    <div class="menu-items"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Sidebar -->
+            <div class="col-lg-3 d-none d-lg-block facebook-left-sidebar">
+                <div class="sidebar-content">
+                    <div class="sidebar-menu">
+                        <div class="profile-item">
+                            <div class="user-avatar-small"></div>
+                            <span class="profile-name">Votre profil</span>
+                        </div>                       
+                        <div class="menu-items"></div>
+                    </div>
+                    <div class="shortcuts-section">
+                        <h3 class="section-title">RACCOURCIS</h3>
+                        <div class="shortcuts-items"></div>
+                    </div>
                 </div>
-                <div class="shortcuts-section">
-                    <h3 class="section-title">RACCOURCIS</h3>
-                    <div class="shortcuts-items"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Main Feed -->
-        <div class="col-lg-6 main-feed">
-            <!-- Stories Section -->
-            <div class="stories-container">
-                <div class="stories-scroll"></div>
             </div>
             
-            <!-- Create Post -->
-            <div class="create-post-container">
-                <form>
-                    <div class="create-post">
-                        <div class="post-input-container">
-                            <div class="user-avatar-small"></div>
-                            <input type="text" class="post-input" placeholder="Que voulez-vous dire ?">
+            <!-- Main Feed -->
+            <div class="col-lg-6 main-feed">
+                <!-- Stories Section -->
+                <div class="stories-container">
+                    <div class="stories-scroll"></div>
+                </div>
+                
+                <!-- Create Post -->
+                <div class="create-post-container">
+                    <form>
+                        <div class="create-post">
+                            <div class="post-input-container">
+                                <div class="user-avatar-small"></div>
+                                <input type="text" class="post-input" placeholder="Que voulez-vous dire ?">
+                            </div>
+                            
+                            <div class="post-actions">
+                                <div class="action-buttons">
+                                    <button class="action-button photo-action">
+                                        <div class="action-icon photo-icon">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                        <span class="action-text">Photo/vidéo</span>
+                                    </button>
+                                    <button class="action-button feeling-action">
+                                        <div class="action-icon feeling-icon">
+                                            <i class="bi bi-emoji-smile"></i>
+                                        </div>
+                                        <span class="action-text">Humeur</span>
+                                    </button>                                    
+                                    <button class="action-button location-action">
+                                        <div class="action-icon location-icon">
+                                            <i class="bi bi-geo-alt"></i>
+                                        </div>
+                                        <span class="action-text">Lieu</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Le bouton "Publier" sera injecté ici par JS -->
                         </div>
-                        
-                        <div class="post-actions">
-                            <div class="action-buttons">
-                                <button class="action-button photo-action">
-                                    <div class="action-icon photo-icon">
-                                        <i class="bi bi-image"></i>
-                                    </div>
-                                    <span class="action-text">Photo/vidéo</span>
+                    </form>
+                </div>
+                
+                <!-- Feed Posts -->
+                <div class="feed-posts"></div>
+            </div>
+            
+            <!-- Right Sidebar -->
+            <div class="col-lg-3 d-none d-xl-block facebook-right-sidebar">
+                <div class="sidebar-content">
+                    <!-- Contacts -->
+                    <div class="contacts-section mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="section-title">CONTACTS</h3>
+                            <div class="contact-actions">
+                                <button class="action-btn" title="Appel vidéo">
+                                    <i class="bi bi-camera-video"></i>
                                 </button>
-                                <button class="action-button feeling-action">
-                                    <div class="action-icon feeling-icon">
-                                        <i class="bi bi-emoji-smile"></i>
-                                    </div>
-                                    <span class="action-text">Humeur</span>
-                                </button>                                    
-                                <button class="action-button location-action">
-                                    <div class="action-icon location-icon">
-                                        <i class="bi bi-geo-alt"></i>
-                                    </div>
-                                    <span class="action-text">Lieu</span>
+                                <button class="action-btn" title="Rechercher">
+                                    <i class="bi bi-search"></i>
                                 </button>
                             </div>
                         </div>
-                        <!-- Le bouton "Publier" sera injecté ici par JS -->
+                        <div class="contacts-list"></div>
                     </div>
-                </form>
-            </div>
-            
-            <!-- Feed Posts -->
-            <div class="feed-posts"></div>
-        </div>
-        
-        <!-- Right Sidebar -->
-        <div class="col-lg-3 d-none d-xl-block facebook-right-sidebar">
-            <div class="sidebar-content">
-                <!-- Contacts -->
-                <div class="contacts-section mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="section-title">CONTACTS</h3>
-                        <div class="contact-actions">
-                            <button class="action-btn" title="Appel vidéo">
-                                <i class="bi bi-camera-video"></i>
-                            </button>
-                            <button class="action-btn" title="Rechercher">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="contacts-list"></div>
-                </div>
 
-                <!-- Suggestions d'amis -->
-                <div class="suggestions-section">
-                    <h3 class="section-title mb-3">SUGGESTIONS</h3>
-                    <div class="suggestions-list"></div>
+                    <!-- Suggestions d'amis -->
+                    <div class="suggestions-section">
+                        <h3 class="section-title mb-3">SUGGESTIONS</h3>
+                        <div class="suggestions-list"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Modal pour les emojis -->
+
+
+    <!-- Modal pour les lieux -->
+
+
+    <!-- Modal pour les notifications -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="notification-list"></div>
+        </div>
+    </div>
+
+    <!-- Modal pour les amis -->
+    <div id="friendsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="friends-list"></div>
+        </div>
+    </div>
+
+</main>
+
+
+
