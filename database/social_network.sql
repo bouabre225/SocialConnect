@@ -213,7 +213,8 @@ ALTER TABLE `story_views`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  ADD `username` VARCHAR(50) NOT NULL UNIQUE AFTER `lastname`;
 
 --
 -- Contraintes pour les tables déchargées

@@ -13,13 +13,11 @@ define('DB_NAME', 'social_network');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-// Fonction utilitaire pour la réponse JSON
-function jsonResponse($data, $code = 200) {
-    http_response_code($code);
-    header('Content-Type: application/json');
-    echo json_encode($data);
-    exit;
-}
+//cle secrete
+define('JWT_SECRET_KEY', 'ta-cle-super-secrete');
+
+
+
 
 // Connexion à la base de données
 try {

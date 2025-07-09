@@ -16,7 +16,7 @@ function displayMessage(message, type, containerId) {
     `;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+//document.addEventListener('DOMContentLoaded', () => {
     const forgotForm = document.getElementById('forgotForm');
     if (forgotForm) {
         forgotForm.addEventListener('submit', async (e) => {
@@ -60,4 +60,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+//});

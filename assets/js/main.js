@@ -29,44 +29,44 @@ async function loadView(url){
     //charger le css de la vue
     switch(url){
         case '/vues/clients/home.html':
-            document.getElementById('style').href = '/assets/css/style.css';
+            document.getElementById('style').href = '../../assets/css/style.css';
             break;
         case '/vues/clients/login.html':
-            document.getElementById('style').href = '/assets/css/login.css';
+            document.getElementById('style').href = '../../assets/css/login.css';
             break;
         case '/vues/clients/register.html':
-            document.getElementById('style').href = '/assets/css/register.css';
+            document.getElementById('style').href = '../../assets/css/register.css';
             break;
         case '/vues/clients/forgot_password.html':
-            document.getElementById('style').href = '/assets/css/forgot.css';
+            document.getElementById('style').href = '../../assets/css/forgot.css';
             break;
         case '/vues/clients/reset_password.html':
-            document.getElementById('style').href = '/assets/css/reset.css';
+            document.getElementById('style').href = '../../assets/css/reset.css';
             break;
         case '/vues/clients/chat.html':
-            document.getElementById('style').href = '/assets/css/chat.css';
+            document.getElementById('style').href = '../../assets/css/chat.css';
             break;
     }
 
     //charger le js de la vue
     switch(url){
         case '/vues/clients/home.html':
-            loadScript('/assets/js/home.js');
+            loadScript('../../assets/js/home.js');
             break;
         case '/vues/clients/login.html':
-            loadScript('/assets/js/login_register.js');
+            loadScript('../../assets/js/login_register.js');
             break;
         case '/vues/clients/register.html':
-            loadScript('/assets/js/login_register.js');
+            loadScript('../../assets/js/login_register.js');
             break;
         case '/vues/clients/forgot_password.html':
-            loadScript('/assets/js/forgot.js');
+            loadScript('../../assets/js/forgot.js');
             break;
         case '/vues/clients/reset_password.html':
-            loadScript('/assets/js/reset.js');
+            loadScript('../../assets/js/reset.js');
             break;
         case '/vues/clients/chat.html':
-            loadScript('/assets/js/chat.js');
+            loadScript('../../assets/js/chat.js');
             break;
     }
 }
