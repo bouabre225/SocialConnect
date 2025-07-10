@@ -560,13 +560,16 @@ document.getElementById('go-to-chat')?.addEventListener('click', () => {
     redirect('/chat');
 });
 
-fetchContacts();
-fetchSuggestions();
-fetchStories();
-fetchPosts();
-//fetchNotifications();
-setupPublishCreation();
-setupEmojiCreation();
-setupPhotoCreation();
+if (checkAuth()) {
+    fetchContacts();
+    fetchSuggestions();
+    fetchStories();
+    fetchPosts();
+    //fetchNotifications();
+    setupPublishCreation();
+    setupEmojiCreation();
+    setupPhotoCreation();
+}
+
 
 //});
