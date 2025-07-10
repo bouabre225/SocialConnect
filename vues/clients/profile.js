@@ -1,4 +1,4 @@
- // DOM Elements
+        //DOM Elements
         const editProfileBtn = document.getElementById('editProfileBtn');
         const passwordModal = document.getElementById('passwordModal');
         const editProfileModal = document.getElementById('editProfileModal');

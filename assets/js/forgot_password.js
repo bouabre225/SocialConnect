@@ -16,6 +16,7 @@ function displayMessage(message, type, containerId) {
     `;
 }
 
+<<<<<<< HEAD:assets/js/forgot_password.js
 function forgot(formData){
     ApiCall('forgot', 'POST', formData)
     .then(data => {
@@ -33,6 +34,9 @@ function forgot(formData){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+=======
+//document.addEventListener('DOMContentLoaded', () => {
+>>>>>>> af27f1af151005961489d1ae32d1d3a0cef5f0e9:assets/js/forgot.js
     const forgotForm = document.getElementById('forgotForm');
     if (forgotForm) {
         forgotForm.addEventListener('submit', async (e) => {
@@ -68,4 +72,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+//});

@@ -1,4 +1,16 @@
 # Ignore les fichiers de configuration
 config.php
+<<<<<<< HEAD
 config/phpmailer.php
 vendor
+=======
+
+# Ignore les fichiers de la base de données
+*.sql
+
+# Ignore les fichiers de la base de données
+*.sql
+
+# Ignore les fichiers de la base de données
+*.sql
+>>>>>>> af27f1af151005961489d1ae32d1d3a0cef5f0e9

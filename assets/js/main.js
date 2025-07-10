@@ -1,172 +1,115 @@
-const API_URL = 'http://localhost/ReseauSocial';
-export {API_URL}
-import {login} from './login.js';
-import { register } from './register.js';
+//config des routes 
+const routes = {
+    '/home' : '/vues/clients/home.html',
+    '/login' : '/vues/clients/login.html',
+    '/register' : '/vues/clients/register.html',
+    '/forgot' : '/vues/clients/forgot_password.html',
+    '/reset' : '/vues/clients/reset_password.html',
+    '/chat' : '/vues/clients/chat.html'
+};
 
-// Gestion du loader
-export async function loader(state) {
-    const loader = document.getElementById('loader');
-    if (loader) {
-        loader.style.display = state ? 'block' : 'none';
-    }
+// Fonction pour charger un script dynamiquement
+function loadScript(url, callback){
+    document.querySelectorAll('script.dynamic').forEach(script => script.remove());
+    const script = document.createElement('script');
+    script.src = url;
+    script.classList.add('dynamic');
+    if (callback) script.onload = callback;
+    document.body.appendChild(script);
 }
 
-// Appel API générique
-export async function ApiCall(url, method, data = {}) {
-    try {
-        const response = await fetch(`${API_URL}/api/${url}.php`, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
-            },
-            body: JSON.stringify(data)
+// fonction pour charger la vue
+async function loadView(url){
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    const response = await fetch(url);
+    const view = await response.text();
+    app.innerHTML = view;
+
+    //charger le css de la vue
+    switch(url){
+        case '/vues/clients/home.html':
+            document.getElementById('style').href = '../../assets/css/style.css';
+            break;
+        case '/vues/clients/login.html':
+            document.getElementById('style').href = '../../assets/css/login.css';
+            break;
+        case '/vues/clients/register.html':
+            document.getElementById('style').href = '../../assets/css/register.css';
+            break;
+        case '/vues/clients/forgot_password.html':
+            document.getElementById('style').href = '../../assets/css/forgot.css';
+            break;
+        case '/vues/clients/reset_password.html':
+            document.getElementById('style').href = '../../assets/css/reset.css';
+            break;
+        case '/vues/clients/chat.html':
+            document.getElementById('style').href = '../../assets/css/chat.css';
+            break;
+    }
+
+    return new Promise(resolve =>{
+        //charger le js de la vue
+        switch(url){
+            case '/vues/clients/home.html':
+                loadScript('../../assets/js/home.js', resolve);
+                break;
+            case '/vues/clients/login.html':
+                loadScript('../../assets/js/login_register.js', resolve);
+                break;
+            case '/vues/clients/register.html':
+                loadScript('../../assets/js/login_register.js', resolve);
+                break;
+            case '/vues/clients/forgot_password.html':
+                loadScript('../../assets/js/forgot.js', resolve);
+                break;
+            case '/vues/clients/reset_password.html':
+                loadScript('../../assets/js/reset.js', resolve);
+                break;
+            case '/vues/clients/chat.html':
+                loadScript('../../assets/js/chat.js', resolve);
+                break;
+            default:
+                resolve();
+        }
+    });
+}
+
+// Gestion du routage basé sur l'URL
+function router(){
+    const path = window.location.pathname;
+    const route = routes[path];
+    if(route){
+        loadView(route).then(() =>{
+            if (route === '/vues/clients/home.html') {
+                console.log(API_URL);
+
+                checkAuth();
+                //setupPublishCreation();
+                //setupEmojiCreation();
+                //setupPhotoCreation();
+            }
         });
-
-        if (!response.ok) {
-            throw new Error('Erreur réseau : ' + response.status);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Erreur API:', error);
-        throw error;
+    }else{
+        loadView(routes['/login']);
     }
 }
 
-// Validation de formulaire
-export async function validateForm(formData, type) {
-    const errors = [];
-    if (!formData.email?.trim()) errors.push("L'email est requis");
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errors.push("Email invalide");
+// Écouter les changements d'URL
+window.addEventListener('popstate', router);
 
-    if (!formData.password || formData.password.length < 8) errors.push("Le mot de passe doit contenir au moins 8 caractères");
+// Charger la vue initiale
+document.addEventListener('DOMContentLoaded', () => {
+    router();
+});
 
-    if (type === 'register') {
-        if (!formData.firstname?.trim()) errors.push("Le prénom est requis");
-        if (!formData.lastname?.trim()) errors.push("Le nom est requis");
-        if (formData.password !== formData.confirm_password) errors.push("Les mots de passe ne correspondent pas");
+// Gestion des liens internes
+document.addEventListener('click', (e) => {
+    if (e.target.hasAttribute('data-url')) {
+        e.preventDefault(); // Empêche le rechargement de la page
+        const route = e.target.getAttribute('data-url');
+        history.pushState(null, '', route); // Met à jour l'URL
+        router(); // Charge la vue correspondante
     }
-
-    return errors;
-}
-
-// Gestion des erreurs
-export async function handleError(message, container) {
-    const containerElement = document.getElementById(container);
-    if (containerElement) {
-        containerElement.innerHTML = `
-            <div class="alert alert-danger alert-dismissible fade show">
-                <strong>Erreur :</strong> ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
-    }
-}
-
-// Gestion des routes protégées et chargement des pages
-export async function navigated(page) {
-    const protectedPages = ['home', 'profile', 'settings'];
-    const token = sessionStorage.getItem('csrf_token');
-    if (protectedPages.includes(page) && !token) {
-        await loadAuthView('login');
-        return;
-    }
-
-    try {
-        const response = await fetch(`./vues/clients/${page}.html`);
-        if (!response.ok) throw new Error('Erreur chargement page');
-        const data = await response.text();
-        document.querySelector('.container-flex').innerHTML = data;
-
-        // Charger le CSS
-        const cssLink = document.getElementById('loginCSS');
-        if (cssLink) {
-            cssLink.href = `./assets/css/${page}.css`;
-        }
-
-        // Charger le JavaScript spécifique
-        const existingScript = document.getElementById('page-js');
-        if (existingScript) existingScript.remove();
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = `./assets/js/${page}.js`;
-        script.id = 'page-js';
-        document.body.appendChild(script);
-
-        // Ajouter à l'historique
-        history.pushState({ page: page }, '', `/${page}`);
-    } catch (error) {
-        console.error('Erreur navigation:', error);
-        await handleError('Erreur lors du chargement de la page', 'errorContainer');
-    }
-}
-
-// Fonction pour charger la vue d'authentification (login/register)
-export async function loadAuthView(view) {
-    try {
-        await navigated(view); // Charger la vue correspondante
-        const form = document.getElementById(view === 'login' ? 'loginForm' : 'registerForm');
-        const submitButton = form?.querySelector('[type="submit"]');
-
-        if (form) {
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = view === 'login' ? {
-                    email: form.email.value.trim(),
-                    password: form.password.value
-                } : {
-                    firstname: form.firstname?.value.trim(),
-                    lastname: form.lastname?.value.trim(),
-                    email: form.email.value.trim(),
-                    password: form.password.value,
-                    confirm_password: form.confirm_password?.value
-                };
-
-                const errors = await validateForm(formData, view);
-                if (errors.length > 0) {
-                    await handleError(errors.join('<br>'), `${view}Message`);
-                    return;
-                }
-
-                // Appeler la méthode appropriée
-                if (view === 'login') {
-                    await login(formData, submitButton);
-                } else {
-                    await register(formData, submitButton);
-                }
-            });
-
-            // Gestion du toggle password
-            document.querySelectorAll('.togglePassword').forEach(button => {
-                button.addEventListener('click', function () {
-                    const passwordInput = this.closest('.input-group').querySelector('.password-field');
-                    const icon = this.querySelector('i');
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        icon.classList.remove('bi-eye');
-                        icon.classList.add('bi-eye-slash');
-                    } else {
-                        passwordInput.type = 'password';
-                        icon.classList.remove('bi-eye-slash');
-                        icon.classList.add('bi-eye');
-                    }
-                });
-            });
-        }
-    } catch (error) {
-        console.error('Erreur chargement vue auth:', error);
-        await handleError('Erreur lors du chargement de la vue', `${view}Message`);
-    }
-}
-
-// Logout
-export async function logout() {
-    sessionStorage.clear();
-    localStorage.clear();
-    await loadAuthView('login');
-}
-
-window.onpopstate = (e) => e.state && loadAuthView(e.state.page);
-window.onload = () => loadAuthView('login');
-window.navigated = navigated;
+});
