@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-light: #6b8cba;
+            --primary-dark: #3a5784;
+            --accent: #ff7e5f;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --danger: #dc3545;
+            --purple: #7209b7;
+            --light: #ffffff;
+            --dark: #2b2d42;
+            --gray: #f8f9fa;
+            --gray-dark: #e9ecef;
+            --gray-light: #f1f3f4;
+            --shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--gray);
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: var(--light);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--gray-dark);
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            backdrop-filter: blur(10px);
+        }
+
+        .dashboard-header h1 {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--light);
+            min-height: calc(100vh - 70px);
+            border-right: 1px solid var(--gray-dark);
+            width: 280px;
+            transition: var(--transition);
+            position: fixed;
+            left: -280px;
+            top: 70px;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        .sidebar-item {
+            padding: 1rem 1.5rem;
+            color: var(--dark);
+            border-left: 4px solid transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0.2rem 0;
+        }
+
+        .sidebar-item:hover {
+            background: linear-gradient(90deg, rgba(74, 111, 165, 0.1), rgba(74, 111, 165, 0.05));
+            border-left-color: var(--primary);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(74, 111, 165, 0.15), rgba(74, 111, 165, 0.08));
+            border-left-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-item i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Button styles */
+        .btn-burger {
+            border: none;
+            background: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .btn-burger:hover {
+            background: var(--gray-light);
+            transform: scale(1.1);
+        }
+
+        /* Main content */
+        .main-content {
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Welcome card */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent) 100%);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+        /* Settings cards */
+        .settings-card {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-dark);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .settings-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .settings-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .settings-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .settings-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-card:hover .settings-icon {
+            transform: scale(1.1);
+        }
+
+        .bg-primary-custom { background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important; }
+        .bg-success-custom { background: linear-gradient(135deg, #4cc9f0, #00b4d8) !important; }
+        .bg-warning-custom { background: linear-gradient(135deg, #f8961e, #f9844a) !important; }
+        .bg-info-custom { background: linear-gradient(135deg, #3a86ff, #4cc9f0) !important; }
+        .bg-danger-custom { background: linear-gradient(135deg, var(--accent), #ff9e87) !important; }
+        .bg-purple-custom { background: linear-gradient(135deg, var(--purple), #a663cc) !important; }
+        .bg-gray-custom { background: linear-gradient(135deg, #6c757d, #8a939b) !important; }
+
+        .settings-card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .settings-card p {
+            color: var(--dark);
+            opacity: 0.8;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            min-height: 40px;
+        }
+
+        .settings-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            background: var(--gray-light);
+            border: 1px solid var(--gray-dark);
+        }
+
+        .settings-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);
+            border-color: var(--primary);
+        }
+
+        .settings-link i {
+            margin-left: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .settings-link:hover i {
+            transform: translateX(3px);
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .btn-langue {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-langue:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(2px);
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Theme switcher */
+        .theme-switcher .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .theme-switcher label {
+            font-weight: 500;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        /* User info */
+        .user-info {
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .btn-outline-danger {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-outline-danger:hover {
+            background-color: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+
+        /* Dark theme */
+        .dark-theme {
+            --primary: #4361ee;
+            --primary-light: #7209b7;
+            --accent: #4cc9f0;
+            --light: #2d2d2d;
+            --dark: #e0e0e0;
+            --gray: #1a1a1a;
+            --gray-dark: #444;
+            --gray-light: #333;
+        }
+
+        .dark-theme body {
+            background-color: var(--gray);
+            color: var(--dark);
+        }
+
+        .dark-theme .dashboard-header {
+            background-color: var(--light);
+            border-bottom-color: var(--gray-dark);
+        }
+
+        .dark-theme .sidebar {
+            background-color: var(--light);
+            border-right-color: var(--gray-dark);
+        }
+
+        .dark-theme .sidebar-item {
+            color: var(--dark);
+        }
+
+        .dark-theme .settings-card {
+            background-color: var(--light);
+            color: var(--dark);
+            border-color: var(--gray-dark);
+        }
+
+        .dark-theme .settings-link {
+            background-color: var(--gray-light);
+            border-color: var(--gray-dark);
+        }
+
+        .dark-theme .user-info {
+            background-color: var(--gray-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            
+            .settings-card {
+                padding: 1.5rem;
+            }
+            
+            .user-info .fw-bold,
+            .user-info small {
+                display: none;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Utility classes */
+        .text-gradient {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+
+        .google-translate-container {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="dashboard-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            <button class="btn-burger me-3" id="sidebarMobileBtn" title="Menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <a href="#" class="btn btn-outline-primary btn-sm me-3" title="Retour à l'accueil">
+                <i class="bi bi-house me-1"></i> Accueil
+            </a>
+            <h1 class="h4 mb-0">
+                Hello <span class="text-gradient">Admin</span> 👋
+            </h1>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="theme-switcher me-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="themeToggle">
+                    <label class="form-check-label" for="themeToggle">
+                        <i class="bi bi-moon-fill me-1"></i> Mode sombre
+                    </label>
+                </div>
+            </div>
+            
+            <div class="language-selector me-3">
+                <button onclick="showLanguageSelector()" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-translate me-1"></i> Langue
+                </button>
+                <div id="google_translate_element" class="google-translate-container"></div>
+            </div>
+            
+            <div class="user-info d-flex align-items-center">
+                <div class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                    <i class="bi bi-person text-white"></i>
+                </div>
+                <div class="me-3 d-none d-md-block">
+                    <div class="fw-bold">Administrateur</div>
+                    <small class="text-muted">Super Admin</small>
+                </div>
+                <a href="#" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-box-arrow-right me-1"></i> 
+                    <span class="d-none d-md-inline">Déconnexion</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="py-4 px-3">
+            <h6 class="text-muted mb-4 px-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Menu Admin</h6>
+            <a href="#" class="sidebar-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="bi bi-people"></i> Gestion des rôles
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="bi bi-person-gear"></i> Administrateurs
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="bi bi-shield-check"></i> Modérateurs
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="bi bi-file-earmark-text"></i> Articles
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="bi bi-graph-up"></i> Statistiques
+            </a>
+            <a href="#" class="sidebar-item active">
+                <i class="bi bi-gear-fill"></i> Paramètres
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="bi bi-archive"></i> Audit
+            </a>
+        </div>
+    </nav>
+    
+    <div class="overlay" id="sidebarOverlay"></div>
+    
+    <div class="main-content">
+        <main class="container-fluid py-4 fade-in">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="welcome-card p-4 p-md-5">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2 class="fw-bold text-white mb-3">
+                                    <i class="bi bi-gear-fill me-2"></i>
+                                    Paramètres Admin
+                                </h2>
+                                <p class="mb-0 text-white opacity-90">Gestion des paramètres administratifs de la plateforme</p>
+                            </div>
+                            <div class="col-md-4 text-end d-none d-md-block">
+                                <i class="bi bi-gear-wide-connected text-white" style="font-size: 5rem; opacity: 0.2;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="settings-card">
+                        <div class="settings-icon bg-primary-custom">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <h2>Gestion Utilisateurs</h2>
+                        <p>Création, modification et suppression des comptes utilisateurs</p>
+                        <a href="dashboard-admin.html" class="settings-link">
+                            Accéder <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="settings-card">
+                        <div class="settings-icon bg-success-custom">
+                            <i class="bi bi-shield-shaded"></i>
+                        </div>
+                        <h2>Gestion des Rôles</h2>
+                        <p>Configuration des permissions et niveaux d'accès</p>
+                        <a href="dashboard-admin.html" class="settings-link">
+                            Configurer <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="settings-card">
+                        <div class="settings-icon bg-warning-custom">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <h2>Modération Contenu</h2>
+                        <p>Gestion des publications et commentaires</p>
+                        <a href="dashboard-moderator.html" class="settings-link">
+                            Modérer <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="settings-card">
+                        <div class="settings-icon bg-danger-custom">
+                            <i class="bi bi-server"></i>
+                        </div>
+                        <h2>Paramètres Système</h2>
+                        <p>Configuration avancée de la plateforme</p>
+                        <a href="vues\clients\settings.html" class="settings-link">
+                            Accéder <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="settings-card">
+                        <div class="settings-icon bg-info-custom">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h2>Statistiques</h2>
+                        <p>Analytics et données d'utilisation</p>
+                        <a href="statistiques.html" class="settings-link">
+                            Voir <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="settings-card">
+                        <div class="settings-icon bg-purple-custom">
+                            <i class="bi bi-database-check"></i>
+                        </div>
+                        <h2>Sauvegardes</h2>
+                        <p>Gestion des sauvegardes et restaurations</p>
+                        <a href="dashboard-admin.html" class="settings-link">
+                            Gérer <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="settings-card">
+                        <div class="settings-icon bg-gray-custom">
+                            <i class="bi bi-palette"></i>
+                        </div>
+                        <h2>Apparence</h2>
+                        <p>Personnalisez l'interface d'administration</p>
+                        <div class="theme-toggle">
+                            <label class="switch">
+                                <input type="checkbox" id="themeToggleCard">
+                                <span class="slider"></span>
+                            </label>
+                            <span>Mode sombre</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="settings-card">
+                        <div class="settings-icon bg-purple-custom">
+                            <i class="bi bi-translate"></i>
+                        </div>
+                        <h2>Langue</h2>
+                        <p>Changer la langue de l'interface</p>
+                        <button class="btn-langue" onclick="showLanguageSelector()">
+                            <i class="bi bi-globe2"></i> Sélectionner
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebarMobileBtn = document.getElementById('sidebarMobileBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        if (sidebarMobileBtn) {
+            sidebarMobileBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+                sidebarOverlay.classList.toggle('show');
+                document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : 'auto';
+            });
+        }
+        
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function() {
+                this.classList.remove('show');
+                sidebar.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeToggleCard = document.getElementById('themeToggleCard');
+            
+            function toggleTheme(isChecked) {
+                document.body.classList.toggle('dark-theme', isChecked);
+                localStorage.setItem('darkTheme', isChecked);
+                
+                if (themeToggle) themeToggle.checked = isChecked;
+                if (themeToggleCard) themeToggleCard.checked = isChecked;
+            }
+            
+            const savedTheme = localStorage.getItem('darkTheme') === 'true';
+            toggleTheme(savedTheme);
+            
+            if (themeToggle) {
+                themeToggle.addEventListener('change', function() {
+                    toggleTheme(this.checked);
+                });
+            }
+            
+            if (themeToggleCard) {
+                themeToggleCard.addEventListener('change', function() {
+                    toggleTheme(this.checked);
+                });
+            }
+        }
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'fr',
+                includedLanguages: 'fr,en,es,de,it,ar,pt,zh-CN,ru,ja',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+
+        function showLanguageSelector() {
+            const translateElement = document.getElementById('google_translate_element');
+            if (translateElement.style.display === 'none' || !translateElement.style.display) {
+                translateElement.style.display = 'block';
+                
+                if (!window.google || !window.google.translate) {
+                    const script = document.createElement('script');
+                    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                    document.body.appendChild(script);
+                }
+            } else {
+                translateElement.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initThemeToggle();
+            
+            document.querySelector('.fade-in').style.opacity = '1';
+        });
+
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
