@@ -84,7 +84,6 @@ function router(){
         loadView(route).then(() =>{
             if (route === '/vues/clients/home.html') {
                 console.log(API_URL);
-
                 checkAuth();
                 //setupPublishCreation();
                 //setupEmojiCreation();

@@ -1,7 +1,7 @@
 // Configuration de l'API
 
 
-const API_URL = 'http://localhost/ReseauSocial/api';
+//const API_URL = 'http://localhost/ReseauSocial/api';
 const app = document.getElementById('app');
 // Validation des formulaires
 function validateForm(formData, type) {
@@ -52,6 +52,7 @@ function handleError(error, container) {
         e.preventDefault();
         console.log('Événement submit capturé pour', e.target.id);
     try {
+        // LOGIN
         if (e.target.id === 'loginForm') {
             e.preventDefault();
             console.log('Soumission du formulaire de connexion');
@@ -106,13 +107,22 @@ function handleError(error, container) {
             } finally {
                 document.getElementById('loader').style.display = 'none';
             }
+            // REGISTER
         } else if (e.target.id === 'registerForm') {
                 e.preventDefault();
                 console.log('Soumission du formulaire d\'inscription');
                 const formData = {
                     firstname: e.target.firstname.value.trim(),
                     lastname: e.target.lastname.value.trim(),
+                    username: e.target.username.value.trim(),
+                    birthdate: e.target.birthdate.value,
+                    gender: e.target.gender.value,
+                    relationship_status: e.target.relationship_status.value,
+                    profession: e.target.profession.value.trim(),
+                    country: e.target.country.value,
+                    city: e.target.city.value.trim(),
                     email: e.target.email.value.trim(),
+                    interests: e.target.interests.value.trim(),
                     password: e.target.password.value,
                     confirm_password: e.target.confirm_password.value
                 };

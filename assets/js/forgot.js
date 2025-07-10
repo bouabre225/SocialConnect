@@ -1,3 +1,5 @@
+const API_URL = 'http://localhost/ReseauSocial/api';
+
 // Validation email basique
 function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -12,22 +14,6 @@ function displayMessage(message, type, containerId) {
             ${message}
         </div>
     `;
-}
-
-function forgot(formData){
-    ApiCall('forgot', 'POST', formData)
-    .then(data => {
-        if (data.status === 'success') {
-            displayMessage(data.message, 'success', 'forgotMessage');
-            forgotForm.reset();
-        } else {
-            displayMessage(data.message, 'danger', 'forgotMessage');
-        }
-    })
-    .catch(error => {
-        console.error(error);
-        displayMessage('Une erreur réseau est survenue. Veuillez réessayer.', 'danger', 'forgotMessage');
-    })
 }
 
 //document.addEventListener('DOMContentLoaded', () => {
@@ -49,14 +35,22 @@ function forgot(formData){
             document.getElementById('loaderForgot').style.display = 'block';
 
             try {
-                const response = await forgot({ email });
+                const response = await fetch(`${API_URL}/forgot_password.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
                 document.getElementById('loaderForgot').style.display = 'none';
 
-                if (response.status === 'success') {
-                    displayMessage(response.message, 'success', messageContainer);
+                if (data.status === 'success') {
+                    displayMessage(data.message, 'success', messageContainer);
                     forgotForm.reset();
                 } else {
-                    displayMessage(response.message, 'danger', messageContainer);
+                    displayMessage(data.message, 'danger', messageContainer);
                 }
 
             } catch (error) {
