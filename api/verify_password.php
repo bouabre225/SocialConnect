@@ -1,42 +1,32 @@
 <?php
 require_once 'config.php';
-session_start();
 
-// Vérifier si la requête est POST et si l'utilisateur est connecté
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
+// Récupérer les données de la requête
+$data = json_decode(file_get_contents('php://input'), true);
+$password = $data['password'] ?? '';
+$user_id = $data['user_id'] ?? 0; // En production, ce serait à partir de la session
+
+if (empty($password) || $user_id <= 0) {
+    jsonResponse(['success' => false, 'message' => 'Données manquantes'], 400);
 }
-
-// Vérifier le token CSRF
-if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-    die(json_encode(['status' => 'error', 'message' => 'Token CSRF invalide']));
-}
-
-// Récupérer le mot de passe soumis
-$password = $_POST['password'] ?? '';
-$user_id = $_SESSION['user_id'];
 
 try {
     // Récupérer le mot de passe hashé de l'utilisateur
     $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
-    $user = $stmt->fetch();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
-        die(json_encode(['status' => 'error', 'message' => 'Utilisateur non trouvé']));
+        jsonResponse(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
     }
 
     // Vérifier le mot de passe
     if (password_verify($password, $user['password'])) {
-        // Générer un nouveau token pour la session de modification
-        $_SESSION['edit_token'] = bin2hex(random_bytes(32));
-        echo json_encode(['status' => 'success', 'edit_token' => $_SESSION['edit_token']]);
+        jsonResponse(['success' => true]);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Mot de passe incorrect']);
+        jsonResponse(['success' => false, 'message' => 'Mot de passe incorrect']);
     }
-    
+
 } catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Erreur de base de données: ' . $e->getMessage()]);
+    jsonResponse(['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()], 500);
 }
-?>

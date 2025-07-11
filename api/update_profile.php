@@ -1,63 +1,78 @@
 <?php
 require_once 'config.php';
-session_start();
 
-// Vérifier si la requête est POST et si l'utilisateur est connecté
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
+// Récupérer les données de la requête
+$data = json_decode(file_get_contents('php://input'), true);
+$user_id = 1; // ID de l'utilisateur connecté (en production, ce serait à partir de la session)
+
+// Vérifier d'abord le mot de passe
+if (empty($data['current_password'])) {
+    jsonResponse(['success' => false, 'message' => 'Mot de passe actuel requis'], 400);
 }
 
-// Vérifier le token CSRF
-if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-    die("Token CSRF invalide");
+// Vérifier le mot de passe
+$passwordVerify = json_decode(file_get_contents('http://localhost/verify_password.php'), true);
+if (!$passwordVerify['success']) {
+    jsonResponse(['success' => false, 'message' => 'Mot de passe incorrect'], 401);
 }
 
-// Récupérer l'ID de l'utilisateur
-$user_id = $_SESSION['user_id'];
-
-// Traitement des données du formulaire
-$bio = $_POST['bio'] ?? '';
-$education = $_POST['education'] ?? '';
-$location = $_POST['location'] ?? '';
+// Préparer les données pour la mise à jour
+$updateData = [
+    'firstname' => $data['firstname'] ?? '',
+    'lastname' => $data['lastname'] ?? '',
+    'birthdate' => $data['birthdate'] ?? null,
+    'city' => $data['city'] ?? null,
+    'profession' => $data['profession'] ?? null,
+    'relationship_status' => $data['relationship_status'] ?? null,
+    'bio' => $data['bio'] ?? null,
+    'user_id' => $user_id
+];
 
 try {
-    // Mettre à jour les informations de base
-    $stmt = $pdo->prepare("UPDATE users SET bio = ?, education = ?, location = ? WHERE id = ?");
-    $stmt->execute([$bio, $education, $location, $user_id]);
+    // Mettre à jour la table users
+    $stmt = $pdo->prepare("
+        UPDATE users 
+        SET 
+            firstname = :firstname,
+            lastname = :lastname,
+            birthdate = :birthdate,
+            city = :city,
+            profession = :profession,
+            relationship_status = :relationship_status,
+            updated_at = NOW()
+        WHERE id = :user_id
+    ");
+    $stmt->execute($updateData);
 
-    // Traitement des fichiers uploadés (avatar et cover photo)
-    $uploadDir = 'uploads/';
-    if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
+    // Vérifier si un profil existe déjà
+    $stmt = $pdo->prepare("SELECT id FROM profiles WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $profileExists = $stmt->fetch();
+
+    if ($profileExists) {
+        // Mettre à jour le profil existant
+        $stmt = $pdo->prepare("
+            UPDATE profiles 
+            SET 
+                bio = :bio,
+                updated_at = NOW()
+            WHERE user_id = :user_id
+        ");
+        $stmt->execute([
+            'bio' => $updateData['bio'],
+            'user_id' => $user_id
+        ]);
+    } else {
+        // Créer un nouveau profil
+        $stmt = $pdo->prepare("
+            INSERT INTO profiles (user_id, bio, created_at, updated_at) 
+            VALUES (?, ?, NOW(), NOW())
+        ");
+        $stmt->execute([$user_id, $updateData['bio']]);
     }
 
-    $avatarPath = null;
-    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-        $avatarName = uniqid() . '_' . basename($_FILES['avatar']['name']);
-        $avatarPath = $uploadDir . $avatarName;
-        move_uploaded_file($_FILES['avatar']['tmp_name'], $avatarPath);
+    jsonResponse(['success' => true, 'message' => 'Profil mis à jour avec succès']);
 
-        // Mettre à jour le chemin de l'avatar dans la base
-        $stmt = $pdo->prepare("UPDATE users SET avatar_url = ? WHERE id = ?");
-        $stmt->execute([$avatarPath, $user_id]);
-    }
-
-    $coverPath = null;
-    if (isset($_FILES['cover_photo']) && $_FILES['cover_photo']['error'] === UPLOAD_ERR_OK) {
-        $coverName = uniqid() . '_' . basename($_FILES['cover_photo']['name']);
-        $coverPath = $uploadDir . $coverName;
-        move_uploaded_file($_FILES['cover_photo']['tmp_name'], $coverPath);
-
-        // Mettre à jour le chemin de la cover photo dans la base (si vous avez ce champ)
-        // $stmt = $pdo->prepare("UPDATE users SET cover_photo = ? WHERE id = ?");
-        // $stmt->execute([$coverPath, $user_id]);
-    }
-
-    // Répondre avec succès
-    echo json_encode(['status' => 'success', 'message' => 'Profil mis à jour avec succès']);
-    
 } catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Erreur de base de données: ' . $e->getMessage()]);
+    jsonResponse(['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()], 500);
 }
-?>
