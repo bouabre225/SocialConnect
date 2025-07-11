@@ -114,15 +114,15 @@ function handleError(error, container) {
                 const formData = {
                     firstname: e.target.firstname.value.trim(),
                     lastname: e.target.lastname.value.trim(),
-                   // username: e.target.username.value.trim(),
-                    ///birthdate: e.target.birthdate.value,
-                    //gender: e.target.gender.value,
-                    //relationship_status: e.target.relationship_status.value,
-                    //profession: e.target.profession.value.trim(),
-                    //country: e.target.country.value,
-                    //city: e.target.city.value.trim(),
+                    username: e.target.username.value.trim(),
+                    birthdate: e.target.birthdate.value,
+                    gender: e.target.gender.value,
+                    relationship_status: e.target.relationship_status.value,
+                    profession: e.target.profession.value.trim(),
+                    country: e.target.country.value,
+                    city: e.target.city.value.trim(),
                     email: e.target.email.value.trim(),
-                    //interests: e.target.interests.value.trim(),
+                    interests: e.target.interests.value.trim(),
                     password: e.target.password.value,
                     confirm_password: e.target.confirm_password.value
                 };

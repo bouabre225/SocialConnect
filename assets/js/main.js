@@ -9,7 +9,13 @@ const routes = {
     '/reset': '/vues/clients/reset_password.html',
     '/chat': '/vues/clients/chat.html',
     '/profile': '/vues/clients/profile.html',
-    '/settings': '/vues/clients/settings.html'
+    '/settings': '/vues/clients/settings.html',
+    '/notification': '/vues/clients/notification.html',
+    '/admin': '/vues/admin/index.html',
+    '/moderator': '/vues/admin/dashboard-moderator.html',
+    '/dashboard-admin': '/vues/admin/dashboard-admin.html',
+    '/settings-admin': '/vues/admin/settings.html',
+    '/statistiques': '/vues/admin/statistiques.html',
 };
 
 // Fonction pour charger dynamiquement un script
@@ -50,7 +56,13 @@ async function loadView(url) {
         '/vues/clients/reset_password.html': '../../assets/css/reset.css',
         '/vues/clients/chat.html': '../../assets/css/chat.css',
         '/vues/clients/profile.html': '../../assets/css/profile.css',
-        '/vues/clients/settings.html': '../../assets/css/settings.css'
+        '/vues/clients/settings.html': '../../assets/css/settings.css',
+        '/vues/clients/notification.html': '../../assets/css/notification.css',
+        '/vues/admin/dashboard-moderator.html': '../../assets/css/moderator.css',
+        '/vues/admin/index.html': '../../assets/css/login_admin.css',
+        '/vues/admin/dashboard-admin.html': '../../assets/css/admin.css',
+        '/vues/admin/settings.html': '../../assets/css/settings-admin.css',
+        '/vues/admin/statistiques.html': '../../assets/css/statistiques.css',
     };
 
     const jsMap = {
@@ -61,7 +73,13 @@ async function loadView(url) {
         '/vues/clients/reset_password.html': '../../assets/js/reset.js',
         '/vues/clients/chat.html': '../../assets/js/chat.js',
         '/vues/clients/profile.html': '../../assets/js/profile.js',
-        '/vues/clients/settings.html': '../../assets/js/settings.js'
+        '/vues/clients/settings.html': '../../assets/js/settings.js',
+        '/vues/clients/notification.html': '../../assets/js/notification.js',
+        '/vues/admin/dashboard-moderator.html': '../../assets/js/moderator.js',
+        '/vues/admin/index.html': '../../assets/js/admin.js',
+        '/vues/admin/dashboard-admin.html': '../../assets/js/dashboard.js',
+        '/vues/admin/settings.html': '../../assets/js/settings-admin.js',
+        '/vues/admin/statistiques.html': '../../assets/js/statistiques.js',
     };
 
     const cssPath = cssMap[url];
@@ -101,7 +119,25 @@ function router() {
                 case '/settings':
                     console.log('Settings ouvert');
                     break;
-                        // ajoute d'autres cas au besoin
+                case '/notification':
+                    console.log('Notification ouvert');
+                    break;
+                case '/ moderator':
+                    console.log('Dashboard modérateur ouvert');
+                    break;
+                case '/admin':
+                    console.log('Admin ouvert');
+                    break;
+                case '/dashboard-admin':
+                    console.log('Dashboard admin ouvert');
+                    break;
+                case '/settings-admin':
+                    console.log('Settings admin ouvert');
+                    break;
+                case '/statistiques':
+                    console.log('Statistiques ouvert');
+                    break;
+                // ajoute d'autres cas au besoin
             }
         });
     } else {

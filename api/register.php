@@ -171,7 +171,8 @@
             'profession' => $profession,
             'country' => $country,
             'city' => $city,
-            'interests' => $interests
+            'interests' => $interests,
+            'avatar_url' => $avatar_url,
         ],
         'activation_token' => $activation_token,
         'status' => 'pending',

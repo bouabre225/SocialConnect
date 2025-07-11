@@ -8,7 +8,7 @@
             autoDisplay: false
         }, 'google_translate_element');
     }
- 
+
     // Affiche le sélecteur de langue Google Translate
     function showLanguageSelector() {
         const frame = document.querySelector('.goog-te-menu-frame');
