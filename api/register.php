@@ -37,8 +37,8 @@
 
     // Validation des données
     if (!isset(
-        $data['firstname'], $data['lastname'], //$data['username'], $data['birthdate'], $data['gender'],
-        //$data['relationship_status'], $data['profession'], $data['country'], $data['city'], $data['interests'],
+        $data['firstname'], $data['lastname'], $data['username'], $data['birthdate'], $data['gender'],
+        $data['relationship_status'], $data['profession'], $data['country'], $data['city'], $data['interests'],
         $data['email'], $data['password'], $data['confirm_password']
     )) {
         jsonResponse(['status' => 'error', 'message' => 'Données manquantes'], 400);
@@ -66,14 +66,14 @@
     // Sécurisation des données
     $firstname = htmlspecialchars($data['firstname'], ENT_QUOTES, 'UTF-8');
     $lastname = htmlspecialchars($data['lastname'], ENT_QUOTES, 'UTF-8');
-    //$username = htmlspecialchars($data['username'], ENT_QUOTES, 'UTF-8');
-    //$birthdate = htmlspecialchars($data['birthdate'], ENT_QUOTES, 'UTF-8');
-    //$gender = htmlspecialchars($data['gender'], ENT_QUOTES, 'UTF-8');
-    //$relationship_status = htmlspecialchars($data['relationship_status'], ENT_QUOTES, 'UTF-8');
-    //$profession = htmlspecialchars($data['profession'], ENT_QUOTES, 'UTF-8');
-    //$country = htmlspecialchars($data['country'], ENT_QUOTES, 'UTF-8');
-    //$city = htmlspecialchars($data['city'], ENT_QUOTES, 'UTF-8');
-    //$interests = htmlspecialchars($data['interests'], ENT_QUOTES, 'UTF-8');
+    $username = htmlspecialchars($data['username'], ENT_QUOTES, 'UTF-8');
+    $birthdate = htmlspecialchars($data['birthdate'], ENT_QUOTES, 'UTF-8');
+    $gender = htmlspecialchars($data['gender'], ENT_QUOTES, 'UTF-8');
+    $relationship_status = htmlspecialchars($data['relationship_status'], ENT_QUOTES, 'UTF-8');
+    $profession = htmlspecialchars($data['profession'], ENT_QUOTES, 'UTF-8');
+    $country = htmlspecialchars($data['country'], ENT_QUOTES, 'UTF-8');
+    $city = htmlspecialchars($data['city'], ENT_QUOTES, 'UTF-8');
+    $interests = htmlspecialchars($data['interests'], ENT_QUOTES, 'UTF-8');
     $email = htmlspecialchars($data['email'], ENT_QUOTES, 'UTF-8');
     $password = $data['password'];
     
@@ -98,10 +98,10 @@
         // Insertion de l'utilisateur
         $insert = $pdo->prepare("
             INSERT INTO users 
-            (firstname, lastname, email, password, csrf_token, activation_token, status) 
-            VALUES (?, ?, ?, ?, ?, ?, 'pending')
+            (firstname, lastname, email, password, username, birthdate, gender, relationship_status, profession, country, city, interests, csrf_token, activation_token, status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
         ");
-        $insert->execute([$firstname, $lastname, $email, $password_hash, $csrf_token, $activation_token]);
+        $insert->execute([$firstname, $lastname, $email, $password_hash, $username, $birthdate, $gender, $relationship_status, $profession, $country, $city, $interests, $csrf_token, $activation_token]);
         
 
         // Envoi de l'email de confirmation
@@ -163,7 +163,15 @@
             'firstname' => $firstname,
             'lastname'  => $lastname,
             'email'     => $email,
-            'csrf_token'=> $csrf_token
+            'csrf_token'=> $csrf_token,
+            'username'  => $username,
+            'birthdate' => $birthdate,
+            'gender'    => $gender,
+            'relationship_status' => $relationship_status,
+            'profession' => $profession,
+            'country' => $country,
+            'city' => $city,
+            'interests' => $interests
         ],
         'activation_token' => $activation_token,
         'status' => 'pending',
