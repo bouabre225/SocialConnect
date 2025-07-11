@@ -520,6 +520,55 @@
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(135deg, var(--primary-dark), var(--accent));
         }
+
+        /* Thème sombre */
+        .dark-theme {
+            --primary: #4361ee;
+            --primary-light: #7209b7;
+            --accent: #4cc9f0;
+            --light: #2d2d2d;
+            --dark: #e0e0e0;
+            --gray: #1a1a1a;
+            --gray-dark: #444;
+            --gray-light: #333;
+        }
+
+        .dark-theme body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+
+        .dark-theme .dashboard-header,
+        .dark-theme .sidebar,
+        .dark-theme .card-stat,
+        .dark-theme .card {
+            background: rgba(45, 45, 45, 0.95);
+            color: var(--dark);
+        }
+
+        .dark-theme .sidebar-item {
+            color: var(--dark);
+        }
+
+        .dark-theme .sidebar-item:hover,
+        .dark-theme .sidebar-item.active {
+            color: var(--primary);
+        }
+
+        .dark-theme .card-header {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05), rgba(76, 201, 240, 0.02)) !important;
+            border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .dark-theme .table th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+
+        .dark-theme .table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.05), rgba(76, 201, 240, 0.02));
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -530,12 +579,24 @@
             <button class="btn-burger d-lg-none me-3" id="sidebarMobileBtn" title="Menu">
                 <i class="bi bi-list"></i>
             </button>
-            <button data-url="/home" class="btn btn-outline-primary btn-sm me-3" title="Retour à l'accueil">
-                <i class="bi bi-house"></i> Accueil
-            </button>
+            <a href="/vues/clients/home.html" class="btn btn-outline-primary btn-sm me-3" title="Retour à l'accueil">
+                <i class="bi bi-house me-1"></i> Accueil
+            </a>
             <h1 class="h5 mb-0">Hello<span class="text-primary"> Admin</span> 👋</h1>
         </div>
         <div class="user-info d-flex align-items-center">
+
+            <div class="theme-switcher me-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="themeToggle">
+                    <label class="form-check-label" for="themeToggle">
+                        <i class="bi bi-moon-fill me-1"></i>
+                        <span class="d-none d-md-inline">Mode sombre</span>
+                    </label>
+                </div>
+            </div>
+
+
             <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
                 <i class="bi bi-person text-white"></i>
             </div>
@@ -554,16 +615,16 @@
         <div class="sidebar d-none d-lg-block" id="sidebar">
             <div class="py-4 px-3">
                 <h5 class="text-muted mb-3 px-3">MENU ADMIN</h5>
-                <a href="#" class="sidebar-item active">
+                <button data-url="dashboard-admin.html" class="sidebar-item border-0">
                     <i class="bi bi-speedometer2"></i> Dashboard
-                </a>
-                <a href="#" class="sidebar-item">
-                    <i class="bi bi-people"></i> Gestion des rôles
-                </a>
-                <a href="#" class="sidebar-item">
-                    <i class="bi bi-person-gear"></i> Administrateurs
-                </a>
-                <button data-url="dashboard-moderator.html" class="sidebar-item border-0">
+                </button>
+                <button data-url="gestion-roles.html" class="sidebar-item border-0">
+                    <i class="bi bi-graph-up"></i> Gestion des rôles
+                </button>
+                <button data-url="administrateurs.html" class="sidebar-item border-0">
+                    <i class="bi bi-people"></i>Administrateurs
+                </button>
+                <button data-url="moderateurs.html" class="sidebar-item border-0">
                     <i class="bi bi-shield-check"></i> Modérateurs
                 </button>
                 <button data-url="articles.html" class="sidebar-item border-0">
@@ -717,28 +778,45 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('sidebarMobileBtn').addEventListener('click', function() {
+        document.getElementById('sidebarMobileBtn').addEventListener('click', function () {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
-            
+    
             sidebar.classList.toggle('show');
             overlay.classList.toggle('show');
         });
-
-        document.getElementById('overlay').addEventListener('click', function() {
+    
+        document.getElementById('overlay').addEventListener('click', function () {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
-            
+    
             sidebar.classList.remove('show');
             overlay.classList.remove('show');
         });
-
+    
+        
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const savedTheme = localStorage.getItem('darkTheme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+            if (savedTheme === 'true' || (savedTheme === null && prefersDark)) {
+                document.body.classList.add('dark-theme');
+                themeToggle.checked = true;
+            }
+    
+            themeToggle.addEventListener('change', function () {
+                const isDark = this.checked;
+                document.body.classList.toggle('dark-theme', isDark);
+                localStorage.setItem('darkTheme', isDark);
+            });
+        }
     
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
-
+    
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -746,10 +824,11 @@
                 }
             });
         }, observerOptions);
-
+    
         document.querySelectorAll('.card-stat, .card').forEach(card => {
             observer.observe(card);
         });
     </script>
+    
 </body>
 </html>

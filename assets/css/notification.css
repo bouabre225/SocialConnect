@@ -1,0 +1,151 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    color: #1c1e21;
+}
+
+.notification-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dddfe2;
+    margin-bottom: 20px;
+}
+
+.notification-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.notification-tabs {
+    display: flex;
+    border-bottom: 1px solid #dddfe2;
+    margin-bottom: 20px;
+}
+
+.notification-tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #65676b;
+    position: relative;
+}
+
+.notification-tab.active {
+    color: #1877f2;
+}
+
+.notification-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #1877f2;
+    border-radius: 3px 3px 0 0;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.notification-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+    background-color: #f0f2f5;
+}
+
+.notification-item.unread {
+    background-color: #e7f3ff;
+}
+
+.notification-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+    background-color: #e4e6eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1877f2;
+    font-size: 20px;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-text {
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: #65676b;
+}
+
+.notification-empty {
+    text-align: center;
+    padding: 50px 0;
+    color: #65676b;
+}
+
+.notification-empty i {
+    font-size: 50px;
+    margin-bottom: 20px;
+    color: #bec3c9;
+}
+
+.notification-empty p {
+    font-size: 18px;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+.btn:hover {
+    background-color: #165eab;
+}
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.5);
+}
+.btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
