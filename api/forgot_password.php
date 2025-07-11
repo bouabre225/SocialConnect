@@ -60,7 +60,7 @@ try {
     $mail->CharSet = 'UTF-8';
     $mail->Subject = 'Réinitialisation de votre mot de passe - SocialConnect';
 
-    $reset_link = "http://localhost/ReseauSocial/vues/clients/reset_password.html?token=$reset_token";
+    $reset_link = "http://localhost:8000/reset?token=$reset_token";
     $mail->Body = "
         <h2>Réinitialisation de mot de passe</h2>
         <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous :</p>

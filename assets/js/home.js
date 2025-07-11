@@ -10,7 +10,7 @@
             return;
         }
         try {
-            const response = await fetch(`${API_URL}/home.php`, {
+            const response = await fetch(`${API_URL}.php`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -47,6 +47,7 @@
             options.body = body;
         }
         const response = await fetch(`${API_URL}${endpoint}`, options);
+        console.log(`${API_URL}${endpoint}`);
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.error || 'Erreur API');

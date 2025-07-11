@@ -22,19 +22,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Récupération des données
 $data = json_decode(file_get_contents('php://input'), true);
 
+$email = $data['email'] ?? null;
+$password = $data['password'] ?? null;
+
 // Validation des données
-if (!isset($data['email'], $data['password'])) {
+if (!isset($email, $password)) {
     jsonResponse(['status' => 'error', 'message' => 'Données manquantes'], 400);
 }
 
 // Validation de l'email
-if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     jsonResponse(['status' => 'error', 'message' => 'Email invalide'], 400);
 }
 
 // Sécurisation des données
-$email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
-$password = $data['password'];
+$email = filter_var($email, FILTER_SANITIZE_EMAIL);
+$password = $password;
 
 // Vérification de l'utilisateur
 try {

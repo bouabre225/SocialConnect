@@ -37,8 +37,8 @@
 
     // Validation des données
     if (!isset(
-        $data['firstname'], $data['lastname'], $data['username'], $data['birthdate'], $data['gender'],
-        $data['relationship_status'], $data['profession'], $data['country'], $data['city'], $data['interests'],
+        $data['firstname'], $data['lastname'], //$data['username'], $data['birthdate'], $data['gender'],
+        //$data['relationship_status'], $data['profession'], $data['country'], $data['city'], $data['interests'],
         $data['email'], $data['password'], $data['confirm_password']
     )) {
         jsonResponse(['status' => 'error', 'message' => 'Données manquantes'], 400);
@@ -66,14 +66,14 @@
     // Sécurisation des données
     $firstname = htmlspecialchars($data['firstname'], ENT_QUOTES, 'UTF-8');
     $lastname = htmlspecialchars($data['lastname'], ENT_QUOTES, 'UTF-8');
-    $username = htmlspecialchars($data['username'], ENT_QUOTES, 'UTF-8');
-    $birthdate = htmlspecialchars($data['birthdate'], ENT_QUOTES, 'UTF-8');
-    $gender = htmlspecialchars($data['gender'], ENT_QUOTES, 'UTF-8');
-    $relationship_status = htmlspecialchars($data['relationship_status'], ENT_QUOTES, 'UTF-8');
-    $profession = htmlspecialchars($data['profession'], ENT_QUOTES, 'UTF-8');
-    $country = htmlspecialchars($data['country'], ENT_QUOTES, 'UTF-8');
-    $city = htmlspecialchars($data['city'], ENT_QUOTES, 'UTF-8');
-    $interests = htmlspecialchars($data['interests'], ENT_QUOTES, 'UTF-8');
+    //$username = htmlspecialchars($data['username'], ENT_QUOTES, 'UTF-8');
+    //$birthdate = htmlspecialchars($data['birthdate'], ENT_QUOTES, 'UTF-8');
+    //$gender = htmlspecialchars($data['gender'], ENT_QUOTES, 'UTF-8');
+    //$relationship_status = htmlspecialchars($data['relationship_status'], ENT_QUOTES, 'UTF-8');
+    //$profession = htmlspecialchars($data['profession'], ENT_QUOTES, 'UTF-8');
+    //$country = htmlspecialchars($data['country'], ENT_QUOTES, 'UTF-8');
+    //$city = htmlspecialchars($data['city'], ENT_QUOTES, 'UTF-8');
+    //$interests = htmlspecialchars($data['interests'], ENT_QUOTES, 'UTF-8');
     $email = htmlspecialchars($data['email'], ENT_QUOTES, 'UTF-8');
     $password = $data['password'];
     

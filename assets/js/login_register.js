@@ -75,7 +75,7 @@ function handleError(error, container) {
     
             document.getElementById('loader').style.display = 'block';
             try {
-                const response = await fetch(`${API_URL}/login.php`, {
+                const response = await fetch(`${API_URL2}/login.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -114,15 +114,15 @@ function handleError(error, container) {
                 const formData = {
                     firstname: e.target.firstname.value.trim(),
                     lastname: e.target.lastname.value.trim(),
-                    username: e.target.username.value.trim(),
-                    birthdate: e.target.birthdate.value,
-                    gender: e.target.gender.value,
-                    relationship_status: e.target.relationship_status.value,
-                    profession: e.target.profession.value.trim(),
-                    country: e.target.country.value,
-                    city: e.target.city.value.trim(),
+                   // username: e.target.username.value.trim(),
+                    ///birthdate: e.target.birthdate.value,
+                    //gender: e.target.gender.value,
+                    //relationship_status: e.target.relationship_status.value,
+                    //profession: e.target.profession.value.trim(),
+                    //country: e.target.country.value,
+                    //city: e.target.city.value.trim(),
                     email: e.target.email.value.trim(),
-                    interests: e.target.interests.value.trim(),
+                    //interests: e.target.interests.value.trim(),
                     password: e.target.password.value,
                     confirm_password: e.target.confirm_password.value
                 };
@@ -136,7 +136,7 @@ function handleError(error, container) {
                 document.getElementById('loaderReg').style.display = 'block';
 
                 try {
-                    const response = await fetch(`${API_URL}/register.php`, {
+                    const response = await fetch(`${API_URL2}/register.php`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

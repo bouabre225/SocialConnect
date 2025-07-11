@@ -17,7 +17,7 @@ async function checkAuth() {
         }, 1200);        
     }
     try {
-        const response = await fetch(`${API_URL}/home`, {
+        const response = await fetch(`${API_URL}`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
