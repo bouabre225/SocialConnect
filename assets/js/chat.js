@@ -11,8 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
 async function checkAuth() {
     const token = localStorage.getItem('token');
     if (!token) {
-        window.location.href = '/login';
-        return;
+        setTimeout(() => {
+            history.pushState(null, '', '/login');
+            router();        
+        }, 1200);        
     }
     try {
         const response = await fetch(`${API_URL}/home`, {
@@ -25,11 +27,16 @@ async function checkAuth() {
             initWebSocket();
             fetchConversations();
         } else {
-            window.location.href = '/login';
-        }
+            setTimeout(() => {
+                history.pushState(null, '', '/login');
+                router();        
+            }, 1200);        }
     } catch (error) {
         console.error('Erreur d\'authentification:', error);
-        window.location.href = '/login';
+        setTimeout(() => {
+            history.pushState(null, '', '/login');
+            router();        
+        }, 1200);        
     }
 }
 
