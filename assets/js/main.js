@@ -16,6 +16,7 @@ const routes = {
     '/dashboard-admin': '/vues/admin/dashboard-admin.html',
     '/settings-admin': '/vues/admin/settings.html',
     '/statistiques': '/vues/admin/statistiques.html',
+    '/utilisateurs': '/vues/admin/utilisateurs.html',   
 };
 
 // Fonction pour charger dynamiquement un script
@@ -63,6 +64,7 @@ async function loadView(url) {
         '/vues/admin/dashboard-admin.html': '../../assets/css/admin.css',
         '/vues/admin/settings.html': '../../assets/css/settings-admin.css',
         '/vues/admin/statistiques.html': '../../assets/css/statistiques.css',
+        '/vues/admin/utilisateurs.html': '../../assets/css/utilisateurs.css',
     };
 
     const jsMap = {
@@ -80,6 +82,7 @@ async function loadView(url) {
         '/vues/admin/dashboard-admin.html': '../../assets/js/dashboard.js',
         '/vues/admin/settings.html': '../../assets/js/settings-admin.js',
         '/vues/admin/statistiques.html': '../../assets/js/statistiques.js',
+        '/vues/admin/utilisateurs.html': '../../assets/js/utilisateurs.js',
     };
 
     const cssPath = cssMap[url];
@@ -137,7 +140,7 @@ function router() {
                 case '/statistiques':
                     console.log('Statistiques ouvert');
                     break;
-                // ajoute d'autres cas au besoin
+                                // ajoute d'autres cas au besoin
             }
         });
     } else {

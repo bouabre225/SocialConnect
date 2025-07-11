@@ -6,7 +6,7 @@
         <button class="btn-burger d-lg-none me-3" id="sidebarMobileBtn" title="Menu">
             <i class="bi bi-list"></i>
         </button>
-        <a href="/vues/clients/home.html" class="btn btn-outline-primary btn-sm me-3" title="Retour à l'accueil">
+        <a data-url="/home" class="btn btn-outline-primary btn-sm me-3" title="Retour à l'accueil">
             <i class="bi bi-house me-1"></i> Accueil
         </a>
 
@@ -31,7 +31,7 @@
                 <div class="fw-bold">Modérateur</div>
                 <small class="text-muted">Accès limité</small>
             </div>
-            <a href="#" class="btn btn-outline-danger btn-sm">
+            <a data-url="#" class="btn btn-outline-danger btn-sm">
                 <i class="bi bi-box-arrow-right me-1"></i>
                 <span class="d-none d-md-inline">Déconnexion</span>
             </a>
@@ -43,16 +43,16 @@
     <div class="sidebar d-none d-lg-block" id="sidebar">
         <div class="py-4 px-3">
             <h5 class="text-muted mb-3 px-3">MENU MODÉRATION</h5>
-            <button data-url="statistiques.html" class="sidebar-item border-0">
+            <button data-url="/statistiques" class="sidebar-item border-0">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </button>
-            <button data-url="statistiques.html" class="sidebar-item border-0">
+            <button data-url="/articles" class="sidebar-item border-0">
                 <i class="bi bi-file-earmark-check"></i> Articles
             </button>
-            <button data-url="utilisateurs.html" class="sidebar-item border-0">
+            <button data-url="/utilisateurs" class="sidebar-item border-0">
                 <i class="bi bi-people"></i> Utilisateurs
             </button>
-            <button data-url="statistiques.html" class="sidebar-item border-0">
+            <button data-url="/statistiques" class="sidebar-item border-0">
                 <i class="bi bi-flag"></i> Signalements
             </button>
         </div>
