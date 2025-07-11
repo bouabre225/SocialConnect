@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Rôles</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-light: #6b8cba;
+            --primary-dark: #3a5784;
+            --accent: #ff7e5f;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --danger: #dc3545;
+            --light: #ffffff;
+            --dark: #2b2d42;
+            --gray: #f8f9fa;
+            --gray-dark: #e9ecef;
+            --gray-light: #f1f3f4;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+    
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);
+            transition: var(--transition);
+            margin-bottom: 2rem;
+        }
+    
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 111, 165, 0.4);
+            color: white;
+        }
+    
+        .dashboard-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem 3rem;
+        }
+    
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+    
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+    
+        .dashboard-header h1 {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+    
+        .dashboard-header h1 i {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    
+        .dashboard-header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+    
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+    
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(74, 111, 165, 0.4);
+        }
+    
+        .table-responsive {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            padding: 1.5rem;
+        }
+    
+        .role-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+    
+        .role-table th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 1.4rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
+        }
+    
+        .role-table td {
+            padding: 1.4rem;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(74, 111, 165, 0.1);
+            transition: var(--transition);
+        }
+    
+        .role-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(74, 111, 165, 0.05), rgba(255, 126, 95, 0.02));
+            transform: scale(1.005);
+        }
+    
+        .badge, .role-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+    
+        .badge-date {
+            background: linear-gradient(135deg, var(--info), #20c997);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+    
+        .badge.bg-primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important; }
+        .badge.bg-success { background: linear-gradient(135deg, var(--success), #20c997) !important; }
+        .badge.bg-danger  { background: linear-gradient(135deg, var(--danger), #e74c3c) !important; }
+        .badge.bg-warning { background: linear-gradient(135deg, var(--warning), #f39c12) !important; }
+        .badge.bg-info    { background: linear-gradient(135deg, var(--info), #17a2b8) !important; }
+        .badge.bg-purple  { background: linear-gradient(135deg, #6f42c1, #8b5cf6) !important; }
+    
+        .btn-action {
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+            font-size: 0.85rem;
+            color: white;
+        }
+    
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--transition);
+        }
+    
+        .btn-action:hover::before { left: 100%; }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+    
+        .btn-delete  { background: linear-gradient(135deg, var(--danger), #e74c3c); }
+        .btn-promote { background: linear-gradient(135deg, var(--success), #20c997); }
+        .btn-demote  { background: linear-gradient(135deg, var(--warning), #f39c12); }
+        .btn-add     { background: linear-gradient(135deg, var(--info), #17a2b8); }
+    
+        .btn-delete:hover  { box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4); }
+        .btn-promote:hover { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4); }
+        .btn-demote:hover  { box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4); }
+        .btn-add:hover    { box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4); }
+    
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+    
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    
+        .empty-state h4 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+    
+        /* Mode sombre */
+        body.dark-theme {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: var(--dark);
+        }
+    
+        body.dark-theme .dashboard-header,
+        body.dark-theme .table-responsive,
+        body.dark-theme .modal-content {
+            background: rgba(45, 45, 45, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--dark);
+        }
+    
+        body.dark-theme .role-table td {
+            color: var(--dark);
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+    
+        body.dark-theme .role-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.05));
+        }
+    
+        body.dark-theme .empty-state {
+            color: #aaa;
+        }
+    
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+    
+            .dashboard-header {
+                padding: 2rem;
+            }
+    
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+    
+            .role-table th, .role-table td {
+                padding: 0.8rem;
+            }
+    
+            .btn-action {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <div class="text-center mt-4 animate__animated animate__fadeInUp">
+        <a href="/vues/admin/dashboard-moderator.html" class="home-btn">
+            <i class="bi bi-house-door"></i> Retourner à l'accueil
+        </a>
+    </div>
+
+    <div class="dashboard-container animate__animated animate__fadeIn">
+        <div class="dashboard-header animate__animated animate__fadeInDown">
+            <h1><i class="bi bi-shield-check"></i> Gestion des Rôles</h1>
+            <p class="mb-0">Gestion des administrateurs et modérateurs</p>
+        </div>
+        
+        <div class="d-flex justify-content-between mb-3">
+            <div class="search-box">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Rechercher un utilisateur..." id="searchInput">
+                </div>
+            </div>
+            <button class="btn btn-action btn-add" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+                <i class="bi bi-plus-circle"></i> Ajouter un rôle
+            </button>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover role-table">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-hash"></i> ID</th>
+                        <th><i class="bi bi-person"></i> Nom</th>
+                        <th><i class="bi bi-person"></i> Prénom</th>
+                        <th><i class="bi bi-envelope"></i> Email</th>
+                        <th><i class="bi bi-shield"></i> Rôle actuel</th>
+                        <th><i class="bi bi-calendar"></i> Date d'ajout</th>
+                        <th><i class="bi bi-gear"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="rolesTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter un rôle -->
+    <div class="modal fade" id="addRoleModal" tabindex="-1" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRoleModalLabel">Ajouter un rôle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addRoleForm">
+                        <div class="mb-3">
+                            <label for="userEmail" class="form-label">Email de l'utilisateur</label>
+                            <input type="email" class="form-control" id="userEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="roleSelect" class="form-label">Rôle à attribuer</label>
+                            <select class="form-select" id="roleSelect" required>
+                                <option value="">Sélectionner un rôle</option>
+                                <option value="admin">Administrateur</option>
+                                <option value="moderator">Modérateur</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-success" id="confirmAddRole">Confirmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmer l'action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmationModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeIcon.className = 'bi bi-sun-fill';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            const isDark = body.classList.contains('dark-theme');
+            
+            themeIcon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            
+            themeToggle.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                themeToggle.style.transform = 'scale(1)';
+            }, 150);
+        });
+
+        // Données de démonstration
+        let roles = [
+            {
+                id: 1,
+                nom: "KORE",
+                prenom: "Ange",
+                email: "ange.kore@gmail.com",
+                role: "admin",
+                dateAjout: "2025-07-10"
+            },
+            {
+                id: 2,
+                nom: "Floriane",
+                prenom: ".",
+                email: "floriane@gmail.com",
+                role: "moderator",
+                dateAjout: "2025-07-11"
+            },
+        ];
+
+        function renderRoles(filteredRoles = null) {
+            const tbody = document.getElementById('rolesTableBody');
+            tbody.innerHTML = '';
+
+            const rolesToRender = filteredRoles || roles;
+
+            if (rolesToRender.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="bi bi-people"></i>
+                                <h4>Aucun rôle trouvé</h4>
+                                <p>Les utilisateurs avec des rôles apparaîtront ici.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            rolesToRender.forEach((role, index) => {
+                const tr = document.createElement('tr');
+                tr.className = `animate__animated animate__fadeInUp`;
+                tr.style.animationDelay = `${index * 0.1}s`;
+                
+                let roleBadge = '';
+                if (role.role === 'admin') {
+                    roleBadge = '<span class="badge bg-danger">Administrateur</span>';
+                } else if (role.role === 'moderator') {
+                    roleBadge = '<span class="badge bg-purple">Modérateur</span>';
+                }
+
+                let actions = '';
+                if (role.role === 'admin') {
+                    actions = `
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-action btn-demote" onclick="demoteUser(${role.id}, '${role.prenom} ${role.nom}')">
+                                <i class="bi bi-arrow-down"></i> Rétrograder
+                            </button>
+                            <button class="btn btn-sm btn-action btn-delete" onclick="removeRole(${role.id}, '${role.prenom} ${role.nom}')">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    actions = `
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-action btn-promote" onclick="promoteUser(${role.id}, '${role.prenom} ${role.nom}')">
+                                <i class="bi bi-arrow-up"></i> Promouvoir
+                            </button>
+                            <button class="btn btn-sm btn-action btn-delete" onclick="removeRole(${role.id}, '${role.prenom} ${role.nom}')">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td><span class="badge bg-primary">#${role.id}</span></td>
+                    <td>${role.nom}</td>
+                    <td>${role.prenom}</td>
+                    <td>${role.email}</td>
+                    <td>${roleBadge}</td>
+                    <td><span class="badge-date">${role.dateAjout}</span></td>
+                    <td>${actions}</td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        let currentAction = null;
+        let currentRoleId = null;
+        let currentRoleName = null;
+
+        function promoteUser(roleId, roleName) {
+            currentAction = 'promote';
+            currentRoleId = roleId;
+            currentRoleName = roleName;
+            
+            document.getElementById('confirmationModalLabel').textContent = 'Confirmer la promotion';
+            document.getElementById('confirmationModalBody').innerHTML = `
+                <div class="text-center">
+                    <i class="bi bi-arrow-up-circle text-success" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Êtes-vous sûr de vouloir promouvoir cet utilisateur ?</h5>
+                    <p class="text-muted"><strong>${roleName}</strong> (ID: ${roleId})</p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> L'utilisateur deviendra administrateur avec tous les droits.
+                    </div>
+                </div>
+            `;
+            document.getElementById('confirmActionBtn').className = 'btn btn-success';
+            document.getElementById('confirmActionBtn').innerHTML = '<i class="bi bi-arrow-up"></i> Promouvoir';
+            
+            new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+        }
+
+        function demoteUser(roleId, roleName) {
+            currentAction = 'demote';
+            currentRoleId = roleId;
+            currentRoleName = roleName;
+            
+            document.getElementById('confirmationModalLabel').textContent = 'Confirmer la rétrogradation';
+            document.getElementById('confirmationModalBody').innerHTML = `
+                <div class="text-center">
+                    <i class="bi bi-arrow-down-circle text-warning" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Êtes-vous sûr de vouloir rétrograder cet administrateur ?</h5>
+                    <p class="text-muted"><strong>${roleName}</strong> (ID: ${roleId})</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> L'utilisateur deviendra modérateur avec des droits réduits.
+                    </div>
+                </div>
+            `;
+            document.getElementById('confirmActionBtn').className = 'btn btn-warning';
+            document.getElementById('confirmActionBtn').innerHTML = '<i class="bi bi-arrow-down"></i> Rétrograder';
+            
+            new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+        }
+
+        function removeRole(roleId, roleName) {
+            currentAction = 'remove';
+            currentRoleId = roleId;
+            currentRoleName = roleName;
+            
+            document.getElementById('confirmationModalLabel').textContent = 'Confirmer la suppression';
+            document.getElementById('confirmationModalBody').innerHTML = `
+                <div class="text-center">
+                    <i class="bi bi-trash text-danger" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Êtes-vous sûr de vouloir supprimer ce rôle ?</h5>
+                    <p class="text-muted"><strong>${roleName}</strong> (ID: ${roleId})</p>
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> L'utilisateur perdra tous ses privilèges d'administration/modération.
+                    </div>
+                </div>
+            `;
+            document.getElementById('confirmActionBtn').className = 'btn btn-danger';
+            document.getElementById('confirmActionBtn').innerHTML = '<i class="bi bi-trash"></i> Supprimer';
+            
+            new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+        }
+
+        document.getElementById('confirmActionBtn').addEventListener('click', function() {
+            if (currentAction && currentRoleId) {
+                executeRoleAction(currentAction, currentRoleId, currentRoleName);
+            }
+        });
+
+        function executeRoleAction(action, roleId, roleName) {
+            bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+            
+            let actionText = '';
+            let actionClass = '';
+            
+            switch(action) {
+                case 'promote':
+                    actionText = 'promu administrateur';
+                    actionClass = 'success';
+                    roles = roles.map(role => {
+                        if (role.id === roleId) {
+                            return {...role, role: 'admin'};
+                        }
+                        return role;
+                    });
+                    break;
+                case 'demote':
+                    actionText = 'rétrogradé modérateur';
+                    actionClass = 'warning';
+                    roles = roles.map(role => {
+                        if (role.id === roleId) {
+                            return {...role, role: 'moderator'};
+                        }
+                        return role;
+                    });
+                    break;
+                case 'remove':
+                    actionText = 'supprimé des rôles';
+                    actionClass = 'danger';
+                    roles = roles.filter(role => role.id !== roleId);
+                    break;
+            }
+            
+            showNotification(`L'utilisateur ${roleName} a été ${actionText} avec succès.`, actionClass);
+            renderRoles();
+            
+            currentAction = null;
+            currentRoleId = null;
+            currentRoleName = null;
+        }
+
+        document.getElementById('confirmAddRole').addEventListener('click', function() {
+            const email = document.getElementById('userEmail').value.trim();
+            const role = document.getElementById('roleSelect').value;
+            
+            if (!email || !role) {
+                showNotification('Veuillez remplir tous les champs', 'danger');
+                return;
+            }
+            
+            if (roles.some(r => r.email.toLowerCase() === email.toLowerCase())) {
+                showNotification('Cet utilisateur a déjà un rôle attribué', 'warning');
+                return;
+            }
+            
+            const newRole = {
+                id: roles.length > 0 ? Math.max(...roles.map(r => r.id)) + 1 : 1,
+                nom: email.split('@')[0].toUpperCase(),
+                prenom: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+                email: email,
+                role: role,
+                dateAjout: new Date().toISOString().split('T')[0]
+            };
+            
+            roles.push(newRole);
+            renderRoles();
+            
+            bootstrap.Modal.getInstance(document.getElementById('addRoleModal')).hide();
+            document.getElementById('addRoleForm').reset();
+            
+            showNotification(`Nouveau rôle ${role === 'admin' ? 'd\'administrateur' : 'de modérateur'} ajouté avec succès`, 'success');
+        });
+
+        
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            if (searchTerm.length === 0) {
+                renderRoles();
+                return;
+            }
+            
+            const filteredRoles = roles.filter(role => 
+                role.nom.toLowerCase().includes(searchTerm) || 
+                role.prenom.toLowerCase().includes(searchTerm) ||
+                role.email.toLowerCase().includes(searchTerm) ||
+                role.role.toLowerCase().includes(searchTerm)             
+            );
+            
+            renderRoles(filteredRoles);
+        });
+
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                border-radius: 16px;
+                backdrop-filter: blur(10px);
+            `;
+            
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'} me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 150);
+                }
+            }, 5000);
+        }
+
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            renderRoles();
+            
+            document.querySelectorAll('.btn-action').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px) scale(1.05)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                themeToggle.click();
+            }
+        });
+    </script>
+</body>
+</html>
