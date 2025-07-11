@@ -1,0 +1,102 @@
+
+<div class="settings-container">
+    <!-- Menu latéral -->
+    <div class="settings-sidebar">
+        <div class="settings-menu-item active">
+            <i class="fas fa-user"></i>
+            <span>Informations personnelles</span>
+        </div>
+        <div class="settings-menu-item">
+            <i class="fas fa-lock"></i>
+            <span>Confidentialité</span>
+        </div>
+        <div class="settings-menu-item">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
+        </div>
+        <div class="settings-menu-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Sécurité</span>
+        </div>
+        <div class="settings-menu-item">
+            <i class="fas fa-ad"></i>
+            <span>Préférences pubs</span>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="settings-main">
+        <!-- Section Informations personnelles -->
+        <div class="settings-section">
+            <h2>Informations personnelles</h2>
+            
+            <form id="personalInfoForm" action="/controllers/settings/update_personal_info.php" method="POST">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" class="form-control" name="lastname" value="<?= htmlspecialchars($user['lastname']) ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input type="text" class="form-control" name="firstname" value="<?= htmlspecialchars($user['firstname']) ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea class="form-control" name="bio" rows="3"><?= htmlspecialchars($user['bio'] ?? '') ?></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+        </div>
+
+        <!-- Section Mot de passe -->
+        <div class="settings-section">
+            <h2>Changer de mot de passe</h2>
+            
+            <form id="passwordForm" action="/controllers/settings/update_password.php" method="POST">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
+                <div class="form-group">
+                    <label>Ancien mot de passe</label>
+                    <input type="password" class="form-control" name="current_password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nouveau mot de passe</label>
+                    <input type="password" class="form-control" name="new_password" required minlength="8">
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmer le nouveau mot de passe</label>
+                    <input type="password" class="form-control" name="confirm_password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            </form>
+        </div>
+
+        <!-- Section Avatar -->
+        <div class="settings-section">
+            <h2>Photo de profil</h2>
+            
+            <form id="avatarForm" action="/controllers/settings/update_avatar.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
+                <div class="form-group">
+                    <label>Choisir une image (JPG/PNG, max 5MB)</label>
+                    <input type="file" class="form-control" name="avatar" accept="image/jpeg,image/png">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            </form>
+        </div>
+    </div>
+</div>

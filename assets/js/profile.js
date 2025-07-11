@@ -1,189 +1,224 @@
-// profile.js - Version adaptée pour la nouvelle structure HTML
+// DOM Elements
+const updateProfileBtn = document.getElementById('update-profile-btn');
+const updateProfileModal = document.getElementById('update-profile-modal');
+const closeModalBtns = document.querySelectorAll('.close-modal');
+const saveProfileBtn = document.getElementById('save-profile-btn');
+const createPostInput = document.getElementById('create-post-input');
+const createPostModal = document.getElementById('create-post-modal');
+const publishPostBtn = document.getElementById('publish-post-btn');
+const postsContainer = document.getElementById('posts-container');
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Chargement initial des données
-    loadProfileData();
-    
-    // Gestionnaires d'événements
-    document.querySelector('.btn-secondary').addEventListener('click', showPasswordModal);
-    document.getElementById('cancelPassword').addEventListener('click', hidePasswordModal);
-    document.getElementById('confirmPassword').addEventListener('click', verifyPassword);
-    document.getElementById('profileForm').addEventListener('submit', updateProfile);
+// Functions to open/close modals
+function openModal(modal) {
+    modal.style.display = 'flex';
+}
+
+function closeModal(modal) {
+    modal.style.display = 'none';
+}
+
+// Event listeners
+updateProfileBtn.addEventListener('click', () => {
+    openModal(updateProfileModal);
 });
 
-// Charger les données du profil
+createPostInput.addEventListener('click', () => {
+    openModal(createPostModal);
+});
+
+closeModalBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const modal = btn.closest('.modal');
+        closeModal(modal);
+    });
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal')) {
+        closeModal(e.target);
+    }
+});
+
+// Function to load profile data
 async function loadProfileData() {
     try {
-        showLoader();
-        
-        const response = await fetch('../api/get_profile.php');
-        if (!response.ok) throw new Error('Erreur réseau');
-        
+        const response = await fetch('api/profile.php');
         const data = await response.json();
         
-        // Mise à jour de l'UI
-        updateProfileUI(data);
-        
+        if (data.success) {
+            updateProfileUI(data.user);
+        } else {
+            console.error('Erreur de chargement du profil:', data.message);
+        }
     } catch (error) {
         console.error('Erreur:', error);
-        showError('Échec du chargement du profil');
-    } finally {
-        hideLoader();
     }
 }
 
-// Mettre à jour l'interface
-function updateProfileUI(profileData) {
-    // Infos de base
-    if (profileData.firstname || profileData.lastname) {
-        document.getElementById('profileName').textContent = 
-            `${profileData.firstname} ${profileData.lastname}`;
-    }
-    
-    // Photo de profil
-    if (profileData.profile_pic) {
-        const img = document.getElementById('profileImage');
-        img.src = profileData.profile_pic;
-        img.style.display = 'block';
-        document.getElementById('profileIcon').style.display = 'none';
-    }
-    
-    // Détails du profil
-    const detailsContainer = document.getElementById('profileDetails');
-    detailsContainer.innerHTML = generateProfileDetailsHTML(profileData);
+// Function to update profile UI
+function updateProfileUI(user) {
+    document.querySelector('.profile-name').textContent = `${user.firstname} ${user.lastname}`;
+    document.querySelector('.friend-count').textContent = `${user.friend_count || 0} amis`;
+    document.getElementById('firstname').value = user.firstname;
+    document.getElementById('lastname').value = user.lastname;
+    document.getElementById('birthdate').value = user.birthdate || '';
+    document.getElementById('city').value = user.city || '';
+    document.getElementById('profession').value = user.profession || '';
+    document.getElementById('relationship-status').value = user.relationship_status || '';
+    document.getElementById('bio').value = user.bio || '';
 }
 
-// Générer le HTML des détails
-function generateProfileDetailsHTML(profileData) {
+// Function to load posts
+async function loadPosts() {
+    try {
+        const response = await fetch('api/profile.php?posts=true');
+        const data = await response.json();
+        
+        if (data.success) {
+            renderPosts(data.posts);
+        } else {
+            console.error('Erreur de chargement des publications:', data.message);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
+
+// Function to render posts
+function renderPosts(posts) {
+    postsContainer.innerHTML = '';
+    
+    if (posts.length === 0) {
+        postsContainer.innerHTML = '<div class="post"><div class="post-content"><p>Aucune publication pour le moment</p></div></div>';
+        return;
+    }
+    
+    posts.forEach(post => {
+        const postElement = createPostElement(post);
+        postsContainer.appendChild(postElement);
+    });
+}
+
+// Function to create a post element
+function createPostElement(post) {
+    const postDate = new Date(post.created_at);
+    const formattedDate = postDate.toLocaleDateString('fr-FR', {
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
     return `
-        ${profileData.bio ? `
-        <div class="detail-item">
-            <div class="detail-icon"><i class="fas fa-pen"></i></div>
-            <span>${profileData.bio}</span>
-        </div>` : ''}
-        
-        ${profileData.education ? `
-        <div class="detail-item">
-            <div class="detail-icon"><i class="fas fa-graduation-cap"></i></div>
-            <span>${profileData.education}</span>
-        </div>` : ''}
-        
-        ${profileData.location ? `
-        <div class="detail-item">
-            <div class="detail-icon"><i class="fas fa-home"></i></div>
-            <span>Habite à ${profileData.location}</span>
-        </div>` : ''}
-        
-        ${profileData.relationship_status ? `
-        <div class="detail-item">
-            <div class="detail-icon"><i class="fas fa-heart"></i></div>
-            <span>${profileData.relationship_status}</span>
-        </div>` : ''}
-        
-        <div class="edit-info" id="editDetailsBtn">
-            <i class="fas fa-pencil-alt"></i>
-            <span>Modifier les infos</span>
+        <div class="post">
+            <div class="post-header">
+                <div class="post-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="post-user-info">
+                    <div class="post-username">${post.firstname} ${post.lastname}</div>
+                    <div class="post-time">
+                        ${formattedDate}
+                        <i class="fas fa-globe-europe"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="post-content">
+                <p class="post-text">${post.content}</p>
+            </div>
+            <div class="post-actions">
+                <div class="action-btn">
+                    <i class="far fa-thumbs-up"></i> J'aime
+                </div>
+                <div class="action-btn">
+                    <i class="far fa-comment"></i> Commenter
+                </div>
+                <div class="action-btn">
+                    <i class="far fa-share-square"></i> Partager
+                </div>
+            </div>
         </div>
     `;
 }
 
-// Gestion de la modale de mot de passe
-function showPasswordModal() {
-    document.getElementById('passwordModal').style.display = 'flex';
-    document.getElementById('passwordInput').focus();
-}
-
-function hidePasswordModal() {
-    document.getElementById('passwordModal').style.display = 'none';
-    document.getElementById('passwordInput').value = '';
-}
-
-// Vérification du mot de passe
-async function verifyPassword() {
-    const password = document.getElementById('passwordInput').value.trim();
-    if (!password) return;
-    
-    try {
-        const response = await fetch('../api/verify_password.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            hidePasswordModal();
-            showEditModal();
-        } else {
-            alert('Mot de passe incorrect');
-        }
-    } catch (error) {
-        console.error('Erreur:', error);
-        alert('Erreur de vérification');
-    }
-}
-
-// Gestion de la modale d'édition
-function showEditModal() {
-    // Charger les données actuelles dans le formulaire
-    loadCurrentProfileData();
-    document.getElementById('editProfileModal').style.display = 'flex';
-}
-
-async function loadCurrentProfileData() {
-    const response = await fetch('../api/get_profile.php');
-    const data = await response.json();
-    
-    document.getElementById('editFirstname').value = data.firstname || '';
-    document.getElementById('editLastname').value = data.lastname || '';
-    document.getElementById('editBio').value = data.bio || '';
-    // ... autres champs
-}
-
-// Mise à jour du profil
-async function updateProfile(e) {
-    e.preventDefault();
-    
+// Function to update profile
+async function updateProfile() {
     const formData = {
-        firstname: document.getElementById('editFirstname').value.trim(),
-        lastname: document.getElementById('editLastname').value.trim(),
-        bio: document.getElementById('editBio').value.trim(),
-        // ... autres champs
+        firstname: document.getElementById('firstname').value,
+        lastname: document.getElementById('lastname').value,
+        birthdate: document.getElementById('birthdate').value,
+        city: document.getElementById('city').value,
+        profession: document.getElementById('profession').value,
+        relationship_status: document.getElementById('relationship-status').value,
+        bio: document.getElementById('bio').value,
+        current_password: document.getElementById('current-password').value
     };
     
     try {
-        const response = await fetch('../api/update_profile.php', {
+        const response = await fetch('api/update_profile.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(formData)
         });
         
         const data = await response.json();
         
         if (data.success) {
-            document.getElementById('editProfileModal').style.display = 'none';
-            loadProfileData(); // Recharger les données
-            alert('Profil mis à jour avec succès');
+            alert('Profil mis à jour avec succès!');
+            closeModal(updateProfileModal);
+            loadProfileData();
+        } else {
+            alert('Erreur: ' + data.message);
         }
     } catch (error) {
         console.error('Erreur:', error);
-        alert('Échec de la mise à jour');
+        alert('Une erreur est survenue lors de la mise à jour du profil');
     }
 }
 
-// Utilitaires
-function showLoader() {
-    document.getElementById('loader').style.display = 'block';
+// Function to create a post
+async function createPost() {
+    const content = document.getElementById('post-content').value;
+    
+    if (!content.trim()) {
+        alert('Veuillez saisir du contenu pour votre publication');
+        return;
+    }
+    
+    try {
+        const response = await fetch('api/create_post.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            closeModal(createPostModal);
+            document.getElementById('post-content').value = '';
+            loadPosts();
+        } else {
+            alert('Erreur: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la création de la publication');
+    }
 }
 
-function hideLoader() {
-    document.getElementById('loader').style.display = 'none';
-}
+// Event listeners for saving and publishing
+saveProfileBtn.addEventListener('click', updateProfile);
+publishPostBtn.addEventListener('click', createPost);
 
-function showError(message) {
-    const errorDiv = document.getElementById('error-message');
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-    setTimeout(() => errorDiv.style.display = 'none', 5000);
-}
+// Load data on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadProfileData();
+    loadPosts();
+});

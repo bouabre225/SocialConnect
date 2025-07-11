@@ -1,4 +1,3 @@
-
 <?php
 
 require_once 'C:\xampp\htdocs\SocialConnect\api\config.php';
@@ -16,6 +15,12 @@ $profileUserId = isset($_GET['id']) ? (int)$_GET['id'] : $currentUserId;
 $user = getUserData($profileUserId, $pdo);
 if (!$user) {
     die("User not found");
+}
+
+function getUserData($userId, $pdo) {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 // Verifier si on consulte son propre profil

@@ -122,7 +122,7 @@ function jsonResponse($data, $statusCode = 200) {
 
 // Gestion des routes
 switch ($uri) {
-    case '/users/home':
+    case '/api/users/home':
         if ($method !== 'GET') {
             jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
         }
@@ -135,7 +135,7 @@ switch ($uri) {
         }
         break;
 
-    case '/users/posts':
+    case '/api/users/posts':
         if ($method === 'POST') {
             $user = authentificateToken(getallheaders());
             $data = json_decode(file_get_contents('php://input'), true);
@@ -188,7 +188,7 @@ switch ($uri) {
         }
         break;
 
-    case '/users/stories':
+    case '/api/users/stories':
         if ($method === 'POST') {
             $user = authentificateToken(getallheaders());
             $emoji_content = $data['emoji_content'] ?? null;
@@ -230,7 +230,7 @@ switch ($uri) {
         }
         break;
 
-    case '/users/comments':
+    case '/api/users/comments':
         if ($method === 'POST') {
             $user = authentificateToken(getallheaders());
             $data = json_decode(file_get_contents('php://input'), true);
@@ -252,7 +252,7 @@ switch ($uri) {
             }
         }
         break;
-        case '/users/likes':
+        case '/api/users/likes':
             if ($method === 'POST') {
                 $user = authentificateToken(getallheaders());
                 $data = json_decode(file_get_contents('php://input'), true);
@@ -291,7 +291,7 @@ switch ($uri) {
                 jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
             }
             break;
-            case '/users/friends':
+            case '/api/users/friends':
                 if ($method === 'POST') {
                     $user = authentificateToken(getallheaders());
                     $data = json_decode(file_get_contents('php://input'), true);
@@ -323,7 +323,7 @@ switch ($uri) {
                     jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
                 }
                 break;
-            case '/users/friends/suggestions':
+            case '/api/users/friends/suggestions':
                 if ($method !== 'GET') {
                     jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
                 }
@@ -351,7 +351,7 @@ switch ($uri) {
                 break;
             default:
                 // Gestion des routes dynamiques
-                if (preg_match('/^\/users\/posts\/(\d+)\/comments$/', $uri, $matches)) {
+                if (preg_match('/^\/api\/users\/posts\/(\d+)\/comments$/', $uri, $matches)) {
                     if ($method !== 'GET') {
                         jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
                     }
@@ -371,7 +371,7 @@ switch ($uri) {
                 } catch (Exception $e) {
                     jsonResponse(['status' => 'error', 'message' => 'Erreur lors de la récupération des commentaires'], 500);
                 }
-            } elseif (preg_match('/^\/users\/stories\/(\d+)\/views$/', $uri, $matches)) {
+            } elseif (preg_match('/^\/api\/users\/stories\/(\d+)\/views$/', $uri, $matches)) {
                 if ($method !== 'POST') {
                     jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
                 }
@@ -384,7 +384,7 @@ switch ($uri) {
                 } catch (Exception $e) {
                     jsonResponse(['status' => 'error', 'message' => 'Erreur lors de l\'enregistrement de la vue'], 500);
                 }
-            } elseif (preg_match('/^\/users\/friends\/(\d+)$/', $uri, $matches) && $method === 'PUT') {
+            } elseif (preg_match('/^\/api\/users\/friends\/(\d+)$/', $uri, $matches) && $method === 'PUT') {    
                 $user = authentificateToken(getallheaders());
                 $friend_id = $matches[1];
                 try {

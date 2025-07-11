@@ -556,25 +556,3 @@ body {
 .dark-theme .table tbody tr:hover {
     background: linear-gradient(90deg, rgba(67, 97, 238, 0.05), rgba(76, 201, 240, 0.02));
 }
-
-.floating-action {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-    box-shadow: 0 8px 25px rgba(74, 111, 165, 0.3);
-    transition: var(--transition);
-    z-index: 1000;
-}
-
-.floating-action:hover {
-    transform: scale(1.05);
-}

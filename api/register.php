@@ -98,10 +98,10 @@
         // Insertion de l'utilisateur
         $insert = $pdo->prepare("
             INSERT INTO users 
-            (firstname, lastname, email, password, csrf_token, activation_token, status) 
-            VALUES (?, ?, ?, ?, ?, ?, 'pending')
+            (firstname, lastname, email, password, username, birthdate, gender, relationship_status, profession, country, city, interests, csrf_token, activation_token, status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
         ");
-        $insert->execute([$firstname, $lastname, $email, $password_hash, $csrf_token, $activation_token]);
+        $insert->execute([$firstname, $lastname, $email, $password_hash, $username, $birthdate, $gender, $relationship_status, $profession, $country, $city, $interests, $csrf_token, $activation_token]);
         
 
         // Envoi de l'email de confirmation
@@ -163,7 +163,16 @@
             'firstname' => $firstname,
             'lastname'  => $lastname,
             'email'     => $email,
-            'csrf_token'=> $csrf_token
+            'csrf_token'=> $csrf_token,
+            'username'  => $username,
+            'birthdate' => $birthdate,
+            'gender'    => $gender,
+            'relationship_status' => $relationship_status,
+            'profession' => $profession,
+            'country' => $country,
+            'city' => $city,
+            'interests' => $interests,
+            'avatar_url' => $avatar_url,
         ],
         'activation_token' => $activation_token,
         'status' => 'pending',

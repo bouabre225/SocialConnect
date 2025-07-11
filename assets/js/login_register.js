@@ -75,7 +75,7 @@ function handleError(error, container) {
     
             document.getElementById('loader').style.display = 'block';
             try {
-                const response = await fetch(`${API_URL}/login.php`, {
+                const response = await fetch(`${API_URL2}/login.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ function handleError(error, container) {
                 document.getElementById('loaderReg').style.display = 'block';
 
                 try {
-                    const response = await fetch(`${API_URL}/register.php`, {
+                    const response = await fetch(`${API_URL2}/register.php`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
