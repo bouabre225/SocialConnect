@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Profil - SocialConnect</title>
     <style>
         :root {
@@ -523,10 +524,130 @@
                         </div>
                         <div class="friend-item">
                             <div class="friend-avatar"></div>
+=======
+    <title>Profil de <?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?> | SocialConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Barre de Navigation --> 
+    <nav class="navbar">
+        <div class="navbar-logo">SocialConnect</div>
+    </nav>
+    
+    <!-- Main Profile Container -->
+    <div class="profile-container">
+        <!-- Photo de couverture -->
+        <div class="cover-photo">
+            <img src="<?= $user['cover_photo'] ? htmlspecialchars($user['cover_photo']) : 'default-cover.jpg' ?>" alt="Cover photo">
+        </div>
+        
+        <!-- Profile Info Section -->
+        <div class="profile-info">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img src="<?= $user['avatar'] ? htmlspecialchars($user['avatar']) : 'default-avatar.jpg' ?>" alt="Profile picture">
+                </div>
+                <div class="profile-name">
+                    <h1><?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?></h1>
+                    <p><?= $friendCount ?> amis</p>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <i class="fas fa-globe"></i>
+                            <span>Public</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <?php if ($isOwnProfile): ?>
+                        <button class="btn btn-secondary" id="editProfileBtn">
+                            <i class="fas fa-pencil-alt"></i>
+                            Modifier le profil
+                        </button>
+                    <?php else: ?>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            Ajouter comme ami
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-comment"></i>
+                            Envoyer un message
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <!-- Profile Tabs -->
+            <div class="profile-tabs">
+                <div class="profile-tab active">Publications</div>
+                <div class="profile-tab">À propos</div>
+                <div class="profile-tab">Amis</div>
+                <div class="profile-tab">Photos</div>
+                <div class="profile-tab">Vidéos</div>
+                <div class="profile-tab">Vérifications</div>
+                <div class="profile-tab">Plus</div>
+            </div>
+        </div>
+        
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <!-- Left Column -->
+            <div class="profile-left">
+                <!-- About Card -->
+                <div class="info-card">
+                    <h2>Intro</h2>
+                    <?php if ($user['bio']): ?>
+                        <p><?= htmlspecialchars($user['bio']) ?></p>
+                    <?php endif; ?>
+                    
+                    <?php if ($user['education']): ?>
+                        <div class="info-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span><?= htmlspecialchars($user['education']) ?></span>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if ($user['location']): ?>
+                        <div class="info-item">
+                            <i class="fas fa-home"></i>
+                            <span><?= htmlspecialchars($user['location']) ?></span>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>A rejoint en <?= date('F Y', strtotime($user['created_at'])) ?></span>
+                    </div>
+                </div>
+                
+                <!-- Amis Card -->
+                <div class="info-card">
+                    <h2>Amis</h2>
+                    <p><?= $friendCount ?> amis</p>
+                    <div class="friends-grid">
+                        <!-- Éléments d'amis d'exemple -->
+                        <div class="friend-item">
+                            <img src="default-avatar.jpg" alt="Friend">
+                        </div>
+                        <div class="friend-item">
+                            <img src="default-avatar.jpg" alt="Friend">
+                        </div>
+                        <div class="friend-item">
+                            <img src="default-avatar.jpg" alt="Friend">
+                        </div>
+                        <div class="friend-item">
+                            <img src="default-avatar.jpg" alt="Friend">
+                        </div>
+                        <div class="friend-item">
+                            <img src="default-avatar.jpg" alt="Friend">
+                        </div>
+                        <div class="friend-item">
+                            <img src="default-avatar.jpg" alt="Friend">
+>>>>>>> ef27a33f333e63b4df057d3a37aec4e4389ba785
                         </div>
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
         </div>
 
         <!-- Profile Content -->
@@ -729,5 +850,151 @@
     </div>
 
     <script src="assets/js/profile.js"></script>
+=======
+            
+            <!-- Right Column -->
+            <div class="profile-right">
+                <!-- Créer une carte de publication -->
+                <?php if ($isOwnProfile): ?>
+                    <div class="info-card">
+                        <h3>Créer une publication</h3>
+                        <div class="post-input">
+                            <div class="post-avatar">
+                                <img src="<?= $user['avatar'] ? htmlspecialchars($user['avatar']) : 'default-avatar.jpg' ?>" alt="Profile picture">
+                            </div>
+                            <input type="text" placeholder="À quoi pensez-vous ?" id="postContent">
+                        </div>
+                        <div class="post-options">
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-images"></i> Photo/vidéo
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-smile"></i> Humeur/activité
+                            </button>
+                            <button class="btn btn-primary" id="publishPostBtn">
+                                Publier
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+                <!-- Posts Section -->
+                <?php foreach ($posts as $post): ?>
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-avatar">
+                                <img src="<?= $user['avatar'] ? htmlspecialchars($user['avatar']) : 'default-avatar.jpg' ?>" alt="Profile picture">
+                            </div>
+                            <div class="post-user">
+                                <h4><?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?></h4>
+                                <p><?= date('d/m/Y à H:i', strtotime($post['created_at'])) ?></p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p><?= htmlspecialchars($post['content']) ?></p>
+                        </div>
+                        <?php if (!empty($post['image'])): ?>
+                            <div class="post-image">
+                                <img src="<?= htmlspecialchars($post['image']) ?>" alt="Post image">
+                            </div>
+                        <?php endif; ?>
+                        <div class="post-actions">
+                            <div class="post-action">
+                                <i class="far fa-thumbs-up"></i>
+                                <span>J'aime</span>
+                            </div>
+                            <div class="post-action">
+                                <i class="far fa-comment"></i>
+                                <span>Commenter</span>
+                            </div>
+                            <div class="post-action">
+                                <i class="fas fa-share"></i>
+                                <span>Partager</span>
+                            </div>
+                        </div>
+                        <div class="post-comments">
+                            <!-- Commentaire d'exemple - dans une vraie application vous récupéreriez les commentaires depuis la base de données -->
+                            <div class="comment">
+                                <div class="comment-avatar">
+                                    <img src="default-avatar.jpg" alt="Commenter">
+                                </div>
+                                <div class="comment-content">
+                                    <div class="comment-user">Marie Dubois</div>
+                                    <div class="comment-text">Magnifique !</div>
+                                </div>
+                            </div>
+                            <div class="comment-input">
+                                <input type="text" placeholder="Écrire un commentaire...">
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Password Verification Modal -->
+    <div class="modal password-modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirmer votre mot de passe</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="passwordForm">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <div class="form-group">
+                    <label for="password">Entrez votre mot de passe pour continuer</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel modal-close">Annuler</button>
+                    <button type="submit" class="btn btn-save">Continuer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Modifier le profil</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="profileForm" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <div class="form-group">
+                    <label>Photo de profil</label>
+                    <input type="file" name="avatar" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Photo de couverture</label>
+                    <input type="file" name="cover_photo" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio"><?= htmlspecialchars($user['bio'] ?? '') ?></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="education">Éducation</label>
+                    <input type="text" id="education" name="education" value="<?= htmlspecialchars($user['education'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label for="location">Localisation</label>
+                    <input type="text" id="location" name="location" value="<?= htmlspecialchars($user['location'] ?? '') ?>">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel modal-close">Annuler</button>
+                    <button type="submit" class="btn btn-save">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="C:\xampp\htdocs\SocialConnect\vues\clients\profile.js"></script>
+            <?php include __DIR__.'/../C:\xampp\htdocs\SocialConnect\api\config\Verify_password.php'; ?>
+            <?php include __DIR__.'/../C:\xampp\htdocs\SocialConnect\api\config\Update_Profil.php'; ?>
+            <?php include __DIR__.'/../C:\xampp\htdocs\SocialConnect\api\config\Gestion_profile.php'; ?>
+>>>>>>> ef27a33f333e63b4df057d3a37aec4e4389ba785
 </body>
 </html>

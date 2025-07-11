@@ -1,52 +1,52 @@
 <header class="facebook-header">
-    <div class="container-fluid">
-        <div class="row align-items-center header-row">
-            <!-- Logo et recherche -->
-            <div class="col-lg-4 col-md-5 d-flex align-items-center logo-search-container">
-                <div class="facebook-logo">SocialConnect</div>
-                <div class="search-box">
-                    <i class="bi bi-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Rechercher sur SocialConnect">
-                </div>
-            </div>
-            
-            <!-- Navigation principale -->
-            <div class="col-lg-4 col-md-2 d-none d-md-flex justify-content-center nav-buttons">
-                <button class="nav-btn active" title="Accueil">
-                    <i class="bi bi-house-door-fill"></i>
-                </button>
-                <button class="nav-btn" title="Amis">
-                    <i class="bi bi-people-fill"></i>
-                </button>
-                <button class="nav-btn" title="Watch">
-                    <i class="bi bi-camera-reels-fill"></i>
-                </button>
-                <button class="nav-btn" title="Marketplace">
-                    <i class="bi bi-shop-fill"></i>
-                </button>
-            </div>
-            
-            <!-- Actions utilisateur -->
-            <div class="col-lg-4 col-md-5 d-flex justify-content-end user-actions">
-                <button class="action-btn menu-toggle d-md-none">
-                    <i class="bi bi-list"></i>
-                </button>
-                <div class="d-none d-md-flex align-items-center action-buttons">
-                    <button class="action-btn" title="Menu">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <button class="action-btn" id="go-to-chat" title="Messenger">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </button>
-                    <button class="action-btn" title="Notifications">
-                        <i class="bi bi-bell-fill"></i>
-                    </button>
-                    <div class="user-avatar" title="Profil"></div>
-                </div>
-                <div class="user-avatar d-md-none"></div>
+<div class="container-fluid">
+    <div class="row align-items-center header-row">
+        <!-- Logo et recherche -->
+        <div class="col-lg-4 col-md-5 d-flex align-items-center logo-search-container">
+            <div class="facebook-logo">SocialConnect</div>
+            <div class="search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Rechercher sur SocialConnect">
             </div>
         </div>
+        
+        <!-- Navigation principale -->
+        <div class="col-lg-4 col-md-2 d-none d-md-flex justify-content-center nav-buttons">
+            <button class="nav-btn active" title="Accueil">
+                <i class="bi bi-house-door-fill"></i>
+            </button>
+            <button class="nav-btn" title="Amis">
+                <i class="bi bi-people-fill"></i>
+            </button>
+            <button class="nav-btn" title="Watch">
+                <i class="bi bi-camera-reels-fill"></i>
+            </button>
+            <button class="nav-btn" title="Marketplace">
+                <i class="bi bi-shop-fill"></i>
+            </button>
+        </div>
+        
+        <!-- Actions utilisateur -->
+        <div class="col-lg-4 col-md-5 d-flex justify-content-end user-actions">
+            <button class="action-btn menu-toggle d-md-none">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="d-none d-md-flex align-items-center action-buttons">
+                <button class="action-btn" title="Menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                <button class="action-btn" id="go-to-chat" title="Messenger">
+                    <i class="bi bi-chat-dots-fill"></i>
+                </button>
+                <button class="action-btn" title="Notifications">
+                    <i class="bi bi-bell-fill"></i>
+                </button>
+                <div class="user-avatar" title="Profil"></div>
+            </div>
+            <div class="user-avatar d-md-none"></div>
+        </div>
     </div>
+</div>
 </header>
 
 <!-- Main Content -->
@@ -60,11 +60,9 @@
                         <div class="profile-item">
                             <div class="user-avatar-small"></div>
                             <span class="profile-name">Votre profil</span>
-                        </div>
-                        
+                        </div>                       
                         <div class="menu-items"></div>
                     </div>
-
                     <div class="shortcuts-section">
                         <h3 class="section-title">RACCOURCIS</h3>
                         <div class="shortcuts-items"></div>
@@ -96,14 +94,12 @@
                                         </div>
                                         <span class="action-text">Photo/vidéo</span>
                                     </button>
-                                    
                                     <button class="action-button feeling-action">
                                         <div class="action-icon feeling-icon">
                                             <i class="bi bi-emoji-smile"></i>
                                         </div>
                                         <span class="action-text">Humeur</span>
-                                    </button>
-                                    
+                                    </button>                                    
                                     <button class="action-button location-action">
                                         <div class="action-icon location-icon">
                                             <i class="bi bi-geo-alt"></i>
@@ -137,7 +133,6 @@
                                 </button>
                             </div>
                         </div>
-                        
                         <div class="contacts-list"></div>
                     </div>
 
@@ -150,4 +145,27 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal pour les emojis -->
+
+
+    <!-- Modal pour les lieux -->
+
+
+    <!-- Modal pour les notifications -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="notification-list"></div>
+        </div>
+    </div>
+
+    <!-- Modal pour les amis -->
+    <div id="friendsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="friends-list"></div>
+        </div>
+    </div>
+
 </main>
