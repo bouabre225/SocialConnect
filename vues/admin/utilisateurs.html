@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilisateurs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-light: #6b8cba;
+            --primary-dark: #3a5784;
+            --accent: #ff7e5f;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --danger: #dc3545;
+            --light: #ffffff;
+            --dark: #2b2d42;
+            --gray: #f8f9fa;
+            --gray-dark: #e9ecef;
+            --gray-light: #f1f3f4;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        /* Bouton de retour à l'accueil */
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);
+            transition: var(--transition);
+            margin-bottom: 2rem;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 111, 165, 0.4);
+            color: white;
+        }
+
+        /* Container principal */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header amélioré */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .dashboard-header h1 {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header h1 i {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        /* Bouton mode sombre */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(74, 111, 165, 0.4);
+        }
+
+        /* Table améliorée */
+        .table-responsive {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .user-table {
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .user-table th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-bottom: none;
+            padding: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        .user-table td {
+            padding: 1.2rem;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(74, 111, 165, 0.1);
+            transition: var(--transition);
+        }
+
+        .user-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(74, 111, 165, 0.05), rgba(255, 126, 95, 0.02));
+            transform: scale(1.01);
+        }
+
+        /* Badges améliorés */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-date {
+            background: linear-gradient(135deg, var(--info), #20c997);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge.bg-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, var(--success), #20c997) !important;
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, var(--danger), #e74c3c) !important;
+        }
+
+        .badge.bg-warning {
+            background: linear-gradient(135deg, var(--warning), #f39c12) !important;
+        }
+
+        /* Boutons d'action */
+        .btn-action {
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+            font-size: 0.85rem;
+        }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--transition);
+        }
+
+        .btn-action:hover::before {
+            left: 100%;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, var(--danger), #e74c3c);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #e74c3c, var(--danger));
+            color: white;
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-block {
+            background: linear-gradient(135deg, var(--warning), #f39c12);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-block:hover {
+            background: linear-gradient(135deg, #f39c12, var(--warning));
+            color: white;
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-ban {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+        }
+
+        .btn-ban:hover {
+            background: linear-gradient(135deg, #8b5cf6, #6f42c1);
+            color: white;
+            box-shadow: 0 6px 20px rgba(111, 66, 193, 0.4);
+        }
+
+        /* État vide */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h4 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Scrollbar personnalisée */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+        }
+
+        /* Thème sombre */
+        .dark-theme {
+            --primary: #4361ee;
+            --primary-light: #7209b7;
+            --primary-dark: #3b2da6;
+            --accent: #4cc9f0;
+            --light: #2d2d2d;
+            --dark: #e0e0e0;
+            --gray: #1a1a1a;
+            --gray-dark: #444;
+            --gray-light: #333;
+        }
+
+        .dark-theme body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: var(--dark);
+        }
+
+        .dark-theme .dashboard-header,
+        .dark-theme .table-responsive {
+            background: rgba(45, 45, 45, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-theme .dashboard-header h1,
+        .dark-theme .dashboard-header p {
+            color: var(--dark);
+        }
+
+        .dark-theme .user-table td {
+            color: var(--dark);
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-theme .user-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.05));
+        }
+
+        .dark-theme .empty-state {
+            color: #aaa;
+        }
+
+        /* Modal de confirmation */
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .dark-theme .modal-content {
+            background: rgba(45, 45, 45, 0.95);
+            color: var(--dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .dashboard-header {
+                padding: 1.5rem;
+            }
+            
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+            
+            .user-table th,
+            .user-table td {
+                padding: 0.8rem;
+            }
+            
+            .btn-action {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <div class="text-center mt-4 animate__animated animate__fadeInUp">
+        <a href="/vues/admin/dashboard-moderator.html" class="home-btn">
+            <i class="bi bi-house-door"></i> Retourner à l'accueil
+        </a>
+    </div>
+
+    <div class="dashboard-container animate__animated animate__fadeIn">
+        <div class="dashboard-header animate__animated animate__fadeInDown">
+            <h1><i class="bi bi-people-fill"></i> Gestion des Utilisateurs</h1>
+            <p class="mb-0">Liste complète des utilisateurs enregistrés</p>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover user-table">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-hash"></i> ID</th>
+                        <th><i class="bi bi-person"></i> Nom</th>
+                        <th><i class="bi bi-person"></i> Prénom</th>
+                        <th><i class="bi bi-envelope"></i> Email</th>
+                        <th><i class="bi bi-calendar"></i> Créé le</th>
+                        <th><i class="bi bi-gear"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Exemple d'utilisateurs pour la démo -->
+                    <tr class="animate__animated animate__fadeIn">
+                        <td><span class="badge bg-primary">#1</span></td>
+                        <td>Dupont</td>
+                        <td>Jean</td>
+                        <td><a href="mailto:jean.dupont@email.com" class="text-decoration-none">jean.dupont@email.com</a></td>
+                        <td><span class="badge-date"><i class="bi bi-clock"></i> 2024-01-15</span></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-action btn-delete" onclick="deleteUser(1, 'Jean Dupont')">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </button>
+                                <button class="btn btn-sm btn-action btn-block" onclick="blockUser(1, 'Jean Dupont')">
+                                    <i class="bi bi-lock"></i> Bloquer
+                                </button>
+                                <button class="btn btn-sm btn-action btn-ban" onclick="banUser(1, 'Jean Dupont')">
+                                    <i class="bi bi-ban"></i> Bannir
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="animate__animated animate__fadeIn">
+                        <td><span class="badge bg-primary">#2</span></td>
+                        <td>Martin</td>
+                        <td>Marie</td>
+                        <td><a href="mailto:marie.martin@email.com" class="text-decoration-none">marie.martin@email.com</a></td>
+                        <td><span class="badge-date"><i class="bi bi-clock"></i> 2024-02-10</span></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-action btn-delete" onclick="deleteUser(2, 'Marie Martin')">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </button>
+                                <button class="btn btn-sm btn-action btn-block" onclick="blockUser(2, 'Marie Martin')">
+                                    <i class="bi bi-lock"></i> Bloquer
+                                </button>
+                                <button class="btn btn-sm btn-action btn-ban" onclick="banUser(2, 'Marie Martin')">
+                                    <i class="bi bi-ban"></i> Bannir
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="animate__animated animate__fadeIn">
+                        <td><span class="badge bg-primary">#3</span></td>
+                        <td>Bernard</td>
+                        <td>Pierre</td>
+                        <td><a href="mailto:pierre.bernard@email.com" class="text-decoration-none">pierre.bernard@email.com</a></td>
+                        <td><span class="badge-date"><i class="bi bi-clock"></i> 2024-03-05</span></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-action btn-delete" onclick="deleteUser(3, 'Pierre Bernard')">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </button>
+                                <button class="btn btn-sm btn-action btn-block" onclick="blockUser(3, 'Pierre Bernard')">
+                                    <i class="bi bi-lock"></i> Bloquer
+                                </button>
+                                <button class="btn btn-sm btn-action btn-ban" onclick="banUser(3, 'Pierre Bernard')">
+                                    <i class="bi bi-ban"></i> Bannir
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmer l'action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmationModalBody">
+                    <!-- Le contenu sera injecté par JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gestion du mode sombre
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // Charger le thème sauvegardé
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeIcon.className = 'bi bi-sun-fill';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            const isDark = body.classList.contains('dark-theme');
+            
+            themeIcon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            
+            // Animation du bouton
+            themeToggle.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                themeToggle.style.transform = 'scale(1)';
+            }, 150);
+        });
+
+        // Variables pour la modal de confirmation
+        let currentAction = null;
+        let currentUserId = null;
+        let currentUserName = null;
+
+        // Fonction pour supprimer un utilisateur
+        function deleteUser(userId, userName) {
+            currentAction = 'delete';
+            currentUserId = userId;
+            currentUserName = userName;
+            
+            document.getElementById('confirmationModalLabel').textContent = 'Confirmer la suppression';
+            document.getElementById('confirmationModalBody').innerHTML = `
+                <div class="text-center">
+                    <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Êtes-vous sûr de vouloir supprimer l'utilisateur ?</h5>
+                    <p class="text-muted"><strong>${userName}</strong> (ID: ${userId})</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-warning"></i> Cette action est irréversible !
+                    </div>
+                </div>
+            `;
+            document.getElementById('confirmActionBtn').className = 'btn btn-danger';
+            document.getElementById('confirmActionBtn').innerHTML = '<i class="bi bi-trash"></i> Supprimer';
+            
+            new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+        }
+
+        // Fonction pour bloquer un utilisateur
+        function blockUser(userId, userName) {
+            currentAction = 'block';
+            currentUserId = userId;
+            currentUserName = userName;
+            
+            document.getElementById('confirmationModalLabel').textContent = 'Confirmer le blocage';
+            document.getElementById('confirmationModalBody').innerHTML = `
+                <div class="text-center">
+                    <i class="bi bi-lock text-warning" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Êtes-vous sûr de vouloir bloquer l'utilisateur ?</h5>
+                    <p class="text-muted"><strong>${userName}</strong> (ID: ${userId})</p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> L'utilisateur ne pourra plus se connecter temporairement.
+                    </div>
+                </div>
+            `;
+            document.getElementById('confirmActionBtn').className = 'btn btn-warning';
+            document.getElementById('confirmActionBtn').innerHTML = '<i class="bi bi-lock"></i> Bloquer';
+            
+            new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+        }
+
+        // Fonction pour bannir un utilisateur
+        function banUser(userId, userName) {
+            currentAction = 'ban';
+            currentUserId = userId;
+            currentUserName = userName;
+            
+            document.getElementById('confirmationModalLabel').textContent = 'Confirmer le bannissement';
+            document.getElementById('confirmationModalBody').innerHTML = `
+                <div class="text-center">
+                    <i class="bi bi-ban text-danger" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Êtes-vous sûr de vouloir bannir l'utilisateur ?</h5>
+                    <p class="text-muted"><strong>${userName}</strong> (ID: ${userId})</p>
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> L'utilisateur sera définitivement banni de la plateforme !
+                    </div>
+                </div>
+            `;
+            document.getElementById('confirmActionBtn').className = 'btn btn-danger';
+            document.getElementById('confirmActionBtn').innerHTML = '<i class="bi bi-ban"></i> Bannir';
+            
+            new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+        }
+
+        // Gestionnaire de confirmation d'action
+        document.getElementById('confirmActionBtn').addEventListener('click', function() {
+            if (currentAction && currentUserId) {
+                executeAction(currentAction, currentUserId, currentUserName);
+            }
+        });
+
+        // Fonction pour exécuter l'action
+        function executeAction(action, userId, userName) {
+            // Fermer la modal
+            bootstrap.Modal.getInstance(document.getElementById('confirmationModal')).hide();
+            
+            // Simuler l'action (remplacez par vos appels AJAX/API)
+            let actionText = '';
+            let actionClass = '';
+            
+            switch(action) {
+                case 'delete':
+                    actionText = 'supprimé';
+                    actionClass = 'danger';
+                    // Supprimer la ligne du tableau
+                    removeUserRow(userId);
+                    break;
+                case 'block':
+                    actionText = 'bloqué';
+                    actionClass = 'warning';
+                    // Marquer comme bloqué
+                    markUserAsBlocked(userId);
+                    break;
+                case 'ban':
+                    actionText = 'banni';
+                    actionClass = 'danger';
+                    // Marquer comme banni
+                    markUserAsBanned(userId);
+                    break;
+            }
+            
+            // Afficher un message de succès
+            showNotification(`L'utilisateur ${userName} a été ${actionText} avec succès.`, actionClass);
+            
+            // Réinitialiser les variables
+            currentAction = null;
+            currentUserId = null;
+            currentUserName = null;
+        }
+
+        // Fonction pour supprimer une ligne du tableau
+        function removeUserRow(userId) {
+            const row = document.querySelector(`tr:has(span:contains("#${userId}"))`);
+            if (row) {
+                row.classList.add('animate__animated', 'animate__fadeOut');
+                setTimeout(() => {
+                    row.remove();
+                }, 500);
+            }
+        }
+
+        // Fonction pour marquer un utilisateur comme bloqué
+        function markUserAsBlocked(userId) {
+            const row = document.querySelector(`tr:has(.badge:contains("#${userId}"))`);
+            if (row) {
+                const actionsCell = row.querySelector('td:last-child');
+                const blockBtn = actionsCell.querySelector('.btn-block');
+                blockBtn.innerHTML = '<i class="bi bi-unlock"></i> Débloquer';
+                blockBtn.classList.remove('btn-block');
+                blockBtn.classList.add('btn-success');
+                blockBtn.onclick = () => unblockUser(userId, row.cells[1].textContent + ' ' + row.cells[2].textContent);
+            }
+        }
+
+        // Fonction pour marquer un utilisateur comme banni
+        function markUserAsBanned(userId) {
+            const row = document.querySelector(`tr:has(.badge:contains("#${userId}"))`);
+            if (row) {
+                const actionsCell = row.querySelector('td:last-child');
+                actionsCell.innerHTML = '<span class="badge bg-danger">BANNI</span>';
+                row.style.opacity = '0.6';
+            }
+        }
+
+        // Fonction pour débloquer un utilisateur
+        function unblockUser(userId, userName) {
+            const row = document.querySelector(`tr:has(.badge:contains("#${userId}"))`);
+            if (row) {
+                const actionsCell = row.querySelector('td:last-child');
+                const unblockBtn = actionsCell.querySelector('.btn-success');
+                unblockBtn.innerHTML = '<i class="bi bi-lock"></i> Bloquer';
+                unblockBtn.classList.remove('btn-success');
+                unblockBtn.classList.add('btn-block');
+                unblockBtn.onclick = () => blockUser(userId, userName);
+                
+                showNotification(`L'utilisateur ${userName} a été débloqué avec succès.`, 'success');
+            }
+        }
+
+        // Fonction pour afficher les notifications
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                border-radius: 16px;
+                backdrop-filter: blur(10px);
+            `;
+            
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Supprimer automatiquement après 5 secondes
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 150);
+                }
+            }, 5000);
+        }
+
+        // Animation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animer les lignes du tableau une par une
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach((row, index) => {
+                setTimeout(() => {
+                    row.classList.add('animate__animated', 'animate__fadeInUp');
+                }, index * 100);
+            });
+        });
+
+        // Effet de survol amélioré pour les boutons
+        document.querySelectorAll('.btn-action').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px) scale(1.05)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Recherche en temps réel (optionnel)
+        function addSearchFunctionality() {
+            const searchInput = document.createElement('input');
+            searchInput.type = 'text';
+            searchInput.placeholder = 'Rechercher un utilisateur...';
+            searchInput.className = 'form-control mb-3';
+            searchInput.style.cssText = `
+                border-radius: 16px;
+                border: 2px solid var(--primary);
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(10px);
+            `;
+            
+            const tableContainer = document.querySelector('.table-responsive');
+            tableContainer.parentNode.insertBefore(searchInput, tableContainer);
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('tbody tr');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                        row.classList.add('animate__animated', 'animate__fadeIn');
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Activer la recherche (décommentez si nécessaire)
+        // addSearchFunctionality();
+
+        // Fonction pour exporter les données (optionnel)
+        function exportToCSV() {
+            const rows = document.querySelectorAll('tbody tr');
+            let csvContent = 'ID,Nom,Prénom,Email,Créé le\n';
+            
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowData = [
+                    cells[0].textContent.replace('#', ''),
+                    cells[1].textContent,
+                    cells[2].textContent,
+                    cells[3].textContent,
+                    cells[4].textContent
+                ].join(',');
+                csvContent += rowData + '\n';
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'utilisateurs.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Gestionnaire pour les touches de raccourci
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + D pour basculer le mode sombre
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                themeToggle.click();
+            }
+            
+            // Ctrl + E pour exporter (décommentez si nécessaire)
+            // if (e.ctrlKey && e.key === 'e') {
+            //     e.preventDefault();
+            //     exportToCSV();
+            // }
+        });
+
+        // Animation des badges au survol
+        document.querySelectorAll('.badge').forEach(badge => {
+            badge.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
+                this.style.transition = 'transform 0.2s ease';
+            });
+            
+            badge.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Fonction pour mettre à jour les statistiques (optionnel)
+        function updateStats() {
+            const totalUsers = document.querySelectorAll('tbody tr').length;
+            const activeUsers = document.querySelectorAll('tbody tr:not([style*="opacity: 0.6"])').length;
+            const bannedUsers = document.querySelectorAll('.badge:contains("BANNI")').length;
+            
+            // Vous pouvez ajouter un widget de statistiques ici
+            console.log(`Total: ${totalUsers}, Actifs: ${activeUsers}, Bannis: ${bannedUsers}`);
+        }
+
+        
+        updateStats();
+    </script>
+</body>
+</html>
