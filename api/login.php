@@ -64,7 +64,8 @@ try {
                     'firstname' => htmlspecialchars($user['firstname']),
                     'lastname' => htmlspecialchars($user['lastname']),
                     'email' => $email,
-                    'csrf_token' => $csrf_token
+                    'csrf_token' => $csrf_token,
+                    'status' => $user['status']
                 ]
             ];
             

@@ -10,3 +10,4 @@ console.log(API_URL);
 console.log(API_URL2);
 console.log(WS_URL);
 
+const app = document.getElementById('app');
