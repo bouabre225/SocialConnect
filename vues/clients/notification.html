@@ -1,21 +1,46 @@
-<div class="notification-container">
-    <div class="notification-header">
-        <h1>Notifications</h1>
-        <div>
-            <button id="mark-all-read" class="btn">Tout marquer comme lu</button>
+<div class="container">
+        <div class="notification-container animate__animated animate__fadeIn">
+            <div class="notification-header">
+                <h1>
+                    <i class="fas fa-bell"></i> Notifications
+                </h1>
+                <div class="notification-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="total-count">12</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="unread-count">5</div>
+                        <div class="stat-label">Non lues</div>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-controls">
+                <div>
+                    <select class="filter-select" id="type-filter">
+                        <option value="all">Tous les types</option>
+                        <option value="system">Système</option>
+                        <option value="security">Sécurité</option>
+                        <option value="update">Mise à jour</option>
+                        <option value="social">Social</option>
+                    </select>
+                </div>
+                <button id="mark-all-read" class="btn btn-primary">
+                    <i class="fas fa-check-double"></i> Tout marquer comme lu
+                </button>
+            </div>
+            <div class="notification-tabs">
+                <div class="notification-tab active" data-tab="all">
+                    Toutes <span class="notification-badge">12</span>
+                </div>
+                <div class="notification-tab" data-tab="unread">
+                    Non lues <span class="notification-badge">5</span>
+                </div>
+            </div>
+            <div class="notification-list" id="notification-list">
+                <!-- Les notifications seront ajoutées ici par JavaScript -->
+            </div>
         </div>
-    </div>
-    
-    <div class="notification-tabs">
-        <div class="notification-tab active" data-tab="all">Toutes</div>
-        <div class="notification-tab" data-tab="unread">Non lues</div>
-    </div>
-    
-    <div class="notification-list" id="notification-list">
-        <!-- Les notifications seront chargées ici via JavaScript -->
-        <div class="notification-empty">
-            <i class="far fa-bell"></i>
-            <p>Aucune notification pour le moment</p>
-        </div>
-    </div>
 </div>
+
+    
