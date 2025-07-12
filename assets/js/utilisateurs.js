@@ -21,6 +21,103 @@ themeToggle.addEventListener('click', () => {
     }, 150);
 });
 
+let users = [
+    {
+        id: 1,
+        nom: "KORE",
+        prenom: "Ange",
+        email: "ange.kore@gmail.com",
+        dateCreation: "2025-07-11",
+        status: "actif"
+    }
+];
+
+function renderUsers() {
+    const tbody = document.getElementById('usersTableBody');
+    tbody.innerHTML = '';
+
+    if (users.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="bi bi-people"></i>
+                        <h4>Aucun utilisateur trouvé</h4>
+                        <p>Les utilisateurs apparaîtront ici lorsqu'ils s'inscriront.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    users.forEach((user, index) => {
+        const tr = document.createElement('tr');
+        tr.className = `animate__animated animate__fadeInUp`;
+        tr.style.animationDelay = `${index * 0.1}s`;
+        
+        let statusBadge = '';
+        if (user.status === 'banned') {
+            statusBadge = '<span class="user-status status-banned">Banni</span>';
+        } else if (user.status === 'blocked') {
+            statusBadge = '<span class="user-status status-blocked">Bloqué</span>';
+        } else {
+            statusBadge = '<span class="user-status status-active">Actif</span>';
+        }
+
+        let actions = '';
+        if (user.status === 'banned') {
+            actions = `
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-action btn-delete" onclick="deleteUser(${user.id}, '${user.prenom} ${user.nom}')">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                </div>
+            `;
+        } else if (user.status === 'blocked') {
+            actions = `
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-action btn-delete" onclick="deleteUser(${user.id}, '${user.prenom} ${user.nom}')">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                    <button class="btn btn-sm btn-action btn-success" onclick="unblockUser(${user.id}, '${user.prenom} ${user.nom}')">
+                        <i class="bi bi-unlock"></i> Débloquer
+                    </button>
+                    <button class="btn btn-sm btn-action btn-ban" onclick="banUser(${user.id}, '${user.prenom} ${user.nom}')">
+                        <i class="bi bi-ban"></i> Bannir
+                    </button>
+                </div>
+            `;
+        } else {
+            actions = `
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-action btn-delete" onclick="deleteUser(${user.id}, '${user.prenom} ${user.nom}')">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                    <button class="btn btn-sm btn-action btn-block" onclick="blockUser(${user.id}, '${user.prenom} ${user.nom}')">
+                        <i class="bi bi-lock"></i> Bloquer
+                    </button>
+                    <button class="btn btn-sm btn-action btn-ban" onclick="banUser(${user.id}, '${user.prenom} ${user.nom}')">
+                        <i class="bi bi-ban"></i> Bannir
+                    </button>
+                </div>
+            `;
+        }
+
+        tr.innerHTML = `
+            <td><span class="badge bg-primary">#${user.id}</span></td>
+            <td>${user.nom}</td>
+            <td>${user.prenom}</td>
+            <td>${user.email}</td>
+            <td><span class="badge-date">${user.dateCreation}</span></td>
+            <td>${statusBadge}</td>
+            <td>${actions}</td>
+        `;
+        
+        tbody.appendChild(tr);
+    });
+}
+
 let currentAction = null;
 let currentUserId = null;
 let currentUserName = null;
@@ -90,6 +187,28 @@ function banUser(userId, userName) {
     new bootstrap.Modal(document.getElementById('confirmationModal')).show();
 }
 
+function unblockUser(userId, userName) {
+    currentAction = 'unblock';
+    currentUserId = userId;
+    currentUserName = userName;
+    
+    document.getElementById('confirmationModalLabel').textContent = 'Confirmer le déblocage';
+    document.getElementById('confirmationModalBody').innerHTML = `
+        <div class="text-center">
+            <i class="bi bi-unlock text-success" style="font-size: 3rem;"></i>
+            <h5 class="mt-3">Êtes-vous sûr de vouloir débloquer l'utilisateur ?</h5>
+            <p class="text-muted"><strong>${userName}</strong> (ID: ${userId})</p>
+            <div class="alert alert-success">
+                <i class="bi bi-info-circle"></i> L'utilisateur pourra à nouveau se connecter.
+            </div>
+        </div>
+    `;
+    document.getElementById('confirmActionBtn').className = 'btn btn-success';
+    document.getElementById('confirmActionBtn').innerHTML = '<i class="bi bi-unlock"></i> Débloquer';
+    
+    new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+}
+
 document.getElementById('confirmActionBtn').addEventListener('click', function() {
     if (currentAction && currentUserId) {
         executeAction(currentAction, currentUserId, currentUserName);
@@ -106,69 +225,46 @@ function executeAction(action, userId, userName) {
         case 'delete':
             actionText = 'supprimé';
             actionClass = 'danger';
-            removeUserRow(userId);
+            users = users.filter(user => user.id !== userId);
             break;
         case 'block':
             actionText = 'bloqué';
             actionClass = 'warning';
-            markUserAsBlocked(userId);
+            users = users.map(user => {
+                if (user.id === userId) {
+                    return {...user, status: 'blocked'};
+                }
+                return user;
+            });
             break;
         case 'ban':
             actionText = 'banni';
             actionClass = 'danger';
-            markUserAsBanned(userId);
+            users = users.map(user => {
+                if (user.id === userId) {
+                    return {...user, status: 'banned'};
+                }
+                return user;
+            });
+            break;
+        case 'unblock':
+            actionText = 'débloqué';
+            actionClass = 'success';
+            users = users.map(user => {
+                if (user.id === userId) {
+                    return {...user, status: 'active'};
+                }
+                return user;
+            });
             break;
     }
     
     showNotification(`L'utilisateur ${userName} a été ${actionText} avec succès.`, actionClass);
+    renderUsers();
     
     currentAction = null;
     currentUserId = null;
     currentUserName = null;
-}
-function removeUserRow(userId) {
-    const row = document.querySelector(`tr:has(span:contains("#${userId}"))`);
-    if (row) {
-        row.classList.add('animate__animated', 'animate__fadeOut');
-        setTimeout(() => {
-            row.remove();
-        }, 500);
-    }
-}
-
-function markUserAsBlocked(userId) {
-    const row = document.querySelector(`tr:has(.badge:contains("#${userId}"))`);
-    if (row) {
-        const actionsCell = row.querySelector('td:last-child');
-        const blockBtn = actionsCell.querySelector('.btn-block');
-        blockBtn.innerHTML = '<i class="bi bi-unlock"></i> Débloquer';
-        blockBtn.classList.remove('btn-block');
-        blockBtn.classList.add('btn-success');
-        blockBtn.onclick = () => unblockUser(userId, row.cells[1].textContent + ' ' + row.cells[2].textContent);
-    }
-}
-
-function markUserAsBanned(userId) {
-    const row = document.querySelector(`tr:has(.badge:contains("#${userId}"))`);
-    if (row) {
-        const actionsCell = row.querySelector('td:last-child');
-        actionsCell.innerHTML = '<span class="badge bg-danger">BANNI</span>';
-        row.style.opacity = '0.6';
-    }
-}
-
-function unblockUser(userId, userName) {
-    const row = document.querySelector(`tr:has(.badge:contains("#${userId}"))`);
-    if (row) {
-        const actionsCell = row.querySelector('td:last-child');
-        const unblockBtn = actionsCell.querySelector('.btn-success');
-        unblockBtn.innerHTML = '<i class="bi bi-lock"></i> Bloquer';
-        unblockBtn.classList.remove('btn-success');
-        unblockBtn.classList.add('btn-block');
-        unblockBtn.onclick = () => blockUser(userId, userName);
-        
-        showNotification(`L'utilisateur ${userName} a été débloqué avec succès.`, 'success');
-    }
 }
 
 function showNotification(message, type) {
@@ -205,117 +301,22 @@ function showNotification(message, type) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach((row, index) => {
-        setTimeout(() => {
-            row.classList.add('animate__animated', 'animate__fadeInUp');
-        }, index * 100);
-    });
-});
-
-document.querySelectorAll('.btn-action').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-2px) scale(1.05)';
-    });
+    renderUsers();
     
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-});
-
-function addSearchFunctionality() {
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.placeholder = 'Rechercher un utilisateur...';
-    searchInput.className = 'form-control mb-3';
-    searchInput.style.cssText = `
-        border-radius: 16px;
-        border: 2px solid var(--primary);
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-    `;
-    
-    const tableContainer = document.querySelector('.table-responsive');
-    tableContainer.parentNode.insertBefore(searchInput, tableContainer);
-    
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
+    document.querySelectorAll('.btn-action').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.05)';
+        });
         
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            if (text.includes(searchTerm)) {
-                row.style.display = '';
-                row.classList.add('animate__animated', 'animate__fadeIn');
-            } else {
-                row.style.display = 'none';
-            }
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
         });
     });
-}
-
-
-// addSearchFunctionality();
-
-function exportToCSV() {
-    const rows = document.querySelectorAll('tbody tr');
-    let csvContent = 'ID,Nom,Prénom,Email,Créé le\n';
-    
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const rowData = [
-            cells[0].textContent.replace('#', ''),
-            cells[1].textContent,
-            cells[2].textContent,
-            cells[3].textContent,
-            cells[4].textContent
-        ].join(',');
-        csvContent += rowData + '\n';
-    });
-    
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'utilisateurs.csv';
-    a.click();
-    window.URL.revokeObjectURL(url);
-}
+});
 
 document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && e.key === 'd') {
         e.preventDefault();
         themeToggle.click();
     }
-    
-
-    // if (e.ctrlKey && e.key === 'e') {
-    //     e.preventDefault();
-    //     exportToCSV();
-    // }
 });
-
-document.querySelectorAll('.badge').forEach(badge => {
-    badge.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1)';
-        this.style.transition = 'transform 0.2s ease';
-    });
-    
-    badge.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1)';
-    });
-});
-
-function updateStats() {
-    const totalUsers = document.querySelectorAll('tbody tr').length;
-    const activeUsers = document.querySelectorAll('tbody tr:not([style*="opacity: 0.6"])').length;
-    const bannedUsers = document.querySelectorAll('.badge:contains("BANNI")').length;
-    
-    
-    console.log(`Total: ${totalUsers}, Actifs: ${activeUsers}, Bannis: ${bannedUsers}`);
-}
-
-
-updateStats();

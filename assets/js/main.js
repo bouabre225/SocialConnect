@@ -1,4 +1,3 @@
-
 // Config des routes
 const routes = {
     '/': '/vues/clients/login.html',
@@ -17,6 +16,9 @@ const routes = {
     '/settings-admin': '/vues/admin/settings.html',
     '/statistiques': '/vues/admin/statistiques.html',
     '/utilisateurs': '/vues/admin/utilisateurs.html',   
+    '/articles': '/vues/admin/articles.html',
+    '/signalements': '/vues/admin/signalements.html',
+    '/roles': '/vues/admin/gestion_des_roles.html'
 };
 
 // Fonction pour charger dynamiquement un script
@@ -65,6 +67,9 @@ async function loadView(url) {
         '/vues/admin/settings.html': '../../assets/css/settings-admin.css',
         '/vues/admin/statistiques.html': '../../assets/css/statistiques.css',
         '/vues/admin/utilisateurs.html': '../../assets/css/utilisateurs.css',
+        '/vues/admin/articles.html': '../../assets/css/articles.css',
+        '/vues/admin/signalements.html': '../../assets/css/signalement.css',
+        '/vues/admin/gestion_des_roles.html': '../../assets/css/roles.css',
     };
 
     const jsMap = {
@@ -83,6 +88,9 @@ async function loadView(url) {
         '/vues/admin/settings.html': '../../assets/js/settings-admin.js',
         '/vues/admin/statistiques.html': '../../assets/js/statistiques.js',
         '/vues/admin/utilisateurs.html': '../../assets/js/utilisateurs.js',
+        '/vues/admin/articles.html': '../../assets/js/articles.js',
+        '/vues/admin/signalements.html': '../../assets/js/signalements.js',
+        '/vues/admin/gestion_des_roles.html': '../../assets/js/roles.js',
     };
 
     const cssPath = cssMap[url];
@@ -140,7 +148,16 @@ function router() {
                 case '/statistiques':
                     console.log('Statistiques ouvert');
                     break;
-                                // ajoute d'autres cas au besoin
+                case '/articles':
+                    console.log('Articles ouvert');
+                    break;
+                case '/signalements':
+                    console.log('Signalements ouvert');
+                    break;
+                case '/roles':
+                    console.log('Roles ouvert');
+                    break;
+                // ajoute d'autres cas au besoin
             }
         });
     } else {

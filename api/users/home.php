@@ -1,13 +1,4 @@
 <?php
-//congig
-require '../../api/config.php';
-
-// Inclure le chargeur automatique de Composer pour JWT
-require_once '../../vendor/autoload.php';
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-//use \Exception;
-
 //inclusion des headers
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     // Configuration des headers
@@ -26,6 +17,15 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
+
+//congig
+require '../../api/config.php';
+
+// Inclure le chargeur automatique de Composer pour JWT
+require_once '../../vendor/autoload.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+//use \Exception;
 
 // Clé secrète pour JWT
 $secretKey = 'JWT_SECRET_KEY';
