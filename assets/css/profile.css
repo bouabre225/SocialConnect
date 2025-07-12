@@ -208,6 +208,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    background-color: #e4e6eb;
 }
 
 .profile-picture i {
