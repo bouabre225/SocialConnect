@@ -10,7 +10,7 @@
             return;
         }
         try {
-            const response = await fetch(`${API_URL}`, {
+            const response = await fetch(`${API_URL}/home`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -192,7 +192,7 @@
             if (emojiInput.value.trim()) formData.append('emoji_content', emojiInput.value.trim());
             
             try {
-                await fetchAPI('/stories', 'POST', formData, true);
+                await fetchApi('/stories', 'POST', formData, true);
                 modal.style.display = 'none';
                 loadStories();
             } catch (error) {
@@ -452,7 +452,6 @@
     }
 
     // Gestion du bouton lieu
-
     document.querySelector('.location-action')?.addEventListener('click', (e) => {
         e.preventDefault();
         let modal = document.getElementById('locationModal');
@@ -558,8 +557,10 @@
     });
  // Gestion du bouton chat
 document.getElementById('go-to-chat')?.addEventListener('click', () => {
-    redirect('/chat');
-});
+    setTimeout(() => {
+        history.pushState(null, '', '/chat');
+        router();        
+    }, 1200);});
 
 if (checkAuth()) {
     fetchContacts();

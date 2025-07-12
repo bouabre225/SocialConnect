@@ -1,4 +1,5 @@
 <?php
+define('API', 'http://localhost/ReseauSocial/api/users');
 
 // Configuration des headers
 header('Content-Type: application/json');
@@ -20,8 +21,8 @@ define('JWT_SECRET_KEY', 'ta-cle-super-secrete');
 // Fonction utilitaire pour la réponse JSON
 function jsonResponse($data, $code = 200) {
     http_response_code($code);
-    header('Content-Type: application/json');
-    echo json_encode($data);
+   // header('Content-Type: application/json');
+   // echo json_encode($data);
 }
 
 // Connexion à la base de données

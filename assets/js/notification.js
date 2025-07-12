@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Fonction pour marquer une notification comme lue
     function markNotificationAsRead(notificationId) {
-        fetch('notification.php', {
+        fetch(`${API_URL2}/notification.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Fonction pour marquer toutes les notifications comme lues
     function markAllNotificationsAsRead() {
-        fetch('notification.php', {
+        fetch(`${API_URL2}/notification.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

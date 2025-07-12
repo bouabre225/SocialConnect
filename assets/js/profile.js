@@ -43,7 +43,7 @@ window.addEventListener('click', (e) => {
 // Function to load profile data
 async function loadProfileData() {
     try {
-        const response = await fetch('api/profile.php');
+        const response = await fetch(`${API_URL2}/profile.php`);
         const data = await response.json();
         
         if (data.success) {
@@ -72,7 +72,7 @@ function updateProfileUI(user) {
 // Function to load posts
 async function loadPosts() {
     try {
-        const response = await fetch('api/profile.php?posts=true');
+        const response = await fetch(`${API_URL2}/profile.php?posts=true`);
         const data = await response.json();
         
         if (data.success) {
@@ -157,7 +157,7 @@ async function updateProfile() {
     };
     
     try {
-        const response = await fetch('api/update_profile.php', {
+        const response = await fetch(`${API_URL2}/update_profile.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -190,7 +190,7 @@ async function createPost() {
     }
     
     try {
-        const response = await fetch('api/create_post.php', {
+        const response = await fetch(`${API_URL2}/create_post.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

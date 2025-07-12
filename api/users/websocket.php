@@ -2,8 +2,8 @@
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
-require '../../config.php';
-require '../../vendor/autoload.php'; // Composer pour JWT
+require_once '../../api/config.php';
+require_once '../../vendor/autoload.php'; // Composer pour JWT
 
 class Chat implements MessageComponentInterface {
     protected $clients;
@@ -27,7 +27,7 @@ class Chat implements MessageComponentInterface {
         }
 
         // Vérifier le token JWT
-        $secretKey = getenv('JWT_SECRET_KEY') ?: 'your-secret-key';
+        $secretKey = 'JWT_SECRET_KEY';
         try {
             $decoded = \Firebase\JWT\JWT::decode($data['token'], new \Firebase\JWT\Key($secretKey, 'HS256'));
             $user_id = $decoded->user_id;

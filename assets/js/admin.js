@@ -48,8 +48,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (data.status === 'success') {
                     
-                    window.location.href = "dashboard.html";
-                } else {
+                    setTimeout(() => {
+                        history.pushState(null, '', '/dashboard-admin');
+                        router();
+                    }, 1200);                } else {
             
                     if (loginMessage) loginMessage.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
                 }

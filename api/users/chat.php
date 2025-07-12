@@ -1,6 +1,6 @@
 <?php
-require '../../config.php';
-require '../../vendor/autoload.php'; // Composer pour JWT
+require_once '../../api/config.php';
+require_once '../../vendor/autoload.php'; // Composer pour JWT
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -8,7 +8,7 @@ use Firebase\JWT\Key;
 // CORS
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin:' . API);
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Allow-Credentials: true');
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin:' . API);
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Access-Control-Allow-Credentials: true');

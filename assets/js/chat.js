@@ -17,7 +17,7 @@ async function checkAuth() {
         }, 1200);        
     }
     try {
-        const response = await fetch(`${API_URL}`, {
+        const response = await fetch(`${API_URL}/home`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -57,7 +57,7 @@ function initWebSocket() {
 // Récupérer les conversations
 async function fetchConversations() {
     try {
-        const response = await fetch(`${API_URL1}/conversations`, {
+        const response = await fetch(`${API_URL}/conversations`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         const data = await response.json();
@@ -87,7 +87,7 @@ async function fetchConversations() {
 // Récupérer les messages d'une conversation
 async function fetchMessages(conversationId) {
     try {
-        const response = await fetch(`${API_URL1}/messages?conversation_id=${conversationId}`, {
+        const response = await fetch(`${API_URL}/messages?conversation_id=${conversationId}`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         const data = await response.json();
@@ -137,7 +137,7 @@ document.querySelector('.message-form').addEventListener('submit', async (e) => 
         }));
 
         // Envoyer via API pour assurer la persistance
-        const response = await fetch(`${API_URL1}/message`, {
+        const response = await fetch(`${API_URL}/message`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
