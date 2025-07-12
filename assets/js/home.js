@@ -84,7 +84,7 @@
         const suggestionsList = document.querySelector('.suggestions-list');
         if (!suggestionsList) return;
         suggestionsList.innerHTML = '';
-        const data = await fetchApi('/friends/suggestions');
+        const data = await fetchApi('/friends_suggestion');
         const suggestions = data.suggestions || [];
         suggestions.forEach(suggestion => {
             const suggestionItem = document.createElement('div');
@@ -297,7 +297,7 @@
             });
             // Charger les commentaires
             async function loadComments(post_id, commentsList) {
-                const comments = await fetchApi(`/posts/${post_id}/comments`);
+                const comments = await fetchApi(`/posts_comments/${post_id}`);
                 commentsList.innerHTML = '';
                 document.getElementById(`comments-count-${post_id}`).textContent = `${comments.length} commentaires`;
                 comments.forEach(comment => {
