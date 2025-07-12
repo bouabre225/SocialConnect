@@ -1,6 +1,7 @@
 <?php
 require_once '../../api/config.php';
 
+require_once '../../api/cors.php';
 
 //inclusion des headers
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
@@ -36,19 +37,46 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 
 // Fonction pour vérifier le token JWT
-function authentificateToken($headers){
-    global $secretKey;
-    if (!isset($headers['Authorization'])) {
-        jsonResponse(['status' => 'error', 'message' => 'Aucun token fourni'], 401);
+function getAuthorizationHeader() {
+    $headers = null;
+    if (isset($_SERVER['Authorization'])) {
+        $headers = trim($_SERVER['Authorization']);
     }
-    $token = str_replace('Bearer ', '', $headers['Authorization']);
+    else if (isset($_SERVER['HTTP_AUTHORIZATION'])) { // Pour Apache + FastCGI
+        $headers = trim($_SERVER['HTTP_AUTHORIZATION']);
+    } elseif (function_exists('apache_request_headers')) {
+        $requestHeaders = apache_request_headers();
+        // Recherche insensible à la casse
+        foreach ($requestHeaders as $key => $value) {
+            if (strcasecmp($key, 'Authorization') == 0) {
+                $headers = trim($value);
+                break;
+            }
+        }
+    }
+    return $headers;
+}
+
+function authentificateToken() {
+    global $secretKey;
+
+    $authHeader = getAuthorizationHeader();
+    if (!$authHeader) {
+        jsonResponse(['status' => 'error', 'message' => 'Aucun token fourni'], 401);
+        exit;
+    }
+
+    $token = str_replace('Bearer ', '', $authHeader);
+
     try {
         $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
         return $decoded;
     } catch (Exception $e) {
         jsonResponse(['status' => 'error', 'message' => 'Token invalide'], 401);
+        exit;
     }
 }
+
 
 // Fonction pour gérer les uploads de fichiers
 function handFileUpload($file, $uploadDir = './uploads/'){

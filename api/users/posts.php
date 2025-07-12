@@ -1,11 +1,11 @@
 <?php
-require_once 'common.php';
+require_once '../../api/users/common.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
-$user = authentificateToken(getallheaders());
+$user = authentificateToken();
 
 if ($method === 'POST') {
-    $user = authentificateToken(getallheaders());
+    $user = authentificateToken();
     $data = json_decode(file_get_contents('php://input'), true);
     $content = $data['content'] ?? null;
     $location_name = $data['location_name'] ?? null;
@@ -36,7 +36,7 @@ if ($method === 'POST') {
         jsonResponse(['status' => 'error', 'message' => 'Erreur lors de la création du post'], 500);
     }
 } elseif ($method === 'GET') {
-    $user = authentificateToken(getallheaders());
+    $user = authentificateToken();
     try {
         $stmt = $pdo->prepare('
             SELECT p.*, u.username, CONCAT(u.firstname, " ", u.lastname) AS full_name, u.avatar_url,

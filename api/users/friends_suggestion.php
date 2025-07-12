@@ -1,11 +1,11 @@
 <?php
 
-require_once 'common.php';
+require_once '../../api/users/common.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents('php://input'), true);
 
-$user = authentificateToken(getallheaders());
+$user = authentificateToken();
 
 if ($method !== 'GET') {
     jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);

@@ -10,7 +10,7 @@
             return;
         }
         try {
-            const response = await fetch(`${API_URL}/home`, {
+            const response = await fetch(`${API_URL}/home.php`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -35,25 +35,43 @@
     }
 
     // Fonction pour faire des requêtes API
-    async function fetchApi(endpoint, method = 'GET', body = null, isFormData = false) {
-        const options = {
-            method,
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        };
-        if (body && !isFormData) {
-            options.headers['Content-Type'] = 'application/json';
-            options.body = JSON.stringify(body);
-        } else if (body && isFormData) {
-            options.body = body;
-        }
+/**
+ * Appel d'API centralisé avec gestion des erreurs et des en-têtes
+ * @param {string} endpoint - Le chemin relatif de l'API (ex: '/api/users/posts')
+ * @param {string} [method='GET'] - Méthode HTTP
+ * @param {Object|FormData|null} [body=null] - Corps de la requête
+ * @param {boolean} [isFormData=false] - True si body est un FormData
+ * @returns {Promise<any>} - Données de la réponse JSON
+ */
+async function fetchApi(endpoint, method = 'GET', body = null, isFormData = false) {
+    const token = localStorage.getItem('token');
+
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (body && !isFormData) headers['Content-Type'] = 'application/json';
+
+    const options = {
+        method,
+        headers,
+    };
+
+    if (body) {
+        options.body = isFormData ? body : JSON.stringify(body);
+    }
+
+    try {
         const response = await fetch(`${API_URL}${endpoint}`, options);
-        console.log(`${API_URL}${endpoint}`);
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Erreur API');
+            // Tente de parser l'erreur renvoyée par l'API
+            const error = await response.json().catch(() => null);
+            throw new Error(error?.error || error?.message || `Erreur HTTP ${response.status}`);
         }
         return await response.json();
+    } catch (err) {
+        console.error(`Erreur sur l'API : ${endpoint}`, err);
+        throw err;
     }
+}
 
     // Récupérer et afficher les contacts (amis)
     async function fetchContacts() {
@@ -63,7 +81,7 @@
             return;
         }
         contactsList.innerHTML = '';
-        const friends = await fetchApi('/friends?status=accepted');
+        const friends = await fetchApi('/friends.php?status=accepted');
         friends.forEach(contact => {
             const contactItem = document.createElement('div');
             contactItem.className = 'contact-item';
@@ -84,7 +102,7 @@
         const suggestionsList = document.querySelector('.suggestions-list');
         if (!suggestionsList) return;
         suggestionsList.innerHTML = '';
-        const data = await fetchApi('/friends_suggestion');
+        const data = await fetchApi('/friends_suggestion.php');
         const suggestions = data.suggestions || [];
         suggestions.forEach(suggestion => {
             const suggestionItem = document.createElement('div');
@@ -105,7 +123,7 @@
             `;
             suggestionsList.appendChild(suggestionItem);
             suggestionItem.querySelector('.suggestion-btn-primary').addEventListener('click', async () => {
-                await fetchApi('/friends', 'POST', { friend_id: suggestion.id });
+                await fetchApi('/friends.php', 'POST', { friend_id: suggestion.id });
                 suggestionItem.remove();
             });
         });
@@ -116,7 +134,7 @@
         const storiesScroll = document.querySelector('.stories-scroll');
         if (!storiesScroll) return;
         storiesScroll.innerHTML = '';
-        const stories = await fetchApi('/stories');
+        const stories = await fetchApi('/stories.php');
         stories.forEach(story => {
             const storyItem = document.createElement('div');
             storyItem.className = 'story-item';
@@ -144,7 +162,7 @@
                     </div>
                 `;
                 storyItem.addEventListener('click', async () => {
-                    await fetchApi(`/stories/${story.story_id}/views`, 'POST');
+                    await fetchApi(`/stories/views/${story.story_id}.php`, 'POST');
                 });
             }
             storiesScroll.appendChild(storyItem);
@@ -192,7 +210,7 @@
             if (emojiInput.value.trim()) formData.append('emoji_content', emojiInput.value.trim());
             
             try {
-                await fetchApi('/stories', 'POST', formData, true);
+                await fetchApi('/stories.php', 'POST', formData, true);
                 modal.style.display = 'none';
                 loadStories();
             } catch (error) {
@@ -207,7 +225,7 @@
     const feedPosts = document.querySelector('.feed-posts');
     if (!feedPosts) return;
         feedPosts.innerHTML = '';
-        const posts = await fetchApi('/posts');
+        const posts = await fetchApi('/posts.php');
         posts.forEach(post => {
             const postElement = document.createElement('div');
             postElement.className = 'post-container';
@@ -275,7 +293,7 @@
             likeBtn.addEventListener('click', async () => {
                 try {
                     const isLiked = likeBtn.classList.contains('liked');
-                    await fetchApi('/likes', isLiked ? 'DELETE' : 'POST', { post_id: post.post_id });
+                    await fetchApi('/likes.php', isLiked ? 'DELETE' : 'POST', { post_id: post.post_id });
                     likeBtn.classList.toggle('liked');
                     likesCount.textContent = isLiked ? parseInt(likesCount.textContent) - 1 : parseInt(likesCount.textContent) + 1;
                 } catch (error) {
@@ -290,14 +308,14 @@
                 const input = commentForm.querySelector('.comment-input');
                 const content = input.value.trim();
                 if (content) {
-                    await fetchApi('/comments', 'POST', { post_id: post.post_id, content });
+                    await fetchApi('/comments.php', 'POST', { post_id: post.post_id, content });
                     input.value = '';
                     loadComments(post.post_id, commentsList);
                 }
             });
             // Charger les commentaires
             async function loadComments(post_id, commentsList) {
-                const comments = await fetchApi(`/posts_comments/${post_id}`);
+                const comments = await fetchApi(`/posts_comments/${post_id}.php`);
                 commentsList.innerHTML = '';
                 document.getElementById(`comments-count-${post_id}`).textContent = `${comments.length} commentaires`;
                 comments.forEach(comment => {
@@ -347,7 +365,7 @@
             if (selectedPostMediaFile) formData.append('media', selectedPostMediaFile);
             
             try {
-                await fetchApi('/posts', 'POST', formData, true);
+                await fetchApi('/posts.php', 'POST', formData, true);
                 postInput.value = '';
                 selectedPostMediaFile = null;
                 selectedEmoji = '';

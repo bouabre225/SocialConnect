@@ -1,10 +1,10 @@
 <?php
-require_once 'common.php';
+require_once '../../api/users/common.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents('php://input'), true);
 
-$user = authentificateToken(getallheaders());
+$user = authentificateToken();
 
 if ($method === 'POST') {
     $friend_id = $data['friend_id'] ?? null;
@@ -17,7 +17,7 @@ if ($method === 'POST') {
         jsonResponse(['status' => 'error', 'message' => 'Erreur lors de l\'envoi de la demande d\'ami'], 500);
     }
 } elseif ($method === 'GET') {
-    $user = authentificateToken(getallheaders());
+    $user = authentificateToken();
     try {
         $stmt = $pdo->prepare('
             SELECT u.id, u.username, CONCAT(u.firstname, " ", u.lastname) AS full_name, u.avatar_url

@@ -1,6 +1,7 @@
 <?php
 require_once '../../api/config.php';
 require_once '../../vendor/autoload.php'; // Composer pour JWT
+require_once '../../api/users/common.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -24,27 +25,6 @@ header('Access-Control-Allow-Credentials: true');
 
 $secretKey = 'JWT_SECRET_KEY'; // À stocker dans .env
 
-//Fonction pour répondre en JSON
-function jsonResponse($data, $statusCode = 200) {
-    http_response_code($statusCode);
-    echo json_encode($data);
-    exit;
-}
-
-// Authentification JWT
-function authenticateToken($headers) {
-    global $secretKey;
-    if (!isset($headers['Authorization'])) {
-        jsonResponse(['status' => 'error', 'message' => 'Aucun token fourni'], 401);
-    }
-    $token = str_replace('Bearer ', '', $headers['Authorization']);
-    try {
-        return JWT::decode($token, new Key($secretKey, 'HS256'));
-    } catch (Exception $e) {
-        jsonResponse(['status' => 'error', 'message' => 'Token invalide'], 401);
-    }
-}
-
 // Gestion des routes
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -54,10 +34,9 @@ switch ($uri) {
         if ($method !== 'GET') {
             jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
         }
-        $user = authenticateToken(getallheaders());
+        $user = authentificateToken();
         try {
-            $stmt = $pdo->prepare('
-                SELECT c.id, c.name, c.type,
+            $stmt = $pdo->prepare('SELECT c.id, c.name, c.type,
                     (SELECT GROUP_CONCAT(u.username) 
                     FROM conversation_participants cp 
                     JOIN users u ON cp.user_id = u.id 
@@ -78,7 +57,7 @@ switch ($uri) {
         if ($method !== 'GET') {
             jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
         }
-        $user = authenticateToken(getallheaders());
+        $user = authentificateToken();
         $conversation_id = $_GET['conversation_id'] ?? null;
         if (!$conversation_id) {
             jsonResponse(['status' => 'error', 'message' => 'ID de conversation requis'], 400);
@@ -106,7 +85,7 @@ switch ($uri) {
         if ($method !== 'POST') {
             jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
         }
-        $user = authenticateToken(getallheaders());
+        $user = authentificateToken();
         $data = json_decode(file_get_contents('php://input'), true);
         $conversation_id = $data['conversation_id'] ?? null;
         $content = $data['content'] ?? null;
