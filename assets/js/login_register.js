@@ -2,7 +2,7 @@
 
 
 //const API_URL = 'http://localhost/ReseauSocial/api';
-const app = document.getElementById('app');
+//const app = document.getElementById('app');
 // Validation des formulaires
 function validateForm(formData, type) {
     const errors = [];
@@ -109,6 +109,7 @@ function handleError(error, container) {
             }
             // REGISTER
         } else if (e.target.id === 'registerForm') {
+            document.getElementById('loaderReg').style.display = 'block';
                 e.preventDefault();
                 console.log('Soumission du formulaire d\'inscription');
                 const formData = {
@@ -133,7 +134,7 @@ function handleError(error, container) {
                     return;
                 }
 
-                document.getElementById('loaderReg').style.display = 'block';
+                ///document.getElementById('loaderReg').style.display = 'block';
 
                 try {
                     const response = await fetch(`${API_URL2}/register.php`, {
@@ -156,7 +157,7 @@ function handleError(error, container) {
                         `;
                         e.target.reset();
                         setTimeout(() => {
-                            history.pushState(null, '', '/login');
+                            history.pushState(null, '', '/home');
                             router();        
                         }, 1200);
                     } else {

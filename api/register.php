@@ -1,4 +1,11 @@
 <?php
+
+error_reporting(E_ERROR);
+ini_set('display_errors', 0);
+header('Content-Type: application/json; charset=utf-8');
+ob_start();
+
+
     // Utilisation de PHPMailer
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
@@ -173,13 +180,16 @@
             'city' => $city,
             'interests' => $interests,
             'avatar_url' => $avatar_url,
+            'activation_token' => $activation_token,
+            'status' => 'pending',
         ],
-        'activation_token' => $activation_token,
-        'status' => 'pending',
+
         ]);
     } catch (Exception $e) {
         error_log("Erreur d'inscription: " . $e->getMessage());
         echo json_encode(['status' => 'error', 'message' => 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.']);
     }
+
+ob_end_flush();
 
 ?>

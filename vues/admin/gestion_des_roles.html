@@ -1,0 +1,96 @@
+<button class="theme-toggle" id="themeToggle">
+    <i class="bi bi-moon-fill"></i>
+</button>
+
+<div class="text-center mt-4 animate__animated animate__fadeInUp">
+    <a data-url="/dashboard-admin" class="home-btn">
+        <i class="bi bi-house-door"></i> Retourner à l'accueil
+    </a>
+</div>
+
+<div class="dashboard-container animate__animated animate__fadeIn">
+    <div class="dashboard-header animate__animated animate__fadeInDown">
+        <h1><i class="bi bi-shield-check"></i> Gestion des Rôles</h1>
+        <p class="mb-0">Gestion des administrateurs et modérateurs</p>
+    </div>
+    
+    <div class="d-flex justify-content-between mb-3">
+        <div class="search-box">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Rechercher un utilisateur..." id="searchInput">
+            </div>
+        </div>
+        <button class="btn btn-action btn-add" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+            <i class="bi bi-plus-circle"></i> Ajouter un rôle
+        </button>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover role-table">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-hash"></i> ID</th>
+                    <th><i class="bi bi-person"></i> Nom</th>
+                    <th><i class="bi bi-person"></i> Prénom</th>
+                    <th><i class="bi bi-envelope"></i> Email</th>
+                    <th><i class="bi bi-shield"></i> Rôle actuel</th>
+                    <th><i class="bi bi-calendar"></i> Date d'ajout</th>
+                    <th><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody id="rolesTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal pour ajouter un rôle -->
+<div class="modal fade" id="addRoleModal" tabindex="-1" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRoleModalLabel">Ajouter un rôle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addRoleForm">
+                    <div class="mb-3">
+                        <label for="userEmail" class="form-label">Email de l'utilisateur</label>
+                        <input type="email" class="form-control" id="userEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="roleSelect" class="form-label">Rôle à attribuer</label>
+                        <select class="form-select" id="roleSelect" required>
+                            <option value="">Sélectionner un rôle</option>
+                            <option value="admin">Administrateur</option>
+                            <option value="moderator">Modérateur</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-success" id="confirmAddRole">Confirmer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmer l'action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirmationModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirmer</button>
+            </div>
+        </div>
+    </div>
+</div>

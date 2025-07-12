@@ -1,0 +1,108 @@
+<button class="theme-toggle" id="themeToggle">
+    <i class="bi bi-moon-fill"></i>
+</button>
+
+<div class="text-center mt-4 animate__animated animate__fadeInUp">
+    <a data-url="/dashboard-admin" class="home-btn">
+        <i class="bi bi-house-door"></i> Retourner à l'accueil
+    </a>
+</div>
+
+<div class="dashboard-container animate__animated animate__fadeIn">
+    <div class="dashboard-header animate__animated animate__fadeInDown">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="bi bi-file-earmark-text-fill"></i> Gestion des Articles</h1>
+                <p class="mb-0">Gérez les articles et publications des utilisateurs</p>
+            </div>
+            <button class="add-btn" onclick="openAddArticleModal()">
+                <i class="bi bi-plus-circle"></i> Nouvel Article
+            </button>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover articles-table">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-hash"></i> ID</th>
+                    <th><i class="bi bi-file-text"></i> Titre</th>
+                    <th><i class="bi bi-card-text"></i> Extrait</th>
+                    <th><i class="bi bi-person"></i> Auteur</th>
+                    <th><i class="bi bi-calendar"></i> Date</th>
+                    <th><i class="bi bi-info-circle"></i> Statut</th>
+                    <th><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody id="articlesTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmer l'action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirmationModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirmer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addArticleModalLabel">
+                    <i class="bi bi-plus-circle"></i> Nouvel Article
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addArticleForm">
+                    <div class="mb-3">
+                        <label for="articleTitle" class="form-label">Titre de l'article</label>
+                        <input type="text" class="form-control" id="articleTitle" placeholder="Saisissez le titre..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="articleExcerpt" class="form-label">Extrait</label>
+                        <textarea class="form-control" id="articleExcerpt" rows="3" placeholder="Bref résumé de l'article..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="articleAuthor" class="form-label">Auteur</label>
+                        <input type="text" class="form-control" id="articleAuthor" placeholder="Nom de l'auteur..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="articleStatus" class="form-label">Statut</label>
+                        <select class="form-select" id="articleStatus" required>
+                            <option value="">Choisir un statut</option>
+                            <option value="draft">Brouillon</option>
+                            <option value="published">Publié</option>
+                            <option value="archived">Archivé</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="articleContent" class="form-label">Contenu</label>
+                        <textarea class="form-control" id="articleContent" rows="5" placeholder="Contenu de l'article..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-success" onclick="addArticle()">
+                    <i class="bi bi-plus-circle"></i> Ajouter l'article
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

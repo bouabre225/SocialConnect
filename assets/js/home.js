@@ -10,7 +10,7 @@
             return;
         }
         try {
-            const response = await fetch(`${API_URL}.php`, {
+            const response = await fetch(`${API_URL}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`

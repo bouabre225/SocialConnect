@@ -1,0 +1,112 @@
+<button class="theme-toggle" id="themeToggle">
+    <i class="bi bi-moon-fill"></i>
+</button>
+
+<div class="text-center mt-4 animate__animated animate__fadeInUp">
+    <a data-url="/moderator" class="home-btn">
+        <i class="bi bi-house-door"></i> Retourner à l'accueil
+    </a>
+</div>
+
+<div class="dashboard-container animate__animated animate__fadeIn">
+    <div class="dashboard-header animate__animated animate__fadeInDown">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="bi bi-flag-fill"></i> Gestion des Signalements</h1>
+                <p class="mb-0">Consultez et gérez les signalements des utilisateurs</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-danger" onclick="filterReports('pending')">
+                    <i class="bi bi-exclamation-triangle"></i> En attente
+                </button>
+                <button class="btn btn-outline-success" onclick="filterReports('reviewed')">
+                    <i class="bi bi-check-circle"></i> Traités
+                </button>
+                <button class="btn btn-outline-secondary" onclick="filterReports('all')">
+                    <i class="bi bi-list-ul"></i> Tous
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover reports-table">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-hash"></i> ID</th>
+                    <th><i class="bi bi-file-text"></i> Objet</th>
+                    <th><i class="bi bi-card-text"></i> Contenu</th>
+                    <th><i class="bi bi-person"></i> Auteur</th>
+                    <th><i class="bi bi-calendar"></i> Date</th>
+                    <th><i class="bi bi-info-circle"></i> Statut</th>
+                    <th><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody id="reportsTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmer l'action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirmationModalBody">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirmer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-labelledby="reportDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportDetailsModalLabel">
+                    <i class="bi bi-flag"></i> Détails du Signalement
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="report-details">
+                    <h5>Objet:</h5>
+                    <p id="reportModalTitle">Chargement...</p>
+                </div>
+                <div class="report-details">
+                    <h5>Contenu:</h5>
+                    <p id="reportModalContent">Chargement...</p>
+                </div>
+                <div class="report-details">
+                    <h5>Auteur:</h5>
+                    <p id="reportModalAuthor">Chargement...</p>
+                </div>
+                <div class="report-details">
+                    <h5>Date:</h5>
+                    <p id="reportModalDate">Chargement...</p>
+                </div>
+                <div class="report-details">
+                    <h5>Statut:</h5>
+                    <p id="reportModalStatus">Chargement...</p>
+                </div>
+                <div class="report-details">
+                    <h5>Type:</h5>
+                    <p id="reportModalType">Chargement...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" id="resolveReportBtn" onclick="resolveReport()">
+                    <i class="bi bi-check-circle"></i> Marquer comme traité
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

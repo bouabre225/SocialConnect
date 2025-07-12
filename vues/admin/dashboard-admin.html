@@ -4,7 +4,7 @@
             <button class="btn-burger d-lg-none me-3" id="sidebarMobileBtn" title="Menu">
                 <i class="bi bi-list"></i>
             </button>
-            <a href="/vues/clients/home.html" class="btn btn-outline-primary btn-sm me-3" title="Retour à l'accueil">
+            <a data-url="/home" class="btn btn-outline-primary btn-sm me-3" title="Retour à l'accueil">
                 <i class="bi bi-house me-1"></i> Accueil
             </a>
             <h1 class="h5 mb-0">Hello<span class="text-primary"> Admin</span> 👋</h1>
@@ -29,7 +29,7 @@
                 <div class="fw-bold">Administrateur</div>
                 <small class="text-muted">Super Admin</small>
             </div>
-            <a href="#" class="btn btn-outline-danger btn-sm">
+            <a data-url="/admin" class="btn btn-outline-danger btn-sm">
                 <i class="bi bi-box-arrow-right"></i> Déconnexion
             </a>
         </div>
@@ -39,26 +39,18 @@
         <div class="sidebar d-none d-lg-block" id="sidebar">
             <div class="py-4 px-3">
                 <h5 class="text-muted mb-3 px-3">MENU ADMIN</h5>
-                <button data-url="dashboard-admin.html" class="sidebar-item border-0">
+                <button data-url="/dashboard-admin" class="sidebar-item border-0">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </button>
-                <button data-url="gestion-roles.html" class="sidebar-item border-0">
-                    <i class="bi bi-graph-up"></i> Gestion des rôles
+                <button data-url="/roles" class="sidebar-item border-0">
+                    <i class="bi bi-shield-check"></i> Modérateurs et Gestion des rôles
+
                 </button>
-                <button data-url="administrateurs.html" class="sidebar-item border-0">
-                    <i class="bi bi-people"></i>Administrateurs
-                </button>
-                <button data-url="moderateurs.html" class="sidebar-item border-0">
-                    <i class="bi bi-shield-check"></i> Modérateurs
-                </button>
-                <button data-url="articles.html" class="sidebar-item border-0">
+                <button data-url="/articles" class="sidebar-item border-0">
                     <i class="bi bi-file-earmark-text"></i> Articles
                 </button>
-                <button data-url="statistiques.html" class="sidebar-item border-0">
+                <button data-url="/statistiques" class="sidebar-item border-0">
                     <i class="bi bi-graph-up"></i> Statistiques
-                </button>
-                <button data-url="#" class="sidebar-item border-0">
-                    <i class="bi bi-archive"></i> Audit
                 </button>
             </div>
         </div>
@@ -137,7 +129,7 @@
                     <div class="card h-100">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Activité récente</h5>
-                            <a href="#" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                            <a data-url="#" class="btn btn-sm btn-outline-primary">Voir tout</a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

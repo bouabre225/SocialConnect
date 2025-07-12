@@ -1,24 +1,185 @@
 <!-- Header -->
 <header class="header">
     <div class="header-content">
-        <div class="logo">SocialConnect</div>
+        <div class="logo">
+            <i class="fab fa-facebook"></i> SocialConnect
+        </div>
         <div class="search-bar">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#65676b">
-                <path d="M10.25 2a8.25 8.25 0 0 1 6.34 13.53l5.69 5.69a.75.75 0 0 1-1.06 1.06l-5.69-5.69A8.25 8.25 0 1 1 10.25 2zm0 1.5a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5z"></path>
-            </svg>
+            <i class="fas fa-search"></i>
             <input type="text" placeholder="Rechercher sur SocialConnect">
         </div>
-        <div>
-            <button class="btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17 11V7a5 5 0 0 0-10 0v4H3v10h18V11h-4zm-8-4a3 3 0 1 1 6 0v4H9V7zm9 11H6v-6h12v6z"></path>
-                </svg>
-                Déconnexion
-            </button>
+        <div class="nav-icons">
+            <div class="nav-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="nav-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="nav-icon">
+                <i class="fas fa-store"></i>
+            </div>
+            <div class="nav-icon">
+                <i class="fas fa-user-friends"></i>
+            </div>
+            <div class="nav-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="nav-icon">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+            <div class="profile-icon">
+                <div></div>
+            </div>
         </div>
     </div>
 </header>
 
+<!-- Main Content -->
+<div class="main-container">
+    <!-- Left Sidebar -->
+    <div class="left-sidebar">
+        <div class="sidebar-card">
+            <div class="sidebar-item">
+                <i class="fas fa-user"></i>
+                <span>Jean Dupont</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Amis</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-users"></i>
+                <span>Groupes</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-store"></i>
+                <span>Marketplace</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-tv"></i>
+                <span>Watch</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-history"></i>
+                <span>Souvenirs</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-bookmark"></i>
+                <span>Enregistrés</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-calendar"></i>
+                <span>Événements</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-flag"></i>
+                <span>Pages</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-chevron-down"></i>
+                <span>Voir plus</span>
+            </div>
+        </div>
+        
+        <div class="sidebar-card">
+            <div class="sidebar-title">Vos raccourcis</div>
+            <div class="sidebar-item">
+                <div style="background-color: #e4e6eb; width: 36px; height: 36px; border-radius: 8px;"></div>
+                <span>Groupe de développement</span>
+            </div>
+            <div class="sidebar-item">
+                <div style="background-color: #e4e6eb; width: 36px; height: 36px; border-radius: 8px;"></div>
+                <span>Photographie</span>
+            </div>
+            <div class="sidebar-item">
+                <div style="background-color: #e4e6eb; width: 36px; height: 36px; border-radius: 8px;"></div>
+                <span>Voyages</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="cover-photo">
+                <div class="edit-icon">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+            <div class="profile-picture">
+                <i class="fas fa-user"></i>
+                <div class="edit-icon">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">Jean Dupont</h1>
+                <div class="friend-count">120 amis</div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Ajouter à la story
+                    </button>
+                    <button class="btn btn-secondary" id="update-profile-btn">
+                        <i class="fas fa-pen"></i> Modifier le profil
+                    </button>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="profile-nav">
+                <div class="nav-item active">Publications</div>
+                <div class="nav-item">À propos</div>
+                <div class="nav-item">Amis</div>
+                <div class="nav-item">Photos</div>
+                <div class="nav-item">Vidéos</div>
+                <div class="nav-item">Vérifications</div>
+            </div>
+        </div>
+
+        <!-- Create Post -->
+        <div class="create-post">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="create-post-input" id="create-post-input">
+                Quoi de neuf, Jean ?
+            </div>
+        </div>
+
+        <!-- Posts Container -->
+        <div id="posts-container">
+            <!-- Posts will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="right-sidebar">
+        <div class="sidebar-card">
+            <div class="birthdays">
+                <div class="birthdays-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div>
+                    <strong>Anniversaires</strong>
+                    <div>C'est l'anniversaire de <strong>Emma Petit</strong> aujourd'hui</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-card">
+            <div class="contacts-header">
+                <div class="sidebar-title">Contacts</div>
+                <div class="nav-icons">
+                    <div class="nav-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="nav-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="nav-icon">
+                        <i class="fas fa-ellipsis-h"></i>
 <!-- Main Content -->
 <div class="main-container">
     <!-- Left Sidebar -->
@@ -217,5 +378,127 @@
                 <button type="submit" class="btn btn-save">Enregistrer</button>
             </div>
         </form>
+    </div>
+</div>
+
+            
+            <div id="contacts-container">
+                <div class="contact-item">
+                    <div class="contact-avatar">
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="contact-name">Alice Martin</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-avatar">
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="contact-name">Thomas Dubois</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-avatar">
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="contact-name">Sophie Laurent</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-avatar">
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="contact-name">Pierre Moreau</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-avatar">
+                        <div class="online-status"></div>
+                    </div>
+                    <div class="contact-name">Julie Bernard</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Profile Modal -->
+<div class="modal" id="update-profile-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Modifier le profil</div>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Prénom</label>
+                <input type="text" class="form-input" id="firstname" placeholder="Prénom">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nom</label>
+                <input type="text" class="form-input" id="lastname" placeholder="Nom">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date de naissance</label>
+                <input type="date" class="form-input" id="birthdate">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ville</label>
+                <input type="text" class="form-input" id="city" placeholder="Ville">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Profession</label>
+                <input type="text" class="form-input" id="profession" placeholder="Profession">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Statut relationnel</label>
+                <select class="form-input" id="relationship-status">
+                    <option value="">Sélectionner</option>
+                    <option value="single">Célibataire</option>
+                    <option value="in_relationship">En couple</option>
+                    <option value="married">Marié(e)</option>
+                    <option value="complicated">C'est compliqué</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Bio</label>
+                <textarea class="form-textarea" id="bio" placeholder="Parlez un peu de vous..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mot de passe actuel</label>
+                <input type="password" class="form-input" id="current-password" placeholder="Mot de passe actuel" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline close-modal">Annuler</button>
+            <button class="btn btn-primary" id="save-profile-btn">Enregistrer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Post Modal -->
+<div class="modal" id="create-post-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Créer une publication</div>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="post-header">
+                <div class="post-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="post-user-info">
+                    <div class="post-username">Jean Dupont</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <textarea class="form-textarea" id="post-content" placeholder="Quoi de neuf ?"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-outline" style="width: 100%;">
+                    <i class="fas fa-image"></i> Photo/Video
+                </button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="publish-post-btn">Publier</button>
+        </div>
     </div>
 </div>
