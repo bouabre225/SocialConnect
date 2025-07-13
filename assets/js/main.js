@@ -127,12 +127,10 @@ async function loadView(url) {
 
 // Fonction de vérification d'authentification (à adapter selon votre logique)
 function checkAuth() {
-    // Implémentez votre logique d'authentification ici
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token'); // Corriger 'authToken' en 'token'
     if (!token) {
         console.log('Utilisateur non authentifié');
-        // Rediriger vers login si nécessaire
-        // navigateTo('/login');
+        // navigateTo('/login'); // Optionnel : rediriger si non authentifié
     } else {
         console.log('Utilisateur authentifié');
     }

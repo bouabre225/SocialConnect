@@ -55,27 +55,37 @@ async function loginUser(formData) {
         });
 
         console.log('Statut de la réponse login.php :', response.status);
-        const data = await response.json();
-        console.log('Réponse de login.php :', data);
+        // Vérifier si la réponse est du JSON valide
+        const text = await response.text();
+        console.log('Contenu brut de la réponse :', text);
+        try {
+            const data = JSON.parse(text);
+            console.log('Réponse de login.php :', data);
 
-        if (data.status === 'success') {
-            localStorage.setItem('token', data.user.token); // Stocker le token JWT
-            localStorage.setItem('user', JSON.stringify(data.user)); // Stocker les données utilisateur
-            if (document.getElementById('rememberMe').checked) {
-                localStorage.setItem('rememberedEmail', formData.email);
+            if (data.status === 'success') {
+                localStorage.setItem('token', data.user.token); // Stocker le token JWT
+                localStorage.setItem('user', JSON.stringify(data.user)); // Stocker les données utilisateur
+                if (document.getElementById('rememberMe')?.checked) {
+                    localStorage.setItem('rememberedEmail', formData.email);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
+                console.log('Connexion réussie, redirection vers /home');
+                navigateTo('/home');
             } else {
-                localStorage.removeItem('rememberedEmail');
+                throw new Error(data.message);
             }
-            console.log('Connexion réussie, redirection vers /home');
-            navigateTo('/home');
-        } else {
-            throw new Error(data.message);
+        } catch (jsonError) {
+            console.error('Erreur de parsing JSON :', jsonError, 'Contenu brut :', text);
+            throw new Error('Réponse du serveur non valide. Veuillez vérifier la configuration du serveur.');
         }
     } catch (error) {
         console.error('Erreur dans loginUser :', error);
         throw new Error(error.message || 'Une erreur est survenue lors de la connexion');
     } finally {
-        document.getElementById('loader').style.display = 'none';
+        if (document.getElementById('loader')) {
+            document.getElementById('loader').style.display = 'none';
+        }
     }
 }
 

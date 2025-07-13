@@ -1,15 +1,17 @@
 <?php
-//require_once '../../api/config.php';
 //require_once '../../api/cors.php';
 
+include __DIR__ . '/../../vendor/autoload.php';
 // Inclure le chargeur automatique de Composer pour JWT
-require_once '../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 //use \Exception;
+//require '/xampp/htdocs/ReseauSocial/api/config.php';
+define('JWT_SECRET_KEY1', 'ta-cle-super-secrete'); //voila ce que j'ai fais 
+
 
 // Clé secrète pour JWT
-$secretKey = 'JWT_SECRET_KEY';  //comment generer ça 
+$secretKey = JWT_SECRET_KEY1;
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -18,7 +20,7 @@ function getAuthorizationHeader() {
     $headers = null;
     if (isset($_SERVER['Authorization'])) {
         $headers = trim($_SERVER['Authorization']);
-    } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) { // Pour Apache + FastCGI
+    } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         $headers = trim($_SERVER['HTTP_AUTHORIZATION']);
     } elseif (function_exists('apache_request_headers')) {
         $requestHeaders = apache_request_headers();
@@ -29,6 +31,7 @@ function getAuthorizationHeader() {
             }
         }
     }
+    error_log("Authorization Header: " . ($headers ?: 'Aucun en-tête trouvé')); // Débogage
     return $headers;
 }
 

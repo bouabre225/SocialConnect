@@ -1,32 +1,21 @@
 <?php
 // Activer le débogage
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Ne pas afficher les erreurs à l'utilisateur
+ini_set('display_errors', 0);
 ob_start();
 
 error_log("Démarrage de login.php");
 
-require_once 'config.php';
-error_log("config.php chargé");
-require_once './users/common.php'; // Vérifiez ce chemin
-error_log("common.php chargé");
-
-require_once '../../vendor/autoload.php';
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-
-// Vérification de la clé secrète
-if (!defined('JWT_SECRET_KEY')) {
-    error_log("Erreur : JWT_SECRET_KEY non défini dans config.php");
-    jsonResponse(['status' => 'error', 'message' => 'Erreur de configuration serveur'], 500);
+// Vérifier la sortie inattendue
+$output = ob_get_contents();
+if (!empty($output)) {
+    error_log("Sortie inattendue détectée : " . $output);
+    ob_clean();
 }
-
-// Définition de l'origine autorisée
-define('API', 'http://localhost:8000');
 
 // Configuration des en-têtes CORS
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: ' . API);
+header('Access-Control-Allow-Origin: http://localhost:8000');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
@@ -37,6 +26,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     error_log("Requête OPTIONS reçue");
     http_response_code(200);
     exit();
+}
+
+// Vérification des inclusions
+if (!file_exists('config.php')) {
+    error_log("Erreur : config.php introuvable");
+    jsonResponse(['status' => 'error', 'message' => 'Erreur de configuration : fichier config.php introuvable'], 500);
+}
+require_once 'config.php';
+error_log("config.php chargé");
+
+if (!file_exists('users/common.php')) {
+    error_log("Erreur : common.php introuvable");
+    jsonResponse(['status' => 'error', 'message' => 'Erreur de configuration : fichier common.php introuvable'], 500);
+}
+require_once 'users/common.php';
+error_log("common.php chargé");
+
+if (!file_exists('../vendor/autoload.php')) {
+    error_log("Erreur : vendor/autoload.php introuvable");
+    jsonResponse(['status' => 'error', 'message' => 'Erreur de configuration : fichier autoload.php introuvable'], 500);
+}
+require_once '../vendor/autoload.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+error_log("vendor/autoload.php chargé");
+
+// Vérification de la clé secrète
+if (!defined('JWT_SECRET_KEY')) {
+    error_log("Erreur : JWT_SECRET_KEY non défini dans config.php");
+    jsonResponse(['status' => 'error', 'message' => 'Erreur de configuration serveur'], 500);
 }
 
 // Vérification de la méthode HTTP
@@ -122,8 +141,7 @@ function jsonResponse($data, $statusCode) {
     http_response_code($statusCode);
     echo json_encode($data);
     error_log("Réponse envoyée : " . json_encode($data));
+    ob_end_flush();
     exit();
 }
-
-ob_end_flush();
 ?>
