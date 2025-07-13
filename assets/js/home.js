@@ -580,6 +580,29 @@ document.getElementById('go-to-chat')?.addEventListener('click', () => {
         router();        
     }, 1200);});
 
+    // Gestion du bouton logout
+    document.getElementById('logout')?.addEventListener('click', () => {
+        fetch(`${API_URL}/logout`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(response => {
+            if (response.ok) {
+                setTimeout(() => {
+                    history.pushState(null, '', '/login');
+                    router();        
+                }, 1200);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la déconnexion:', error);
+            setTimeout(() => {
+                history.pushState(null, '', '/login');
+                router();        
+            }, 1200);
+        });
+    });    
+
 if (checkAuth()) {
     fetchContacts();
     fetchSuggestions();

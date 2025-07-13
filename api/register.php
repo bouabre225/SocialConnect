@@ -1,195 +1,195 @@
 <?php
-
 error_reporting(E_ERROR);
 ini_set('display_errors', 0);
-header('Content-Type: application/json; charset=utf-8');
 ob_start();
 
+// Utilisation de PHPMailer
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 
-    // Utilisation de PHPMailer
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\Exception;
-    use PHPMailer\PHPMailer\SMTP;
+// Inclusion des fichiers de configuration
+require_once 'config.php';
 
-    // Inclusion des fichiers de configuration
-    require_once 'config.php';
+// Définition de l'origine autorisée
+define('API', 'http://localhost:8000');
 
-    // Handle preflight (OPTIONS) request
-    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-        // Configuration des headers
-        header('Content-Type: application/json');
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
-        header('Access-Control-Allow-Credentials: true');
-        http_response_code(200);
-        exit();
-    }
+// Configuration des en-têtes CORS
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: ' . API);
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
+header('Access-Control-Allow-Credentials: true');
 
-    // Configuration PHPMailer
-    require_once 'config/phpmailer.php';
+// Gérer la requête OPTIONS
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
-    //include 'vendor/autoload.php';
-    require '../vendor/phpmailer/phpmailer/src/Exception.php';
-    require '../vendor/phpmailer/phpmailer/src/PHPMailer.php';
-    require '../vendor/phpmailer/phpmailer/src/SMTP.php';
+// Configuration PHPMailer
+require_once 'config/phpmailer.php';
+require '../vendor/phpmailer/phpmailer/src/Exception.php';
+require '../vendor/phpmailer/phpmailer/src/PHPMailer.php';
+require '../vendor/phpmailer/phpmailer/src/SMTP.php';
 
-    // Vérification de la méthode HTTP
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
-    }
+// Vérification de la méthode HTTP
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
+}
 
-    // Récupération des données
-    $data = json_decode(file_get_contents('php://input'), true);
+// Récupération des données
+$data = json_decode(file_get_contents('php://input'), true);
 
-    // Validation des données
-    if (!isset(
-        $data['firstname'], $data['lastname'], $data['username'], $data['birthdate'], $data['gender'],
-        $data['relationship_status'], $data['profession'], $data['country'], $data['city'], $data['interests'],
-        $data['email'], $data['password'], $data['confirm_password']
-    )) {
-        jsonResponse(['status' => 'error', 'message' => 'Données manquantes'], 400);
-    }
+// Validation des données
+if (!isset(
+    $data['firstname'], $data['lastname'], $data['username'], $data['birthdate'], $data['gender'],
+    $data['relationship_status'], $data['profession'], $data['country'], $data['city'], $data['interests'],
+    $data['email'], $data['password'], $data['confirm_password']
+)) {
+    jsonResponse(['status' => 'error', 'message' => 'Données manquantes'], 400);
+}
 
-    // Validation des noms
-    if (!preg_match("/^[À-ſa-zA-Z\s]+$/u", $data['firstname']) || !preg_match("/^[À-ſa-zA-Z\s]+$/u", $data['lastname'])) {
-        jsonResponse(['status' => 'error', 'message' => 'Les noms ne sont pas valides'], 400);
-    }
+// Validation des noms
+if (!preg_match("/^[À-ſa-zA-Z\s]+$/u", $data['firstname']) || !preg_match("/^[À-ſa-zA-Z\s]+$/u", $data['lastname'])) {
+    jsonResponse(['status' => 'error', 'message' => 'Les noms ne sont pas valides'], 400);
+}
 
-    // Validation de l'email
-    if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-        jsonResponse(['status' => 'error', 'message' => 'Email invalide'], 400);
-    }
+// Validation de l'email
+if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+    jsonResponse(['status' => 'error', 'message' => 'Email invalide'], 400);
+}
 
-    // Validation du mot de passe
-    if (strlen($data['password']) < 8 || strlen($data['password']) > 72) {
-        jsonResponse(['status' => 'error', 'message' => 'Le mot de passe doit contenir entre 8 et 72 caractères'], 400);
-    }
+// Validation du mot de passe
+if (strlen($data['password']) < 8 || strlen($data['password']) > 72) {
+    jsonResponse(['status' => 'error', 'message' => 'Le mot de passe doit contenir entre 8 et 72 caractères'], 400);
+}
 
-    if ($data['password'] !== $data['confirm_password']) {
-        jsonResponse(['status' => 'error', 'message' => 'Les mots de passe ne correspondent pas'], 400);
-    }
+if ($data['password'] !== $data['confirm_password']) {
+    jsonResponse(['status' => 'error', 'message' => 'Les mots de passe ne correspondent pas'], 400);
+}
 
-    // Sécurisation des données
-    $firstname = htmlspecialchars($data['firstname'], ENT_QUOTES, 'UTF-8');
-    $lastname = htmlspecialchars($data['lastname'], ENT_QUOTES, 'UTF-8');
-    $username = htmlspecialchars($data['username'], ENT_QUOTES, 'UTF-8');
-    $birthdate = htmlspecialchars($data['birthdate'], ENT_QUOTES, 'UTF-8');
-    $gender = htmlspecialchars($data['gender'], ENT_QUOTES, 'UTF-8');
-    $relationship_status = htmlspecialchars($data['relationship_status'], ENT_QUOTES, 'UTF-8');
-    $profession = htmlspecialchars($data['profession'], ENT_QUOTES, 'UTF-8');
-    $country = htmlspecialchars($data['country'], ENT_QUOTES, 'UTF-8');
-    $city = htmlspecialchars($data['city'], ENT_QUOTES, 'UTF-8');
-    $interests = htmlspecialchars($data['interests'], ENT_QUOTES, 'UTF-8');
-    $email = htmlspecialchars($data['email'], ENT_QUOTES, 'UTF-8');
-    $password = $data['password'];
+// Sécurisation des données
+$firstname = htmlspecialchars($data['firstname'], ENT_QUOTES, 'UTF-8');
+$lastname = htmlspecialchars($data['lastname'], ENT_QUOTES, 'UTF-8');
+$username = htmlspecialchars($data['username'], ENT_QUOTES, 'UTF-8');
+$birthdate = htmlspecialchars($data['birthdate'], ENT_QUOTES, 'UTF-8');
+$gender = htmlspecialchars($data['gender'], ENT_QUOTES, 'UTF-8');
+$relationship_status = htmlspecialchars($data['relationship_status'], ENT_QUOTES, 'UTF-8');
+$profession = htmlspecialchars($data['profession'], ENT_QUOTES, 'UTF-8');
+$country = htmlspecialchars($data['country'], ENT_QUOTES, 'UTF-8');
+$city = htmlspecialchars($data['city'], ENT_QUOTES, 'UTF-8');
+$interests = htmlspecialchars($data['interests'], ENT_QUOTES, 'UTF-8');
+$email = htmlspecialchars($data['email'], ENT_QUOTES, 'UTF-8');
+$password = $data['password'];
+
+// Génération de variables pour l'inscription
+$csrf_token = bin2hex(random_bytes(32));
+$activation_token = bin2hex(random_bytes(32));
+
+try {
+    // Vérification de l'email
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt->execute([$email]);
     
-
-    // Génération de variables pour l'inscription
-    $csrf_token = bin2hex(random_bytes(32));
-    $activation_token = bin2hex(random_bytes(32));
-    //$activation_link = "http://localhost/ReseauSocial/index.html?token=" . $activation_token;
-
+    if ($stmt->rowCount() > 0) {
+        jsonResponse(['status' => 'error', 'message' => 'Email déjà utilisé'], 400);
+    }
+    
+    // Hash du mot de passe
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+    
+    // Insertion de l'utilisateur
+    $insert = $pdo->prepare("
+        INSERT INTO users 
+        (firstname, lastname, email, password, username, birthdate, gender, relationship_status, profession, country, city, interests, csrf_token, activation_token, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+    ");
+    $insert->execute([$firstname, $lastname, $email, $password_hash, $username, $birthdate, $gender, $relationship_status, $profession, $country, $city, $interests, $csrf_token, $activation_token]);
+    
+    // Envoi de l'email de confirmation
     try {
-        // Vérification de l'email
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-        $stmt->execute([$email]);
+        $mail = new PHPMailer();
+        $mail->SMTPDebug = SMTP::DEBUG_OFF; // Désactiver le débogage par défaut
         
-        if ($stmt->rowCount() > 0) {
-            jsonResponse(['status' => 'error', 'message' => 'Email déjà utilisé'], 400);
+        // Configuration serveur
+        $mail->isSMTP();
+        $mail->Host = $phpmailer_config['host'];
+        $mail->SMTPAuth = $phpmailer_config['smtp_auth'];
+        $mail->Username = $phpmailer_config['username'];
+        $mail->Password = $phpmailer_config['password'];
+        $mail->SMTPSecure = $phpmailer_config['smtp_secure'];
+        $mail->Port = $phpmailer_config['port'];
+
+        // Expéditeur
+        $mail->setFrom($phpmailer_config['from_email'], $phpmailer_config['from_name']);
+        
+        // Destinataire
+        $mail->addAddress($email);
+        
+        // Contenu
+        $mail->isHTML(true);
+        $activation_link = "http://localhost/ReseauSocial/api/activate.php?token=" . $activation_token;
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
+        $mail->Subject = "Confirmation d'inscription - SocialConnect";
+        $mail->Body = "
+        <html>
+        <head>
+        <title>Confirmation d'inscription</title>
+        </head>
+        <body style='font-family: Arial, sans-serif; line-height: 1.6;'>
+        <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+            <h2 style='color: #333;'>Bienvenue sur SocialConnect !</h2>
+            <p style='color: #666;'>Merci de vous être inscrit. Pour activer votre compte, veuillez cliquer sur le lien suivant :</p>
+            <p style='margin: 20px 0;'><a href='" . $activation_link . "' style='display: inline-block; padding: 12px 24px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;'>Activer mon compte</a></p>
+            <p style='color: #666;'>Cordialement,</p>
+            <p style='color: #666;'>L'équipe SocialConnect</p>
+        </div>
+        </body>
+        </html>
+        ";
+        
+        // Envoi de l'email
+        if (!$mail->send()) {
+            error_log("Erreur d'envoi de l'email: " . $mail->ErrorInfo);
         }
-        
-        // Hash du mot de passe
-        $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        
-        // Insertion de l'utilisateur
-        $insert = $pdo->prepare("
-            INSERT INTO users 
-            (firstname, lastname, email, password, username, birthdate, gender, relationship_status, profession, country, city, interests, csrf_token, activation_token, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-        ");
-        $insert->execute([$firstname, $lastname, $email, $password_hash, $username, $birthdate, $gender, $relationship_status, $profession, $country, $city, $interests, $csrf_token, $activation_token]);
-        
+    } catch (Exception $e) {
+        error_log("Erreur d'envoi de l'email: " . $e->getMessage());
+    }
 
-        // Envoi de l'email de confirmation
-        try {
-            $mail = new PHPMailer();
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER; // Décommentez pour le débogage: 2;
-            
-            // Configuration serveur
-            $mail->isSMTP();
-            $mail->Host = $phpmailer_config['host'];
-            $mail->SMTPAuth = $phpmailer_config['smtp_auth'];
-            $mail->Username = $phpmailer_config['username'];
-            $mail->Password = $phpmailer_config['password'];
-            $mail->SMTPSecure = $phpmailer_config['smtp_secure'];
-            $mail->Port = $phpmailer_config['port'];
-
-            // Expéditeur
-            $mail->setFrom($phpmailer_config['from_email'], $phpmailer_config['from_name']);
-            
-            // Destinataire
-            $mail->addAddress($email);
-            
-            // Contenu
-            $mail->isHTML(true);
-            $activation_link = "http://localhost/ReseauSocial/api/activate.php?token=" . $activation_token;
-            $mail->CharSet = 'UTF-8';
-            $mail->Encoding = 'base64';
-            $mail->Subject = "Confirmation d'inscription - SocialConnect";
-            $mail->Body = "
-            <html>
-            <head>
-            <title>Confirmation d'inscription</title>
-            </head>
-            <body style='font-family: Arial, sans-serif; line-height: 1.6;'>
-            <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
-                <h2 style='color: #333;'>Bienvenue sur SocialConnect !</h2>
-                <p style='color: #666;'>Merci de vous être inscrit. Pour activer votre compte, veuillez cliquer sur le lien suivant :</p>
-                <p style='margin: 20px 0;'><a href='" . $activation_link . "' style='display: inline-block; padding: 12px 24px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;'>Activer mon compte</a></p>
-                <p style='color: #666;'>Cordialement,</p>
-                <p style='color: #666;'>L'équipe SocialConnect</p>
-            </div>
-            </body>
-            </html>
-            ";
-            
-            // Envoi de l'email
-            if(!$mail->send()) {
-                error_log("Erreur d'envoi de l'email: " . $mail->ErrorInfo);
-            }
-        } catch (Exception $e) {
-            // En cas d'échec de l'envoi, on continue quand même l'inscription
-            error_log("Erreur d'envoi de l'email: " . $e->getMessage());
-        }
-
-
-        echo json_encode(['status' => 'success', 
-        'message' => 'Inscription réussie.', 
+    jsonResponse([
+        'status' => 'success',
+        'message' => 'Inscription réussie.',
         'user' => [
             'firstname' => $firstname,
-            'lastname'  => $lastname,
-            'email'     => $email,
-            'csrf_token'=> $csrf_token,
-            'username'  => $username,
+            'lastname' => $lastname,
+            'email' => $email,
+            'csrf_token' => $csrf_token,
+            'username' => $username,
             'birthdate' => $birthdate,
-            'gender'    => $gender,
+            'gender' => $gender,
             'relationship_status' => $relationship_status,
             'profession' => $profession,
             'country' => $country,
             'city' => $city,
             'interests' => $interests,
-            'avatar_url' => $avatar_url,
             'activation_token' => $activation_token,
-            'status' => 'pending',
-        ],
+            'status' => 'pending'
+        ]
+    ], 200);
 
-        ]);
-    } catch (Exception $e) {
-        error_log("Erreur d'inscription: " . $e->getMessage());
-        echo json_encode(['status' => 'error', 'message' => 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.']);
-    }
+} catch (Exception $e) {
+    error_log("Erreur d'inscription: " . $e->getMessage());
+    jsonResponse(['status' => 'error', 'message' => 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.'], 500);
+}
+
+// Fonction pour envoyer une réponse JSON
+function jsonResponse($data, $statusCode) {
+    http_response_code($statusCode);
+    echo json_encode($data);
+    exit();
+}
 
 ob_end_flush();
-
 ?>

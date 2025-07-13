@@ -1,8 +1,3 @@
-// Configuration de l'API
-
-
-//const API_URL = 'http://localhost/ReseauSocial/api';
-//const app = document.getElementById('app');
 // Validation des formulaires
 function validateForm(formData, type) {
     const errors = [];
@@ -45,73 +40,133 @@ function handleError(error, container) {
     }
 }
 
-//document.addEventListener('DOMContentLoaded', () => {
-    // Gestion des formulaires
+// Fonction async pour gérer la connexion
+async function loginUser(formData) {
+    console.log('Envoi de la requête de connexion avec :', formData);
+    try {
+        const response = await fetch('http://localhost:8001/login.php', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        console.log('Statut de la réponse login.php :', response.status);
+        const data = await response.json();
+        console.log('Réponse de login.php :', data);
+
+        if (data.status === 'success') {
+            localStorage.setItem('token', data.user.token); // Stocker le token JWT
+            localStorage.setItem('user', JSON.stringify(data.user)); // Stocker les données utilisateur
+            if (document.getElementById('rememberMe').checked) {
+                localStorage.setItem('rememberedEmail', formData.email);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+            console.log('Connexion réussie, redirection vers /home');
+            navigateTo('/home');
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Erreur dans loginUser :', error);
+        throw new Error(error.message || 'Une erreur est survenue lors de la connexion');
+    } finally {
+        document.getElementById('loader').style.display = 'none';
+    }
+}
+
+// Fonction async pour gérer l'inscription
+async function registerUser(formData) {
+    console.log('Envoi de la requête d\'inscription avec :', formData);
+    try {
+        const response = await fetch('http://localhost:8001/register.php', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        console.log('Statut de la réponse register.php :', response.status);
+        const data = await response.json();
+        console.log('Réponse de register.php :', data);
+
+        if (data.status === 'success') {
+            return data;
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Erreur dans registerUser :', error);
+        throw new Error(error.message || 'Une erreur est survenue lors de l\'inscription');
+    }
+}
+
+// Gestion des formulaires
+//document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOMContentLoaded capturé');
+
+    // Vérifier si l'utilisateur est déjà connecté dans sessionStorage
+    const user = sessionStorage.getItem('user');
+    if (user) {
+        console.log('Utilisateur trouvé dans sessionStorage, redirection vers /home');
+        navigateTo('/home');
+    }
+
     document.addEventListener('submit', async function (e) {
         e.preventDefault();
         console.log('Événement submit capturé pour', e.target.id);
-    try {
-        // LOGIN
-        if (e.target.id === 'loginForm') {
-            e.preventDefault();
-            console.log('Soumission du formulaire de connexion');
-            const savedEmail = localStorage.getItem('rememberedEmail');
-            if (savedEmail) {
-                document.querySelector('input[name="email"]').value = savedEmail;
-                document.getElementById('rememberMe').checked = true;
-            }
-    
-            const formData = {
-                email: e.target.email.value.trim(),
-                password: e.target.password.value
-            };
-    
-            const errors = validateForm(formData, 'login');
-            if (errors.length > 0) {
-                handleError(errors.join('<br>'), document.getElementById('loginMessage'));
-                return;
-            }
-    
-            document.getElementById('loader').style.display = 'block';
-            try {
-                const response = await fetch(`${API_URL2}/login.php`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
-                    },
-                    body: JSON.stringify(formData)
-                });
-    
-                const data = await response.json();
-    
-                if (data.status === 'success') {
-                    sessionStorage.setItem('user', JSON.stringify(data.user));
-                    sessionStorage.setItem('csrf_token', data.user.csrf_token);
-    
+
+        try {
+            // LOGIN
+            if (e.target.id === 'loginForm') {
+                console.log('Soumission du formulaire de connexion');
+
+                const savedEmail = localStorage.getItem('rememberedEmail');
+                if (savedEmail) {
+                    document.querySelector('input[name="email"]').value = savedEmail;
+                    document.getElementById('rememberMe').checked = true;
+                }
+
+                const formData = {
+                    email: e.target.email.value.trim(),
+                    password: e.target.password.value
+                };
+
+                const errors = validateForm(formData, 'login');
+                if (errors.length > 0) {
+                    handleError(errors.join('<br>'), document.getElementById('loginMessage'));
+                    return;
+                }
+
+                document.getElementById('loader').style.display = 'block';
+                try {
+                    const data = await loginUser(formData);
+
                     if (document.getElementById('rememberMe').checked) {
                         localStorage.setItem('rememberedEmail', formData.email);
                     } else {
                         localStorage.removeItem('rememberedEmail');
-                    }   
-                    setTimeout(() => {
-                        history.pushState(null, '', '/home');
-                        router();
-                    }, 1200);
-                } else {
-                    handleError(data.message, document.getElementById('loginMessage'));
+                    }
+
+                    console.log('Connexion réussie, redirection vers /home');
+                    navigateTo('/home');
+                } catch (error) {
+                    handleError(error.message, document.getElementById('loginMessage'));
+                } finally {
+                    document.getElementById('loader').style.display = 'none';
                 }
-            } catch (error) {
-                handleError('Une erreur est survenue lors de la connexion', document.getElementById('loginMessage'));
-            } finally {
-                document.getElementById('loader').style.display = 'none';
-            }
+
             // REGISTER
-        } else if (e.target.id === 'registerForm') {
-            document.getElementById('loaderReg').style.display = 'block';
-                e.preventDefault();
+            } else if (e.target.id === 'registerForm') {
                 console.log('Soumission du formulaire d\'inscription');
+
                 const formData = {
                     firstname: e.target.firstname.value.trim(),
                     lastname: e.target.lastname.value.trim(),
@@ -134,74 +189,59 @@ function handleError(error, container) {
                     return;
                 }
 
-                ///document.getElementById('loaderReg').style.display = 'block';
-
+                document.getElementById('loaderReg').style.display = 'block';
                 try {
-                    const response = await fetch(`${API_URL2}/register.php`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': sessionStorage.getItem('csrf_token') || ''
-                        },
-                        body: JSON.stringify(formData)
-                    });
+                    const data = await registerUser(formData);
 
-                    const data = await response.json();
-                    document.getElementById('loaderReg').style.display = 'none';
-
-                    if (data.status === 'success') {
-                        document.getElementById('registerMessage').innerHTML = `
-                            <div class="alert alert-success">
-                                ${data.message}
-                            </div>
-                        `;
-                        e.target.reset();
-                        setTimeout(() => {
-                            history.pushState(null, '', '/home');
-                            router();        
-                        }, 1200);
-                    } else {
-                        handleError(data.message, document.getElementById('registerMessage'));
-                    }
-
+                    document.getElementById('registerMessage').innerHTML = `
+                        <div class="alert alert-success">
+                            ${data.message}
+                        </div>
+                    `;
+                    e.target.reset();
+                    console.log('Inscription réussie, redirection vers /login');
+                    setTimeout(() => {
+                        navigateTo('/login');
+                    }, 1200);
                 } catch (error) {
-                    handleError('Une erreur est survenue lors de l\'inscription', document.getElementById('registerMessage'));
+                    handleError(error.message, document.getElementById('registerMessage'));
+                } finally {
                     document.getElementById('loaderReg').style.display = 'none';
                 }
-            }    
+            }
         } catch (error) {
             console.error('Erreur dans le gestionnaire de soumission :', error);
         }
     });
-        
-        // Message activation
-        const params = new URLSearchParams(window.location.search);
-        if (params.has('activated')) {
-            const activationMsg = document.getElementById('activationMessage');
-            if (activationMsg) {
-                activationMsg.innerHTML = `
-                    <div class="alert alert-success">
-                        ✅ Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.
-                    </div>
-                `;
+
+    // Message activation
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('activated')) {
+        const activationMsg = document.getElementById('activationMessage');
+        if (activationMsg) {
+            activationMsg.innerHTML = `
+                <div class="alert alert-success">
+                    ✅ Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.
+                </div>
+            `;
+        }
+    }
+
+    // Gestion oeil togglePassword s'il existe
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', () => {
+            const icon = togglePassword.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
             }
-        }
-        
-        // Gestion oeil togglePassword s'il existe
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        if (togglePassword && passwordInput) {
-            togglePassword.addEventListener('click', () => {
-                const icon = togglePassword.querySelector('i');
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    icon.classList.remove('bi-eye');
-                    icon.classList.add('bi-eye-slash');
-                } else {
-                    passwordInput.type = 'password';
-                    icon.classList.remove('bi-eye-slash');
-                    icon.classList.add('bi-eye');
-                }
-            });
-        }
+        });
+    }
 //});

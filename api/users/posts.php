@@ -1,6 +1,20 @@
 <?php
 require_once '../../api/users/common.php';
 
+define('API', 'http://localhost:8000');
+
+// Configuration des en-têtes CORS
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: ' . API);
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
+header('Access-Control-Allow-Credentials: true');
+
+// Gérer la requête OPTIONS
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 $method = $_SERVER['REQUEST_METHOD'];
 $user = authentificateToken();
 

@@ -1,27 +1,6 @@
 <?php
-require_once '../../api/config.php';
-
-require_once '../../api/cors.php';
-
-//inclusion des headers
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    // Configuration des headers
-    header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin:' . API);
-    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
-    header('Access-Control-Allow-Credentials: true');
-    http_response_code(200);
-    exit();
-}
-
-// Configuration des headers pour toutes les requêtes
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin:' . API);
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
-header('Access-Control-Allow-Credentials: true');
-
+//require_once '../../api/config.php';
+//require_once '../../api/cors.php';
 
 // Inclure le chargeur automatique de Composer pour JWT
 require_once '../../vendor/autoload.php';
@@ -30,23 +9,19 @@ use Firebase\JWT\Key;
 //use \Exception;
 
 // Clé secrète pour JWT
-$secretKey = 'JWT_SECRET_KEY';
-
+$secretKey = 'JWT_SECRET_KEY';  //comment generer ça 
 
 $data = json_decode(file_get_contents('php://input'), true);
-
 
 // Fonction pour vérifier le token JWT
 function getAuthorizationHeader() {
     $headers = null;
     if (isset($_SERVER['Authorization'])) {
         $headers = trim($_SERVER['Authorization']);
-    }
-    else if (isset($_SERVER['HTTP_AUTHORIZATION'])) { // Pour Apache + FastCGI
+    } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) { // Pour Apache + FastCGI
         $headers = trim($_SERVER['HTTP_AUTHORIZATION']);
     } elseif (function_exists('apache_request_headers')) {
         $requestHeaders = apache_request_headers();
-        // Recherche insensible à la casse
         foreach ($requestHeaders as $key => $value) {
             if (strcasecmp($key, 'Authorization') == 0) {
                 $headers = trim($value);
@@ -62,7 +37,9 @@ function authentificateToken() {
 
     $authHeader = getAuthorizationHeader();
     if (!$authHeader) {
-        jsonResponse(['status' => 'error', 'message' => 'Aucun token fourni'], 401);
+        http_response_code(401);
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Aucun token fourni']);
         exit;
     }
 
@@ -72,19 +49,19 @@ function authentificateToken() {
         $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
         return $decoded;
     } catch (Exception $e) {
-        jsonResponse(['status' => 'error', 'message' => 'Token invalide'], 401);
+        http_response_code(401);
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Token invalide']);
         exit;
     }
 }
 
-
 // Fonction pour gérer les uploads de fichiers
-function handFileUpload($file, $uploadDir = './uploads/'){
+function handFileUpload($file, $uploadDir = './uploads/') {
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
     }
 
-    // Vérifie et crée le .htaccess si nécessaire
     $htaccessPath = $uploadDir . '.htaccess';
     if (!file_exists($htaccessPath)) {
         $htaccessContent = "php_flag engine off\n";
@@ -92,40 +69,46 @@ function handFileUpload($file, $uploadDir = './uploads/'){
         file_put_contents($htaccessPath, $htaccessContent);
     }
 
-    // Vérification sécurisée du type MIME via finfo
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mimeType = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
 
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!in_array($mimeType, $allowedTypes)) {
-        jsonResponse(['status' => 'error', 'message' => 'Type de fichier non autorisé'], 400);
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Type de fichier non autorisé']);
+        exit;
     }
 
-    // Vérification de l'extension du fichier
     $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
     $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     if (!in_array($extension, $allowedExtensions)) {
-        jsonResponse(['status' => 'error', 'message' => 'Extension de fichier non autorisée'], 400);
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Extension de fichier non autorisée']);
+        exit;
     }
 
-    // Limite de taille 5MB
     $maxSize = 5 * 1024 * 1024;
     if ($file['size'] > $maxSize) {
-        jsonResponse(['status' => 'error', 'message' => 'Fichier trop volumineux'], 400);
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Fichier trop volumineux']);
+        exit;
     }
 
-    // Nettoyage et génération du nom de fichier sécurisé
     $safeName = preg_replace('/[^a-zA-Z0-9-_\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
     $fileName = uniqid() . '_' . $safeName . '.' . $extension;
     $uploadPath = $uploadDir . $fileName;
 
-    // Déplacement du fichier
     if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
-        jsonResponse(['status' => 'error', 'message' => 'Erreur lors du téléchargement du fichier'], 500);
+        http_response_code(500);
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Erreur lors du téléchargement du fichier']);
+        exit;
     }
 
-    // Retour structuré des infos
     return [
         'name' => $fileName,
         'url' => $uploadPath,
@@ -133,7 +116,6 @@ function handFileUpload($file, $uploadDir = './uploads/'){
         'size' => $file['size']
     ];
 }
-
 
 // Fonction pour récupérer un utilisateur par ID
 function getUserById($userId) {
