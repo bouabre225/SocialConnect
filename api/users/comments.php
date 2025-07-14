@@ -35,3 +35,5 @@ if ($method === 'POST') {
         jsonResponse(['status' => 'error', 'message' => 'Erreur lors de la récupération des commentaires'], 500);
     }
 }
+
+?>

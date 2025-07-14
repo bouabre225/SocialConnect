@@ -1,4 +1,5 @@
 <?php
+//posts_comments.php
 require_once '../../api/users/common.php';
 require '../config.php';
 

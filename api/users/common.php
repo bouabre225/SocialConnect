@@ -1,4 +1,5 @@
 <?php
+//common.php
 //require '/api/config.php';
 include __DIR__ . '/../../vendor/autoload.php';
 // Inclure le chargeur automatique de Composer pour JWT

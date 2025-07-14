@@ -338,10 +338,10 @@
                     feedPosts.innerHTML = '<p>Aucun post disponible</p>';
                 } else {
                     data.posts.forEach(post => {
-                        /*if (!post.post_id) {
+                        if (!post.id) {
                             console.warn('Post sans post_id:', post);
                             return; // Ignorer les posts sans post_id
-                        }*/
+                        }
 
                         if (post.id) {
                             loadComments(post.id);
@@ -383,17 +383,17 @@
                                         <span class="post-likes-count">${post.likes_count || 0}</span>
                                     </div>
                                     <div class="post-comments-share">
-                                        <span id="comments-count-${post.post_id || 0}">${post.comments_count || 0} commentaires</span>
+                                        <span id="comments-count-${post.id || 0}">${post.comments_count || 0} commentaires</span>
                                         <span>0 partages</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="post-actions">
                                 <div class="post-action-buttons">
-                                    <button class="post-action-btn post-like-btn" data-id="${post.post_id || 0}">
+                                    <button class="post-action-btn post-like-btn" data-id="${post.id || 0}">
                                         <i class="bi bi-hand-thumbs-up"></i><span>J'aime</span>
                                     </button>
-                                    <button class="post-action-btn post-comment-btn" data-id="${post.post_id || 0}">
+                                    <button class="post-action-btn post-comment-btn" data-id="${post.id || 0}">
                                         <i class="bi bi-chat-left"></i><span>Commenter</span>
                                     </button>
                                     <button class="post-action-btn"><i class="bi bi-share"></i><span>Partager</span></button>
@@ -401,7 +401,7 @@
                             </div>
                             <div class="post-comments-section mt-2 p-2" style="background:#f6f7f9;border-radius:0.5rem;">
                                 <div class="comments-list mb-2"></div>
-                                <form class="comment-form d-flex align-items-center gap-2" data-id="${post.post_id || 0}">
+                                <form class="comment-form d-flex align-items-center gap-2" data-id="${post.id || 0}">
                                     <div class="user-avatar-small" style="width:28px;height:28px;"></div>
                                     <input type="text" class="form-control form-control-sm comment-input" placeholder="Écrire un commentaire..." style="background:#fff;border-radius:1rem;">
                                     <button type="submit" class="btn btn-primary btn-sm px-3">Publier</button>
@@ -413,7 +413,7 @@
                         likeBtn.addEventListener('click', async () => {
                             try {
                                 const isLiked = likeBtn.classList.contains('liked');
-                                await fetchApi('/likes.php', isLiked ? 'DELETE' : 'POST', { post_id: post.post_id });
+                                await fetchApi('/likes.php', isLiked ? 'DELETE' : 'POST', { post_id: post.id });
                                 likeBtn.classList.toggle('liked');
                                 likesCount.textContent = isLiked ? parseInt(likesCount.textContent) - 1 : parseInt(likesCount.textContent) + 1;
                             } catch (error) {
@@ -428,9 +428,9 @@
                             const content = input.value.trim();
                             if (content) {
                                 try {
-                                    await fetchApi('/comments.php', 'POST', { post_id: post.post_id, content });
+                                    await fetchApi('/comments.php', 'POST', { post_id: post.id, content });
                                     input.value = '';
-                                    loadComments(post.post_id, commentsList);
+                                    loadComments(post.id, commentsList);
                                 } catch (error) {
                                     console.error('Erreur lors de l\'ajout de commentaire:', error);
                                 }
@@ -463,7 +463,7 @@
                                 console.error('Erreur lors de la récupération des commentaires:', error);
                             }
                         }
-                        loadComments(post.post_id, commentsList);
+                        loadComments(post.id, commentsList);
                         feedPosts.appendChild(postElement);
                     });
                 }
