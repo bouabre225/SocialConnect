@@ -56,7 +56,7 @@ class Chat implements MessageComponentInterface {
 
             // Récupérer les détails du message
             $stmt = $this->pdo->prepare('
-                SELECT m.id, m.content, m.created_at, u.username, u.avatar_url
+                SELECT m.id, m.content, m.created_at, u.username, u.avatar_url  
                 FROM messages m
                 JOIN users u ON m.sender_id = u.id
                 WHERE m.id = ?

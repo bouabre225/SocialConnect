@@ -47,7 +47,7 @@
             <form id="loginForm">
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                    <input type="text" class="form-control" name="username" placeholder="Identifiant administrateur" required>
+                    <input type="email" class="form-control" name="email" placeholder="Email administrateur" required>
                 </div>
                 
                 <div class="input-group mb-3">
@@ -63,7 +63,7 @@
                         <input class="form-check-input" type="checkbox" id="rememberMe">
                         <label class="form-check-label" for="rememberMe">Se souvenir de moi</label>
                     </div>
-                    <a data-url="/forgot" class="forgot-password">Mot de passe oublié ?</a>
+                    <a href="javascript:void(0);" data-url="/forgot" class="forgot-password text-decoration-none">Mot de passe oublié ?</a>
                 </div>
                 
                 <button type="submit" class="btn btn-login">
@@ -74,7 +74,7 @@
             </form>
             
             <div class="text-center mt-4">
-                <p class="small">Retour au <a data-url="/home" class="login-link">site principal</a></p>
+                <p class="small">Retour au <a href="javascript:void(0);" data-url="/home" class="login-link text-decoration-none">site principal</a></p>
             </div>
         </div>
     </div>

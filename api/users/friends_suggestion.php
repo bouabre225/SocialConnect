@@ -41,9 +41,12 @@ try {
         AND u.id NOT IN (
             SELECT friend_id FROM friends WHERE user_id = ? AND status = "accepted"
         )
+        AND u.id NOT IN (
+            SELECT friend_id FROM friends WHERE user_id = ? AND status = "pending"
+        )
         LIMIT 10
     ');
-    $stmt->execute([$user->user_id, $user->user_id, $user->user_id]);
+    $stmt->execute([$user->user_id, $user->user_id, $user->user_id, $user->user_id]);
     $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     jsonResponse(['status' => 'success', 'suggestions' => $suggestions]);
 } catch (Exception $e) {

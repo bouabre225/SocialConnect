@@ -1,2085 +1,421 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <style>
-        :root {
-            --primary: #4a6fa5;
-            --primary-light: #6b8cba;
-            --primary-dark: #3a5784;
-            --accent: #ff7e5f;
-            --light: #ffffff;
-            --dark: #2b2d42;
-            --gray: #f8f9fa;
-            --gray-dark: #e9ecef;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--gray);
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        /* Header */
-        .header {
-            background: var(--light);
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 1rem 0;
-        }
-
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem;
-        }
-
-        .app-logo {
-            display: flex;
-            align-items: center;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .app-logo i {
-            margin-right: 0.8rem;
-            color: var(--accent);
-            font-size: 2.5rem;
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background: var(--gray-dark);
-            border-radius: 25px;
-            padding: 0.6rem 1.2rem;
-            flex: 1;
-            max-width: 600px;
-            margin: 0 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .search-bar:hover {
-            background: var(--primary-light);
-        }
-
-        .search-bar input {
-            border: none;
-            outline: none;
-            background: none;
-            flex: 1;
-            padding: 0.4rem;
-            font-size: 1rem;
-        }
-
-        .search-bar i {
-            color: #666;
-            margin-right: 0.6rem;
-        }
-
-        .nav-icons {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-        }
-
-        .nav-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--gray-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nav-icon:hover {
-            background: var(--primary);
-            color: var(--light);
-            transform: translateY(-3px);
-        }
-
-        .profile-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .profile-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--accent);
-            color: var(--light);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Main Container */
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 300px 1fr 350px;
-            gap: 2.5rem;
-            padding: 2.5rem;
-        }
-
-        /* Left Sidebar */
-        .left-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .sidebar-card {
-            background: var(--light);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-            width: 100%;
-        }
-
-        .sidebar-card:hover {
-            transform: translateY(-8px);
-        }
-
-        .sidebar-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        .sidebar-title i {
-            background: var(--gray-dark);
-            padding: 0.6rem;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-        }
-
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .sidebar-item:hover {
-            background: var(--primary-light);
-        }
-
-        .sidebar-item i {
-            color: var(--primary);
-            width: 24px;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.2rem;
-            padding: 1rem;
-            background: var(--gray-dark);
-            border-radius: 10px;
-        }
-
-        .info-icon {
-            font-size: 1.3rem;
-            width: 28px;
-            text-align: center;
-            color: var(--primary);
-        }
-
-        .info-item div:last-child {
-            color: var(--dark);
-            font-weight: 500;
-        }
-
-        /* Profile Content */
-        .profile-content {
-            display: flex;
-            flex-direction: column;
-            gap: 2.5rem;
-        }
-
-        .profile-header {
-            background: var(--light);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-            width: 100%;
-        }
-
-        .profile-header:hover {
-            transform: translateY(-8px);
-        }
-
-        .cover-photo {
-            height: 250px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            position: relative;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .edit-icon {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .edit-icon:hover {
-            background: var(--light);
-            transform: scale(1.1);
-        }
-
-        .profile-info {
-            padding: 2.5rem;
-            position: relative;
-        }
-
-        .profile-picture {
-            position: absolute;
-            top: -70px;
-            left: 2.5rem;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 5px solid var(--light);
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--light);
-            font-size: 3.5rem;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .profile-picture img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-picture .edit-icon {
-            bottom: 5px;
-            right: 5px;
-            width: 36px;
-            height: 36px;
-            background: var(--accent);
-            border: 2px solid var(--light);
-        }
-
-        .profile-name {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-top: 70px;
-            margin-bottom: 0.6rem;
-        }
-
-        .friend-count {
-            color: #666;
-            font-size: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 1.2rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: var(--light);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            animation: pulse 1.5s infinite;
-        }
-
-        .btn-secondary {
-            background: var(--gray-dark);
-            color: var(--dark);
-        }
-
-        .btn-secondary:hover {
-            background: var(--gray);
-            transform: translateY(-3px);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--gray-dark);
-            color: var(--dark);
-        }
-
-        .btn-outline:hover {
-            background: var(--gray-dark);
-        }
-
-        .profile-nav {
-            display: flex;
-            border-top: 1px solid var(--gray-dark);
-            padding-top: 1.2rem;
-        }
-
-        .nav-item {
-            padding: 1rem 2rem;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-item:hover {
-            background: var(--primary-light);
-        }
-
-        .nav-item.active {
-            background: var(--primary);
-            color: var(--light);
-        }
-
-        /* Create Post */
-        .create-post {
-            background: var(--light);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-            transition: transform 0.3s ease;
-            width: 100%;
-        }
-
-        .create-post:hover {
-            transform: translateY(-8px);
-        }
-
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--light);
-            font-size: 1.5rem;
-            overflow: hidden;
-        }
-
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .create-post-input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            border: 2px solid var(--gray-dark);
-            border-radius: 25px;
-            cursor: pointer;
-            color: #666;
-            background: var(--gray-dark);
-            transition: all 0.3s ease;
-        }
-
-        .create-post-input:hover {
-            background: var(--primary-light);
-        }
-
-        /* Posts */
-        .post {
-            background: var(--light);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            margin-bottom: 2.5rem;
-            transition: transform 0.3s ease;
-            width: 100%;
-        }
-
-        .post:hover {
-            transform: translateY(-8px);
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .post-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--light);
-            overflow: hidden;
-        }
-
-        .post-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .post-user h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .post-user p {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .post-content {
-            margin: 1.2rem 0;
-            color: var(--dark);
-        }
-
-        .post-image {
-            width: 100%;
-            border-radius: 10px;
-            margin: 1.2rem 0;
-            max-height: 500px;
-            object-fit: cover;
-        }
-
-        .post-actions {
-            display: flex;
-            justify-content: space-around;
-            border-top: 1px solid var(--gray-dark);
-            padding-top: 1.2rem;
-        }
-
-        .post-action {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 1.2rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #666;
-        }
-
-        .post-action:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-
-        /* Right Sidebar */
-        .right-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .birthdays {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-            padding: 1.2rem;
-            background: var(--gray-dark);
-            border-radius: 10px;
-        }
-
-        .birthdays-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--light);
-            font-size: 1.5rem;
-        }
-
-        .contacts-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.2rem;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-            padding: 1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .contact-item:hover {
-            background: var(--primary-light);
-        }
-
-        .contact-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contact-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .online-status {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 12px;
-            height: 12px;
-            background: #4CAF50;
-            border-radius: 50%;
-            border: 2px solid var(--light);
-        }
-
-        .contact-name {
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .tag {
-            background: var(--primary);
-            color: var(--light);
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--light);
-            border-radius: 16px;
-            padding: 2.5rem;
-            max-width: 800px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .modal-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            position: relative;
-        }
-
-        .modal-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 80px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #666;
-            transition: all 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: var(--dark);
-        }
-
-        .form-group {
-            margin-bottom: 1.8rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.6rem;
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        .input-group {
-            display: flex;
-            margin-bottom: 1.2rem;
-            position: relative;
-        }
-
-        .input-group-text {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 1rem;
-            background-color: var(--gray-dark);
-            border: 1px solid var(--gray-dark);
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-            color: var(--primary);
-            font-size: 1.1rem;
-        }
-
-        .form-control {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            border: 1px solid var(--gray-dark);
-            border-radius: 0 10px 10px 0;
-            font-family: inherit;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 0.2rem rgba(74, 111, 165, 0.2);
-        }
-
-        .form-textarea {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid var(--gray-dark);
-            border-radius: 10px;
-            font-family: inherit;
-            transition: all 0.3s ease;
-            resize: vertical;
-            min-height: 120px;
-            font-size: 1rem;
-        }
-
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 0.2rem rgba(74, 111, 165, 0.2);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid var(--gray-dark);
-            border-radius: 10px;
-            font-family: inherit;
-            transition: all 0.3s ease;
-            background-color: var(--light);
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 0.2rem rgba(74, 111, 165, 0.2);
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 1.2rem;
-            justify-content: flex-end;
-        }
-
-        .file-cta {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--light);
-            border: none;
-            transition: all 0.3s ease;
-            border-radius: 10px;
-            padding: 0.8rem 1rem;
-        }
-
-        .file-cta:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
-        }
-
-        .profile-pic-preview {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--light);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            display: none;
-            margin: 0 auto 1.8rem;
-        }
-
-        .text-muted {
-            color: #6c757d;
-            font-size: 0.9rem;
-            display: block;
-            margin-top: -0.9rem;
-            margin-bottom: 1.2rem;
-            line-height: 1.4;
-        }
-
-        .error-message {
-            color: var(--accent);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .main-container {
-                grid-template-columns: 250px 1fr 300px;
-                gap: 2rem;
-                padding: 2rem;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .main-container {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .left-sidebar, .right-sidebar {
-                display: none;
-            }
-
-            .header-content {
-                padding: 0 1.5rem;
-            }
-
-            .search-bar {
-                margin: 0 1.5rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1.2rem;
-            }
-
-            .search-bar {
-                margin: 0;
-                max-width: 100%;
-            }
-
-            .nav-icons {
-                order: -1;
-            }
-
-            .main-container {
-                padding: 1.5rem;
-            }
-
-            .profile-header {
-                margin: 0 -1.5rem;
-            }
-
-            .profile-info {
-                padding: 1.5rem;
-            }
-
-            .profile-name {
-                font-size: 1.8rem;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .profile-nav {
-                flex-wrap: wrap;
-            }
-
-            .modal-content {
-                width: 95%;
-                padding: 1.8rem;
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .comments-section { margin-top: 10px; }
-        .comments-list .comment { margin-bottom: 5px; padding: 5px; border: 1px solid #ccc; }
-        .comment-actions button { margin-left: 5px; }
-        .comment-form { margin-top: 5px; }
-        .comment-input { padding: 5px; width: 70%; }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="app-logo">
-                <i class="fas fa-globe"></i> SocialConnect
+<!-- Header -->
+<header class="header">
+    <div class="header-content">
+        <div class="app-logo">
+            <i class="fas fa-globe"></i> SocialConnect
+        </div>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Rechercher sur SocialConnect">
+        </div>
+        <div class="nav-icons">
+            <div class="nav-icon">
+                <i class="fas fa-home"></i>
             </div>
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Rechercher sur SocialConnect">
+            <div class="nav-icon">
+                <i class="fas fa-users"></i>
             </div>
-            <div class="nav-icons">
-                <div class="nav-icon">
-                    <i class="fas fa-home"></i>
+            <div class="nav-icon">
+                <i class="fas fa-store"></i>
+            </div>
+            <div class="nav-icon">
+                <i class="fas fa-user-friends"></i>
+            </div>
+            <div class="nav-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="nav-icon">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+            <div class="profile-icon" id="header-profile-icon">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="main-container">
+    <!-- Left Sidebar -->
+    <div class="left-sidebar">
+        <div class="sidebar-card">
+            <div class="sidebar-title">
+                <i class="fas fa-user"></i>
+                <span id="sidebar-username"></span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Amis</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-users"></i>
+                <span>Groupes</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-store"></i>
+                <span>Marketplace</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-tv"></i>
+                <span>Watch</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-bookmark"></i>
+                <span>Enregistrés</span>
+            </div>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-title">
+                <i class="fas fa-info-circle"></i>
+                À propos de moi
+            </div>
+            <div class="info-item">
+                <div class="info-icon">📅</div>
+                <div>
+                    <div>Date de naissance</div>
+                    <div id="birthdate"></div>
                 </div>
-                <div class="nav-icon">
-                    <i class="fas fa-users"></i>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">🏙️</div>
+                <div>
+                    <div>Ville</div>
+                    <div id="city"></div>
                 </div>
-                <div class="nav-icon">
-                    <i class="fas fa-store"></i>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">💼</div>
+                <div>
+                    <div>Profession</div>
+                    <div id="profession"></div>
                 </div>
-                <div class="nav-icon">
-                    <i class="fas fa-user-friends"></i>
-                </div>
-                <div class="nav-icon">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge">3</span>
-                </div>
-                <div class="nav-icon">
-                    <i class="fas fa-comment-dots"></i>
-                </div>
-                <div class="profile-icon" id="header-profile-icon">
-                    <i class="fas fa-user"></i>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">❤️</div>
+                <div>
+                    <div>Statut relationnel</div>
+                    <div id="relationship"></div>
                 </div>
             </div>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <!-- Left Sidebar -->
-        <div class="left-sidebar">
-            <div class="sidebar-card">
-                <div class="sidebar-title">
+    <!-- Profile Content -->
+    <div class="profile-content">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="cover-photo" id="cover-photo">
+                <div class="edit-icon" id="edit-cover-btn">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+            <div class="profile-info">
+                <div class="profile-picture" id="profile-picture">
                     <i class="fas fa-user"></i>
-                    <span id="sidebar-username"></span>
-                </div>
-                <div class="sidebar-item">
-                    <i class="fas fa-user-friends"></i>
-                    <span>Amis</span>
-                </div>
-                <div class="sidebar-item">
-                    <i class="fas fa-users"></i>
-                    <span>Groupes</span>
-                </div>
-                <div class="sidebar-item">
-                    <i class="fas fa-store"></i>
-                    <span>Marketplace</span>
-                </div>
-                <div class="sidebar-item">
-                    <i class="fas fa-tv"></i>
-                    <span>Watch</span>
-                </div>
-                <div class="sidebar-item">
-                    <i class="fas fa-bookmark"></i>
-                    <span>Enregistrés</span>
-                </div>
-            </div>
-            <div class="sidebar-card">
-                <div class="sidebar-title">
-                    <i class="fas fa-info-circle"></i>
-                    À propos de moi
-                </div>
-                <div class="info-item">
-                    <div class="info-icon">📅</div>
-                    <div>
-                        <div>Date de naissance</div>
-                        <div id="birthdate"></div>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon">🏙️</div>
-                    <div>
-                        <div>Ville</div>
-                        <div id="city"></div>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon">💼</div>
-                    <div>
-                        <div>Profession</div>
-                        <div id="profession"></div>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon">❤️</div>
-                    <div>
-                        <div>Statut relationnel</div>
-                        <div id="relationship"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profile Content -->
-        <div class="profile-content">
-            <!-- Profile Header -->
-            <div class="profile-header">
-                <div class="cover-photo" id="cover-photo">
-                    <div class="edit-icon" id="edit-cover-btn">
+                    <div class="edit-icon" id="edit-avatar-btn">
                         <i class="fas fa-camera"></i>
                     </div>
                 </div>
-                <div class="profile-info">
-                    <div class="profile-picture" id="profile-picture">
-                        <i class="fas fa-user"></i>
-                        <div class="edit-icon" id="edit-avatar-btn">
-                            <i class="fas fa-camera"></i>
-                        </div>
-                    </div>
-                    <h1 class="profile-name" id="profile-name"></h1>
-                    <div class="friend-count" id="friend-count">0 amis</div>
-                    <div class="action-buttons">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Ajouter à la story
-                        </button>
-                        <button class="btn btn-secondary" id="update-profile-btn">
-                            <i class="fas fa-pen"></i> Modifier le profil
-                        </button>
-                        <button class="btn btn-outline">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </button>
-                    </div>
-                    <div class="profile-nav">
-                        <div class="nav-item active">Publications</div>
-                        <div class="nav-item">À propos</div>
-                        <div class="nav-item">Amis</div>
-                        <div class="nav-item">Photos</div>
-                        <div class="nav-item">Vidéos</div>
-                    </div>
+                <h1 class="profile-name" id="profile-name"></h1>
+                <div class="friend-count" id="friend-count">0 amis</div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Ajouter à la story
+                    </button>
+                    <button class="btn btn-secondary" id="update-profile-btn">
+                        <i class="fas fa-pen"></i> Modifier le profil
+                    </button>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
                 </div>
-            </div>
-
-            <!-- Create Post -->
-            <div class="create-post" id="create-post">
-                <div class="user-avatar" id="create-post-avatar">
-                    <i class="fas fa-user"></i>
+                <div class="profile-nav">
+                    <div class="nav-item active">Publications</div>
+                    <div class="nav-item">À propos</div>
+                    <div class="nav-item">Amis</div>
+                    <div class="nav-item">Photos</div>
+                    <div class="nav-item">Vidéos</div>
                 </div>
-                <div class="create-post-input" id="create-post-input">
-                    Quoi de neuf ?
-                </div>
-            </div>
-
-            <!-- Posts Container -->
-            <div id="posts-container">
-                <!-- Posts will be loaded dynamically -->
             </div>
         </div>
 
-        <!-- Right Sidebar -->
-        <div class="right-sidebar">
-            <div class="sidebar-card">
-                <div class="birthdays">
-                    <div class="birthdays-icon">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <div>
-                        <strong>Anniversaires</strong>
-                        <div id="birthdays-list">Aucun anniversaire aujourd'hui</div>
-                    </div>
+        <!-- Create Post -->
+        <div class="create-post" id="create-post">
+            <div class="user-avatar" id="create-post-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="create-post-input" id="create-post-input">
+                Quoi de neuf ?
+            </div>
+        </div>
+
+        <!-- Posts Container -->
+        <div id="posts-container">
+            <!-- Posts will be loaded dynamically -->
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="right-sidebar">
+        <div class="sidebar-card">
+            <div class="birthdays">
+                <div class="birthdays-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div>
+                    <strong>Anniversaires</strong>
+                    <div id="birthdays-list">Aucun anniversaire aujourd'hui</div>
                 </div>
             </div>
-            <div class="sidebar-card">
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-title">
+                <i class="fas fa-heart"></i>
+                Centres d'intérêt
+            </div>
+            <div class="tags" id="profile-interests">
+                <!-- Interests will be loaded dynamically -->
+            </div>
+        </div>
+        <div class="sidebar-card">
+            <div class="contacts-header">
                 <div class="sidebar-title">
-                    <i class="fas fa-heart"></i>
-                    Centres d'intérêt
+                    <i class="fas fa-users"></i>
+                    Contacts
                 </div>
-                <div class="tags" id="profile-interests">
-                    <!-- Interests will be loaded dynamically -->
+                <div class="nav-icons">
+                    <div class="nav-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="nav-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="nav-icon">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
                 </div>
             </div>
-            <div class="sidebar-card">
-                <div class="contacts-header">
-                    <div class="sidebar-title">
-                        <i class="fas fa-users"></i>
-                        Contacts
-                    </div>
-                    <div class="nav-icons">
-                        <div class="nav-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <div class="nav-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="nav-icon">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </div>
-                    </div>
-                </div>
-                <div id="contacts-container">
-                    <!-- Contacts will be loaded dynamically -->
-                </div>
+            <div id="contacts-container">
+                <!-- Contacts will be loaded dynamically -->
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Update Profile Modal -->
-    <div class="modal" id="update-profile-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Modifier le profil</div>
-                <button class="close-modal">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="edit-profile-form">
-                    <div class="form-group">
-                        <label class="form-label">Photo de profil</label>
-                        <div class="file is-centered has-name is-boxed">
-                            <label class="file-label">
-                                <input class="file-input" type="file" id="profile-pic" accept="image/*">
-                                <span class="file-cta">
-                                    <span class="file-icon"><i class="fas fa-cloud-upload-alt"></i></span>
-                                    <span class="file-label">Choisir une photo...</span>
-                                </span>
-                                <span class="file-name">Aucun fichier sélectionné</span>
-                            </label>
-                        </div>
-                        <img id="profile-pic-preview" class="profile-pic-preview" src="" alt="Preview">
-                        <p class="text-muted">Taille recommandée : 500x500 pixels (format carré)</p>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Photo de couverture</label>
-                        <div class="file is-centered has-name is-boxed">
-                            <label class="file-label">
-                                <input class="file-input" type="file" id="cover-pic" accept="image/*">
-                                <span class="file-cta">
-                                    <span class="file-icon"><i class="fas fa-cloud-upload-alt"></i></span>
-                                    <span class="file-label">Choisir une photo...</span>
-                                </span>
-                                <span class="file-name">Aucun fichier sélectionné</span>
-                            </label>
-                        </div>
-                        <p class="text-muted">Taille recommandée : 1200x400 pixels</p>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Prénom</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                            <input type="text" class="form-control" id="first-name" placeholder="Prénom" required>
-                        </div>
-                        <div class="error-message" id="first-name-error">Veuillez entrer un prénom valide.</div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Nom</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                            <input type="text" class="form-control" id="last-name" placeholder="Nom" required>
-                        </div>
-                        <div class="error-message" id="last-name-error">Veuillez entrer un nom valide.</div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Pseudo</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-at"></i></span>
-                            <input type="text" class="form-control" id="username" placeholder="Pseudo" required>
-                        </div>
-                        <div class="error-message" id="username-error">Veuillez entrer un pseudo valide (minimum 3 caractères).</div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Date de naissance</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-birthday-cake"></i></span>
-                            <input type="date" class="form-control" id="birthdate" required>
-                        </div>
-                        <div class="error-message" id="birthdate-error">Veuillez sélectionner une date de naissance.</div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Âge</label>
-                        <input type="number" class="form-control" id="age" min="13" max="120" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Genre</label>
-                        <select class="form-select" id="gender">
-                            <option value="">Sélectionner</option>
-                            <option value="male">Homme</option>
-                            <option value="female">Femme</option>
-                            <option value="other">Autre</option>
-                            <option value="prefer-not-to-say">Préfère ne pas dire</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Situation matrimoniale</label>
-                        <select class="form-select" id="relationship-status">
-                            <option value="">Sélectionner</option>
-                            <option value="single">Célibataire</option>
-                            <option value="in-a-relationship">En couple</option>
-                            <option value="engaged">Fiancé(e)</option>
-                            <option value="married">Marié(e)</option>
-                            <option value="complicated">C'est compliqué</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Profession</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
-                            <input type="text" class="form-control" id="profession" placeholder="Votre métier">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Pays</label>
-                        
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ville</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-city"></i></span>
-                            <input type="text" class="form-control" id="city" placeholder="Votre ville">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Adresse</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-home"></i></span>
-                            <input type="text" class="form-control" id="address" placeholder="Votre adresse">
-                        </div>
-                        <p class="text-muted">Seuls vos amis pourront voir cette information</p>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Bio</label>
-                        <textarea class="form-textarea" id="bio" placeholder="Parlez un peu de vous..." maxlength="500"></textarea>
-                        <p class="text-muted"><span id="bio-counter">0</span>/500 caractères</p>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Centres d'intérêt</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-heart"></i></span>
-                            <input type="text" class="form-control" id="interests" placeholder="Sports, musique, voyages...">
-                        </div>
-                        <p class="text-muted">Séparez par des virgules</p>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Mot de passe actuel</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="current-password" placeholder="Mot de passe actuel" required>
-                        </div>
-                        <div class="error-message" id="current-password-error">Veuillez entrer un mot de passe valide.</div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline close-modal">Annuler</button>
-                <button class="btn btn-primary" id="save-profile-btn">Enregistrer</button>
-            </div>
+<!-- Update Profile Modal -->
+<div class="modal" id="update-profile-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Modifier le profil</div>
+            <button class="close-modal">×</button>
         </div>
-    </div>
-
-    <!-- Create Post Modal -->
-    <div class="modal" id="create-post-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Créer une publication</div>
-                <button class="close-modal">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="post-header">
-                    <div class="post-avatar" id="post-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="post-user-info">
-                        <div class="post-username" id="post-username"></div>
-                    </div>
-                </div>
+        <div class="modal-body">
+            <form id="edit-profile-form">
                 <div class="form-group">
-                    <textarea class="form-textarea" id="post-content" placeholder="Quoi de neuf ?"></textarea>
-                    <div class="error-message" id="post-content-error">Veuillez entrer du contenu pour votre publication.</div>
-                </div>
-                <div class="form-group">
+                    <label class="form-label">Photo de profil</label>
                     <div class="file is-centered has-name is-boxed">
                         <label class="file-label">
-                            <input class="file-input" type="file" id="post-media" accept="image/*">
+                            <input class="file-input" type="file" id="profile-pic" accept="image/*">
                             <span class="file-cta">
-                                <span class="file-icon"><i class="fas fa-image"></i></span>
-                                <span class="file-label">Photo</span>
+                                <span class="file-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                                <span class="file-label">Choisir une photo...</span>
                             </span>
                             <span class="file-name">Aucun fichier sélectionné</span>
                         </label>
                     </div>
-                    <img id="post-media-preview" class="post-image" src="" alt="Preview" style="display: none;">
+                    <img id="profile-pic-preview" class="profile-pic-preview" src="" alt="Preview">
+                    <p class="text-muted">Taille recommandée : 500x500 pixels (format carré)</p>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="publish-post-btn">Publier</button>
-            </div>
+                <div class="form-group">
+                    <label class="form-label">Photo de couverture</label>
+                    <div class="file is-centered has-name is-boxed">
+                        <label class="file-label">
+                            <input class="file-input" type="file" id="cover-pic" accept="image/*">
+                            <span class="file-cta">
+                                <span class="file-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                                <span class="file-label">Choisir une photo...</span>
+                            </span>
+                            <span class="file-name">Aucun fichier sélectionné</span>
+                        </label>
+                    </div>
+                    <p class="text-muted">Taille recommandée : 1200x400 pixels</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prénom</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" class="form-control" id="first-name" placeholder="Prénom" required>
+                    </div>
+                    <div class="error-message" id="first-name-error">Veuillez entrer un prénom valide.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" class="form-control" id="last-name" placeholder="Nom" required>
+                    </div>
+                    <div class="error-message" id="last-name-error">Veuillez entrer un nom valide.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pseudo</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-at"></i></span>
+                        <input type="text" class="form-control" id="username" placeholder="Pseudo" required>
+                    </div>
+                    <div class="error-message" id="username-error">Veuillez entrer un pseudo valide (minimum 3 caractères).</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date de naissance</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-birthday-cake"></i></span>
+                        <input type="date" class="form-control" id="birthdate" required>
+                    </div>
+                    <div class="error-message" id="birthdate-error">Veuillez sélectionner une date de naissance.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Âge</label>
+                    <input type="number" class="form-control" id="age" min="13" max="120" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Genre</label>
+                    <select class="form-select" id="gender">
+                        <option value="">Sélectionner</option>
+                        <option value="male">Homme</option>
+                        <option value="female">Femme</option>
+                        <option value="other">Autre</option>
+                        <option value="prefer-not-to-say">Préfère ne pas dire</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Situation matrimoniale</label>
+                    <select class="form-select" id="relationship-status">
+                        <option value="">Sélectionner</option>
+                        <option value="single">Célibataire</option>
+                        <option value="in-a-relationship">En couple</option>
+                        <option value="engaged">Fiancé(e)</option>
+                        <option value="married">Marié(e)</option>
+                        <option value="complicated">C'est compliqué</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Profession</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                        <input type="text" class="form-control" id="profession" placeholder="Votre métier">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pays</label>
+                    
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ville</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-city"></i></span>
+                        <input type="text" class="form-control" id="city" placeholder="Votre ville">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Adresse</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-home"></i></span>
+                        <input type="text" class="form-control" id="address" placeholder="Votre adresse">
+                    </div>
+                    <p class="text-muted">Seuls vos amis pourront voir cette information</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-textarea" id="bio" placeholder="Parlez un peu de vous..." maxlength="500"></textarea>
+                    <p class="text-muted"><span id="bio-counter">0</span>/500 caractères</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Centres d'intérêt</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-heart"></i></span>
+                        <input type="text" class="form-control" id="interests" placeholder="Sports, musique, voyages...">
+                    </div>
+                    <p class="text-muted">Séparez par des virgules</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mot de passe actuel</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="current-password" placeholder="Mot de passe actuel" required>
+                    </div>
+                    <div class="error-message" id="current-password-error">Veuillez entrer un mot de passe valide.</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline close-modal">Annuler</button>
+            <button class="btn btn-primary" id="save-profile-btn">Enregistrer</button>
         </div>
     </div>
+</div>
 
-    <!-- Password Verification Modal -->
-    <div class="modal" id="password-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Confirmer votre mot de passe</div>
-                <button class="close-modal">×</button>
+<!-- Create Post Modal -->
+<div class="modal" id="create-post-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Créer une publication</div>
+            <button class="close-modal">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="post-header">
+                <div class="post-avatar" id="post-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="post-user-info">
+                    <div class="post-username" id="post-username"></div>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="password-form">
-                    <div class="form-group">
-                        <label class="form-label">Mot de passe</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" required>
-                        </div>
-                        <div class="error-message" id="password-error">Mot de passe incorrect.</div>
-                    </div>
-                </form>
+            <div class="form-group">
+                <textarea class="form-textarea" id="post-content" placeholder="Quoi de neuf ?"></textarea>
+                <div class="error-message" id="post-content-error">Veuillez entrer du contenu pour votre publication.</div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline close-modal">Annuler</button>
-                <button class="btn btn-primary" id="verify-password-btn">Continuer</button>
+            <div class="form-group">
+                <div class="file is-centered has-name is-boxed">
+                    <label class="file-label">
+                        <input class="file-input" type="file" id="post-media" accept="image/*">
+                        <span class="file-cta">
+                            <span class="file-icon"><i class="fas fa-image"></i></span>
+                            <span class="file-label">Photo</span>
+                        </span>
+                        <span class="file-name">Aucun fichier sélectionné</span>
+                    </label>
+                </div>
+                <img id="post-media-preview" class="post-image" src="" alt="Preview" style="display: none;">
             </div>
         </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="publish-post-btn">Publier</button>
+        </div>
     </div>
+</div>
 
- <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    const updateProfileBtn = document.getElementById('update-profile-btn');
-    const updateProfileModal = document.getElementById('update-profile-modal');
-    const closeModalBtns = document.querySelectorAll('.close-modal');
-    const saveProfileBtn = document.getElementById('save-profile-btn');
-    const createPostInput = document.getElementById('create-post-input');
-    const createPostModal = document.getElementById('create-post-modal');
-    const publishPostBtn = document.getElementById('publish-post-btn');
-    const postsContainer = document.getElementById('posts-container');
-    const editCoverBtn = document.getElementById('edit-cover-btn');
-    const editAvatarBtn = document.getElementById('edit-avatar-btn');
-
-    const profileData = JSON.parse(localStorage.getItem('profileData')) || {};
-    const posts = JSON.parse(localStorage.getItem('posts')) || [];
-    const contacts = [
-        { name: 'Jean Dupont', online: true },
-        { name: 'Marie Leclerc', online: false },
-        { name: 'Pierre Martin', online: true }
-    ];
-    function openModal(modal) {
-        modal.classList.add('active');
-    }
-
-    function closeModal(modal) {
-        modal.classList.remove('active');
-    }
-
-    updateProfileBtn.addEventListener('click', () => {
-        openModal(document.getElementById('password-modal'));
-    });
-
-    createPostInput.addEventListener('click', () => {
-        openModal(createPostModal);
-    });
-
-    closeModalBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const modal = btn.closest('.modal');
-            closeModal(modal);
-        });
-    });
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            closeModal(e.target);
-        }
-    });
-    
-    async function loadProfileData() {
-        try {
-            const response = await fetch('api/profile.php');
-            const data = await response.json();
-            if (data.success) {
-                updateProfileUI(data.user);
-            } else {
-                console.error('Erreur de chargement du profil:', data.message);
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
-
-    function updateProfileUI(user) {
-        document.querySelector('.profile-name').textContent = `${user.firstname} ${user.lastname}`;
-        document.querySelector('.friend-count').textContent = `${user.friend_count || 0} amis`;
-        document.getElementById('first-name').value = user.firstname || '';
-        document.getElementById('last-name').value = user.lastname || '';
-        document.getElementById('username').value = user.username || '';
-        document.getElementById('birthdate').value = user.birthdate || '';
-        document.getElementById('city').value = user.city || '';
-        document.getElementById('profession').value = user.profession || '';
-        document.getElementById('relationship-status').value = user.relationship_status || '';
-        document.getElementById('bio').value = user.bio || '';
-        document.getElementById('sidebar-username').textContent = user.username || '';
-        document.getElementById('post-username').textContent = user.username || 'Utilisateur';
-        document.getElementById('birthdate').textContent = user.birthdate || '';
-        document.getElementById('city').textContent = user.city || '';
-        document.getElementById('profession').textContent = user.profession || '';
-        document.getElementById('relationship').textContent = user.relationship_status || '';
-        if (user.profilePic) {
-            document.getElementById('profile-picture').innerHTML = `<img src="${user.profilePic}" alt="Profile Picture">`;
-            document.getElementById('create-post-avatar').innerHTML = `<img src="${user.profilePic}" alt="Avatar">`;
-            document.getElementById('post-avatar').innerHTML = `<img src="${user.profilePic}" alt="Avatar">`;
-            document.getElementById('header-profile-icon').innerHTML = `<img src="${user.profilePic}" alt="Profile Icon">`;
-        }
-        if (user.coverPic) {
-            document.getElementById('cover-photo').style.backgroundImage = `url(${user.coverPic})`;
-        }
-        if (user.interests) {
-            const interestsContainer = document.getElementById('profile-interests');
-            interestsContainer.innerHTML = user.interests
-                .split(',')
-                .map(tag => tag.trim())
-                .map(tag => `<span class="tag">${tag}</span>`)
-                .join('');
-        }
-    }
-
-    async function loadPosts() {
-        try {
-            const response = await fetch('api/profile.php?posts=true');
-            const data = await response.json();
-            if (data.success) {
-                renderPosts(data.posts);
-            } else {
-                console.error('Erreur de chargement des publications:', data.message);
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
-
-    function renderPosts(postsData) {
-        postsContainer.innerHTML = '';
-        if (postsData.length === 0) {
-            postsContainer.innerHTML = '<div class="post"><div class="post-content"><p>Aucune publication pour le moment</p></div></div>';
-            return;
-        }
-        postsData.forEach(post => {
-            const postElement = createPostElement(post);
-            postsContainer.appendChild(postElement);
-        });
-    }
-
-    function createPostElement(post) {
-        const postDate = new Date(post.created_at);
-        const formattedDate = postDate.toLocaleDateString('fr-FR', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        return `
-            <div class="post" data-post-id="${post.id}">
-                <div class="post-header">
-                    <div class="post-avatar">
-                        ${profileData.profilePic ? `<img src="${profileData.profilePic}" alt="Avatar">` : '<i class="fas fa-user"></i>'}
+<!-- Password Verification Modal -->
+<div class="modal" id="password-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Confirmer votre mot de passe</div>
+            <button class="close-modal">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="password-form">
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" required>
                     </div>
-                    <div class="post-user">
-                        <h4>${post.firstname || profileData.username || 'Utilisateur'} ${post.lastname || ''}</h4>
-                        <p>${formattedDate} <i class="fas fa-globe-europe"></i></p>
-                    </div>
+                    <div class="error-message" id="password-error">Mot de passe incorrect.</div>
                 </div>
-                <div class="post-content">
-                    <p class="post-text">${post.content}</p>
-                    ${post.media_url ? `<img src="${post.media_url}" class="post-image" alt="Post Media">` : ''}
-                </div>
-                <div class="post-actions">
-                    <div class="action-btn like-btn" data-post-id="${post.id}">
-                        <i class="far fa-thumbs-up"></i> J'aime <span class="like-count">${post.likes || 0}</span>
-                    </div>
-                    <div class="action-btn comment-btn" data-post-id="${post.id}">
-                        <i class="far fa-comment"></i> Commenter
-                    </div>
-                    <div class="action-btn share-btn" data-post-id="${post.id}">
-                        <i class="far fa-share-square"></i> Partager
-                    </div>
-                </div>
-                <div class="comments-section" data-post-id="${post.id}" style="display: none;">
-                    <div class="comments-list"></div>
-                    <div class="comment-form">
-                        <input type="text" class="comment-input" placeholder="Écrire un commentaire...">
-                        <button class="submit-comment-btn" data-post-id="${post.id}">Envoyer</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    async function loadComments(postId) {
-        try {
-            const response = await fetch(`api/profile.php?comments=true&post_id=${postId}`);
-            const data = await response.json();
-            if (data.success) {
-                renderComments(postId, data.comments);
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
-
-    function renderComments(postId, comments) {
-        const commentsList = document.querySelector(`.comments-section[data-post-id="${postId}"] .comments-list`);
-        commentsList.innerHTML = '';
-        comments.forEach(comment => {
-            const commentDate = new Date(comment.created_at);
-            const formattedDate = commentDate.toLocaleDateString('fr-FR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            commentsList.innerHTML += `
-                <div class="comment" data-comment-id="${comment.id}">
-                    <div class="comment-content">${comment.content}</div>
-                    <div class="comment-actions">
-                        <span class="comment-date">${formattedDate}</span>
-                        <button class="like-comment-btn" data-comment-id="${comment.id}"><i class="far fa-thumbs-up"></i> (${comment.likes || 0})</button>
-                        <button class="reply-btn" data-comment-id="${comment.id}">Répondre</button>
-                    </div>
-                    <div class="replies" data-comment-id="${comment.id}"></div>
-                </div>
-            `;
-        });
-    }
-
-    async function updateProfile() {
-        const formData = {
-            firstname: document.getElementById('first-name').value,
-            lastname: document.getElementById('last-name').value,
-            username: document.getElementById('username').value,
-            birthdate: document.getElementById('birthdate').value,
-            city: document.getElementById('city').value,
-            profession: document.getElementById('profession').value,
-            relationship_status: document.getElementById('relationship-status').value,
-            bio: document.getElementById('bio').value,
-            current_password: document.getElementById('current-password').value,
-            interests: document.getElementById('interests').value
-        };
-
-        try {
-            const response = await fetch('api/update_profile.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            const data = await response.json();
-            if (data.success) {
-                alert('Profil mis à jour avec succès!');
-                closeModal(updateProfileModal);
-                loadProfileData();
-            } else {
-                alert('Erreur: ' + data.message);
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-            alert('Une erreur est survenue lors de la mise à jour du profil');
-        }
-    }
-
-    async function createPost() {
-        const content = document.getElementById('post-content').value.trim();
-        if (!content) {
-            alert('Veuillez saisir du contenu pour votre publication');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('content', content);
-        if (document.getElementById('post-media').files[0]) {
-            formData.append('media', document.getElementById('post-media').files[0]);
-        }
-
-        try {
-            const response = await fetch('api/create_post.php', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (data.success) {
-                closeModal(createPostModal);
-                document.getElementById('post-content').value = '';
-                loadPosts();
-            } else {
-                alert('Erreur: ' + data.message);
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-            alert('Une erreur est survenue lors de la création de la publication');
-        }
-    }
-
-    saveProfileBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        updateProfile();
-    });
-
-    publishPostBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        createPost();
-    });
-
-    function loadProfile() {
-        document.getElementById('profile-name').textContent = profileData.firstName && profileData.lastName
-            ? `${profileData.firstName} ${profileData.lastName}`
-            : '';
-        document.getElementById('sidebar-username').textContent = profileData.username || '';
-        document.getElementById('post-username').textContent = profileData.username || 'Utilisateur';
-        document.getElementById('birthdate').textContent = profileData.birthdate || '';
-        document.getElementById('city').textContent = profileData.city || '';
-        document.getElementById('profession').textContent = profileData.profession || '';
-        document.getElementById('relationship').textContent = profileData.relationship || '';
-        if (profileData.profilePic) {
-            document.getElementById('profile-picture').innerHTML = `<img src="${profileData.profilePic}" alt="Profile Picture">`;
-            document.getElementById('create-post-avatar').innerHTML = `<img src="${profileData.profilePic}" alt="Avatar">`;
-            document.getElementById('post-avatar').innerHTML = `<img src="${profileData.profilePic}" alt="Avatar">`;
-            document.getElementById('header-profile-icon').innerHTML = `<img src="${profileData.profilePic}" alt="Profile Icon">`;
-        }
-        if (profileData.coverPic) {
-            document.getElementById('cover-photo').style.backgroundImage = `url(${profileData.coverPic})`;
-        }
-        if (profileData.interests) {
-            const interestsContainer = document.getElementById('profile-interests');
-            interestsContainer.innerHTML = profileData.interests
-                .split(',')
-                .map(tag => tag.trim())
-                .map(tag => `<span class="tag">${tag}</span>`)
-                .join('');
-        }
-    }
-
-    function loadContacts() {
-        const contactsContainer = document.getElementById('contacts-container');
-        contactsContainer.innerHTML = contacts.map(contact => `
-            <div class="contact-item">
-                <div class="contact-avatar">
-                    <i class="fas fa-user"></i>${contact.online ? '<span class="online-status"></span>' : ''}
-                </div>
-                <div class="contact-name">${contact.name}</div>
-            </div>
-        `).join('');
-    }
-
-    function loadPostsLocal() {
-        postsContainer.innerHTML = posts.map(post => `
-            <div class="post animate__animated animate__fadeIn" data-post-id="${post.id || Date.now()}">
-                <div class="post-header">
-                    <div class="post-avatar">
-                        ${profileData.profilePic ? `<img src="${profileData.profilePic}" alt="Avatar">` : '<i class="fas fa-user"></i>'}
-                    </div>
-                    <div class="post-user">
-                        <h4>${profileData.username || 'Utilisateur'}</h4>
-                        <p>${new Date(post.timestamp).toLocaleString('fr-FR')}</p>
-                    </div>
-                </div>
-                <div class="post-content">
-                    <p>${post.content}</p>
-                    ${post.media ? `<img src="${post.media}" class="post-image" alt="Post Media">` : ''}
-                </div>
-                <div class="post-actions">
-                    <div class="post-action like-btn" data-post-id="${post.id || Date.now()}">
-                        <i class="far fa-heart"></i>
-                        <span>J'aime</span> <span class="like-count">${post.likes || 0}</span>
-                    </div>
-                    <div class="post-action comment-btn" data-post-id="${post.id || Date.now()}">
-                        <i class="far fa-comment"></i>
-                        <span>Commenter</span>
-                    </div>
-                    <div class="post-action share-btn" data-post-id="${post.id || Date.now()}">
-                        <i class="fas fa-share"></i>
-                        <span>Partager</span>
-                    </div>
-                </div>
-                <div class="comments-section" data-post-id="${post.id || Date.now()}">
-                    <div class="comments-list"></div>
-                    <div class="comment-form">
-                        <input type="text" class="comment-input" placeholder="Écrire un commentaire...">
-                        <button class="submit-comment-btn" data-post-id="${post.id || Date.now()}">Envoyer</button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    const profilePicInput = document.getElementById('profile-pic');
-    const profilePicPreview = document.getElementById('profile-pic-preview');
-    const profileFileName = document.querySelector('#update-profile-modal .file-name');
-    const profilePicture = document.getElementById('profile-picture');
-
-    profilePicInput.addEventListener('change', function() {
-        if (profilePicInput.files && profilePicInput.files.length > 0) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                profilePicPreview.src = event.target.result;
-                profilePicPreview.style.display = 'block';
-                profilePicture.innerHTML = `<img src="${event.target.result}" alt="Profile Picture">`;
-                document.getElementById('create-post-avatar').innerHTML = `<img src="${event.target.result}" alt="Avatar">`;
-                document.getElementById('post-avatar').innerHTML = `<img src="${event.target.result}" alt="Avatar">`;
-                document.getElementById('header-profile-icon').innerHTML = `<img src="${event.target.result}" alt="Profile Icon">`;
-            };
-            reader.readAsDataURL(profilePicInput.files[0]);
-            profileFileName.textContent = profilePicInput.files[0].name;
-        } else {
-            profilePicPreview.style.display = 'none';
-            profileFileName.textContent = 'Aucun fichier sélectionné';
-            profilePicture.innerHTML = '<i class="fas fa-user"></i>';
-            document.getElementById('create-post-avatar').innerHTML = '<i class="fas fa-user"></i>';
-            document.getElementById('post-avatar').innerHTML = '<i class="fas fa-user"></i>';
-            document.getElementById('header-profile-icon').innerHTML = '<i class="fas fa-user"></i>';
-        }
-    });
-
-    const coverPicInput = document.getElementById('cover-pic');
-    const coverFileName = document.querySelector('#update-profile-modal .file-name:last-of-type');
-
-    coverPicInput.addEventListener('change', function() {
-        if (coverPicInput.files.length > 0) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                document.getElementById('cover-photo').style.backgroundImage = `url(${event.target.result})`;
-            };
-            reader.readAsDataURL(coverPicInput.files[0]);
-            coverFileName.textContent = coverPicInput.files[0].name;
-        } else {
-            coverFileName.textContent = 'Aucun fichier sélectionné';
-        }
-    });
-
-    const postMediaInput = document.getElementById('post-media');
-    const postMediaPreview = document.getElementById('post-media-preview');
-    const postFileName = document.querySelector('#create-post-modal .file-name');
-
-    postMediaInput.addEventListener('change', function() {
-        if (postMediaInput.files.length > 0) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                postMediaPreview.src = event.target.result;
-                postMediaPreview.style.display = 'block';
-            };
-            reader.readAsDataURL(postMediaInput.files[0]);
-            postFileName.textContent = postMediaInput.files[0].name;
-        } else {
-            postMediaPreview.style.display = 'none';
-            postFileName.textContent = 'Aucun fichier sélectionné';
-        }
-    });
-
-    const birthdateInput = document.getElementById('birthdate');
-    const ageInput = document.getElementById('age');
-
-    birthdateInput.addEventListener('change', function() {
-        if (birthdateInput.value) {
-            const birthDate = new Date(birthdateInput.value);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            ageInput.value = age;
-        }
-    });
-
-    const bioTextarea = document.getElementById('bio');
-    const bioCounter = document.getElementById('bio-counter');
-
-    bioTextarea.addEventListener('input', function() {
-        bioCounter.textContent = bioTextarea.value.length;
-    });
-
-    function validateForm() {
-        let isValid = true;
-        const firstName = document.getElementById('first-name').value.trim();
-        const lastName = document.getElementById('last-name').value.trim();
-        const username = document.getElementById('username').value.trim();
-        const birthdate = document.getElementById('birthdate').value;
-        const password = document.getElementById('current-password').value;
-
-        if (!firstName) {
-            document.getElementById('first-name-error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('first-name-error').style.display = 'none';
-        }
-
-        if (!lastName) {
-            document.getElementById('last-name-error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('last-name-error').style.display = 'none';
-        }
-
-        if (!username || username.length < 3) {
-            document.getElementById('username-error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('username-error').style.display = 'none';
-        }
-
-        if (!birthdate) {
-            document.getElementById('birthdate-error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('birthdate-error').style.display = 'none';
-        }
-
-        if (!password) {
-            document.getElementById('current-password-error').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('current-password-error').style.display = 'none';
-        }
-
-        return isValid;
-    }
-
-    document.getElementById('verify-password-btn').addEventListener('click', function() {
-        const password = document.getElementById('password').value;
-        if (password) {
-            closeModal(document.getElementById('password-modal'));
-            openModal(updateProfileModal);
-            document.getElementById('first-name').value = profileData.firstName || '';
-            document.getElementById('last-name').value = profileData.lastName || '';
-            document.getElementById('username').value = profileData.username || '';
-            document.getElementById('birthdate').value = profileData.birthdate || '';
-            document.getElementById('age').value = profileData.age || '';
-            document.getElementById('gender').value = profileData.gender || '';
-            document.getElementById('relationship-status').value = profileData.relationship || '';
-            document.getElementById('profession').value = profileData.profession || '';
-            document.getElementById('country').value = profileData.country || '';
-            document.getElementById('city').value = profileData.city || '';
-            document.getElementById('address').value = profileData.address || '';
-            document.getElementById('bio').value = profileData.bio || '';
-            document.getElementById('interests').value = profileData.interests || '';
-            bioCounter.textContent = profileData.bio ? profileData.bio.length : 0;
-            if (profileData.profilePic) {
-                profilePicPreview.src = profileData.profilePic;
-                profilePicPreview.style.display = 'block';
-                profileFileName.textContent = 'Image chargée';
-            }
-        } else {
-            document.getElementById('password-error').style.display = 'block';
-        }
-    });
-
-    const profileForm = document.getElementById('edit-profile-form');
-    profileForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (!validateForm()) return;
-
-        const saveBtn = document.getElementById('save-profile-btn');
-        saveBtn.classList.add('is-loading');
-
-        const formData = new FormData();
-        formData.append('firstname', document.getElementById('first-name').value.trim());
-        formData.append('lastname', document.getElementById('last-name').value.trim());
-        formData.append('username', document.getElementById('username').value.trim());
-        formData.append('birthdate', document.getElementById('birthdate').value);
-        formData.append('age', document.getElementById('age').value);
-        formData.append('gender', document.getElementById('gender').value);
-        formData.append('relationship_status', document.getElementById('relationship-status').value);
-        formData.append('profession', document.getElementById('profession').value.trim());
-        formData.append('country', document.getElementById('country').value);
-        formData.append('city', document.getElementById('city').value.trim());
-        formData.append('address', document.getElementById('address').value.trim());
-        formData.append('bio', document.getElementById('bio').value.trim());
-        formData.append('interests', document.getElementById('interests').value.trim());
-        if (document.getElementById('profile-pic').files[0]) {
-            formData.append('profile_pic', document.getElementById('profile-pic').files[0]);
-        }
-        if (document.getElementById('cover-pic').files[0]) {
-            formData.append('cover_pic', document.getElementById('cover-pic').files[0]);
-        }
-        formData.append('current_password', document.getElementById('current-password').value);
-
-        setTimeout(() => {
-            saveBtn.classList.remove('is-loading');
-            closeModal(updateProfileModal);
-            alert('Profil mis à jour avec succès !');
-            profileData.firstName = document.getElementById('first-name').value.trim();
-            profileData.lastName = document.getElementById('last-name').value.trim();
-            profileData.username = document.getElementById('username').value.trim();
-            profileData.birthdate = document.getElementById('birthdate').value;
-            profileData.age = document.getElementById('age').value;
-            profileData.gender = document.getElementById('gender').value;
-            profileData.relationship = document.getElementById('relationship-status').value;
-            profileData.profession = document.getElementById('profession').value.trim();
-            profileData.country = document.getElementById('country').value;
-            profileData.city = document.getElementById('city').value.trim();
-            profileData.address = document.getElementById('address').value.trim();
-            profileData.bio = document.getElementById('bio').value.trim();
-            profileData.interests = document.getElementById('interests').value.trim();
-            loadProfile();
-            loadProfileData();
-        }, 1500);
-    });
-
-    publishPostBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const content = document.getElementById('post-content').value.trim();
-        if (!content) {
-            document.getElementById('post-content-error').style.display = 'block';
-            return;
-        }
-        document.getElementById('post-content-error').style.display = 'none';
-
-        const formData = new FormData();
-        formData.append('content', content);
-        if (document.getElementById('post-media').files[0]) {
-            formData.append('media', document.getElementById('post-media').files[0]);
-        }
-
-        posts.unshift({ content, media: postMediaPreview.src || null, timestamp: new Date().toISOString(), likes: 0, id: Date.now() });
-        localStorage.setItem('posts', JSON.stringify(posts));
-        loadPostsLocal();
-        createPost();
-        closeModal(createPostModal);
-        document.getElementById('post-content').value = '';
-        postMediaPreview.style.display = 'none';
-        postFileName.textContent = 'Aucun fichier sélectionné';
-    });
-
-    editCoverBtn.addEventListener('click', () => coverPicInput.click());
-    editAvatarBtn.addEventListener('click', () => profilePicInput.click());
-
-    postsContainer.addEventListener('click', async (e) => {
-        const postId = e.target.closest('.post')?.dataset.postId;
-        if (!postId) return;
-
-        if (e.target.classList.contains('like-btn')) {
-            await likePost(postId);
-        } else if (e.target.classList.contains('comment-btn')) {
-            const commentsSection = document.querySelector(`.comments-section[data-post-id="${postId}"]`);
-            commentsSection.style.display = commentsSection.style.display === 'block' ? 'none' : 'block';
-            if (commentsSection.style.display === 'block') {
-                await loadComments(postId);
-            }
-        } else if (e.target.classList.contains('share-btn')) {
-            sharePost(postId);
-        } else if (e.target.classList.contains('submit-comment-btn')) {
-            const commentInput = e.target.previousElementSibling;
-            await submitComment(postId, commentInput.value);
-            commentInput.value = '';
-        } else if (e.target.classList.contains('like-comment-btn')) {
-            const commentId = e.target.dataset.commentId;
-            await likeComment(commentId);
-        } else if (e.target.classList.contains('reply-btn')) {
-            const commentId = e.target.dataset.commentId;
-            await replyToComment(postId, commentId);
-        }
-    });
-
-    async function likePost(postId) {
-        try {
-            const response = await fetch(`api/profile.php?like=true&post_id=${postId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
-            if (data.success) {
-                const likeCount = document.querySelector(`.like-btn[data-post-id="${postId}"] .like-count`);
-                likeCount.textContent = data.likes;
-                // Mettre à jour localStorage
-                const postIndex = posts.findIndex(p => p.id === parseInt(postId));
-                if (postIndex !== -1) {
-                    posts[postIndex].likes = data.likes;
-                    localStorage.setItem('posts', JSON.stringify(posts));
-                }
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
-
-    async function submitComment(postId, content) {
-        if (!content.trim()) return;
-        try {
-            const response = await fetch(`api/profile.php?comment=true`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ post_id: postId, content })
-            });
-            const data = await response.json();
-            if (data.success) {
-                await loadComments(postId);
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
-
-    async function likeComment(commentId) {
-        try {
-            const response = await fetch(`api/profile.php?like_comment=true&comment_id=${commentId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
-            if (data.success) {
-                const likeCount = document.querySelector(`.like-comment-btn[data-comment-id="${commentId}"]`);
-                likeCount.innerHTML = `<i class="far fa-thumbs-up"></i> (${data.likes})`;
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
-
-    async function replyToComment(postId, commentId) {
-        const replyContent = prompt('Répondez au commentaire :');
-        if (!replyContent) return;
-        try {
-            const response = await fetch(`api/profile.php?reply=true`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ post_id: postId, comment_id: commentId, content: replyContent })
-            });
-            const data = await response.json();
-            if (data.success) {
-                await loadComments(postId);
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
-
-    function sharePost(postId) {
-        const postUrl = window.location.href + '?post=' + postId;
-        navigator.clipboard.writeText(postUrl).then(() => {
-            alert('Lien copié : ' + postUrl);
-        }).catch(err => {
-            console.error('Erreur:', err);
-            alert('Échec de la copie du lien');
-        });
-    }
-
-    loadProfile();
-    loadContacts();
-    loadPostsLocal();
-    loadProfileData();
-});
- </script>
-        
-    </body>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline close-modal">Annuler</button>
+            <button class="btn btn-primary" id="verify-password-btn">Continuer</button>
+        </div>
+    </div>
+</div>

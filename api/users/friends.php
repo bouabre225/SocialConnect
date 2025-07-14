@@ -1,4 +1,9 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once '../../api/users/common.php';
 require '../config.php';
 
@@ -80,6 +85,23 @@ try {
             }
         }
         jsonResponse(['status' => 'success', 'friends' => $friends]);
+    } elseif ($method === 'DELETE') {
+        $friend_id = isset($data['friend_id']) ? (int)$data['friend_id'] : null;
+        if (!$friend_id || $friend_id == $user->user_id) {
+            error_log("Erreur: friend_id invalide ($friend_id) ou identique à user_id ($user->user_id)");
+            jsonResponse(['status' => 'error', 'message' => 'ID d\'ami invalide ou identique à l\'utilisateur'], 400);
+        }
+
+        global $pdo;
+        if (!$pdo) {
+            error_log("Erreur: \$pdo est null dans /friends.php");
+            jsonResponse(['status' => 'error', 'message' => 'Erreur de connexion à la base de données'], 500);
+        }
+
+        $stmt = $pdo->prepare('DELETE FROM friends WHERE user_id = ? AND friend_id = ?');
+        $stmt->execute([$user->user_id, $friend_id]);
+        error_log("Demande d'ami supprimée: user_id=$user->user_id, friend_id=$friend_id");
+        jsonResponse(['status' => 'success', 'message' => 'Demande d\'ami supprimée'], 200);
     } else {
         error_log("Erreur: Méthode non autorisée ($method)");
         jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);

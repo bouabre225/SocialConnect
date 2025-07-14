@@ -75,15 +75,16 @@ function handFileUpload($file, $uploadDir = './uploads/') {
     $mimeType = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
 
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/quicktime'];
     if (!in_array($mimeType, $allowedTypes)) {
         http_response_code(400);
         header('Content-Type: application/json');
         echo json_encode(['status' => 'error', 'message' => 'Type de fichier non autorisé']);
         exit;
     }
+    
 
-    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov' , 'avi' , 'webm', 'webp'];
     $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     if (!in_array($extension, $allowedExtensions)) {
         http_response_code(400);
@@ -92,7 +93,7 @@ function handFileUpload($file, $uploadDir = './uploads/') {
         exit;
     }
 
-    $maxSize = 5 * 1024 * 1024;
+    $maxSize = 5 * 4024 * 4024;
     if ($file['size'] > $maxSize) {
         http_response_code(400);
         header('Content-Type: application/json');

@@ -64,15 +64,15 @@
     }
 
     async function fetchApi(endpoint, method = 'GET', body = null, isFormData = false) {
-        if (failedAttempts >= maxAttempts) {
+        /*if (failedAttempts >= maxAttempts) {
             console.error('Nombre maximum de tentatives atteint, redirection vers /login');
             localStorage.removeItem('token');
             navigateTo('/login');
             return null;
-        }
+        }*/
 
         const token = localStorage.getItem('token');
-        console.log('Token envoyé dans fetchApi:', token || 'Aucun token');
+        //console.log('Token envoyé dans fetchApi:', token || 'Aucun token');
 
         const headers = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -88,7 +88,7 @@
         }
 
         try {
-            console.log(`Requête API vers: ${API_URL}${endpoint}`, options);
+            //console.log(`Requête API vers: ${API_URL}${endpoint}`, options);
             const response = await fetch(`${API_URL}${endpoint}`, options);
             console.log(`Réponse reçue pour ${endpoint}: ${response.status} ${response.statusText}`);
             if (response.status === 401) {
@@ -101,11 +101,12 @@
             if (!response.ok) {
                 failedAttempts++;
                 const error = await response.json().catch(() => null);
+                console.error('Détails de l\'erreur serveur:', error);
                 throw new Error(error?.message || `Erreur HTTP ${response.status}`);
             }
             failedAttempts = 0;
             const text = await response.text();
-            console.log(`Contenu brut pour ${endpoint}:`, text);
+            //console.log(`Contenu brut pour ${endpoint}:`, text);
             try {
                 return JSON.parse(text);
             } catch (jsonError) {
@@ -184,7 +185,7 @@
                             </div>
                             <div class="suggestion-actions">
                                 <button class="suggestion-btn suggestion-btn-primary" data-id="${suggestion.id}">Ajouter</button>
-                                <button class="suggestion-btn suggestion-btn-secondary">Supprimer</button>
+                                <button class="suggestion-btn suggestion-btn-secondary" data-id="${suggestion.remove_id}">Supprimer</button>
                             </div>
                         `;
                         suggestionsList.appendChild(suggestionItem);
@@ -194,6 +195,14 @@
                                 suggestionItem.remove();
                             } catch (error) {
                                 console.error('Erreur lors de l\'ajout d\'ami:', error);
+                            }
+                        });
+                        suggestionItem.querySelector('.suggestion-btn-secondary').addEventListener('click', async () => {
+                            try {
+                                await fetchApi('/friends.php', 'DELETE',{ friend_id: suggestion.id});
+                                suggestionItem.remove();
+                            } catch (error) {
+                                console.error('Erreur lors de la suppression d\'ami:', error);
                             }
                         });
                     });
@@ -332,7 +341,7 @@
         feedPosts.innerHTML = '';
         try {
             const data = await fetchApi('/posts.php');
-            console.log('Posts récupérés:', JSON.stringify(data, null, 2));
+            //console.log('Posts récupérés:', JSON.stringify(data, null, 2));
             if (data.status === 'success' && Array.isArray(data.posts)) {
                 if (data.posts.length === 0) {
                     feedPosts.innerHTML = '<p>Aucun post disponible</p>';
@@ -369,8 +378,8 @@
                             </div>
                             ${post.media_url ? 
                                 (post.media_type === 'video' ? 
-                                    `<video src="${post.media_url}" controls class="post-image"></video>` : 
-                                    `<img src="${post.media_url}" alt="Post content" class="post-image">`
+                                    `<video src="${API_URL}${post.media_url}" controls class="post-image"></video>` : 
+                                `<img src="${API_URL}${post.media_url}" alt="Post content" class="post-image">`
                                 ) : ''
                             }
                             <div class="post-stats">
@@ -444,7 +453,7 @@
                             }
                             try {
                                 console.log("postId:", post_id); // Débogage
-                                const data = await fetchApi(`/posts_comments/${post_id}.php`);
+                                const data = await fetchApi(`/posts_comments.php?post_id=${post_id}`);
                                 console.log('Commentaires récupérés pour post', post_id, ':', data);
                                 commentsList.innerHTML = '';
                                 document.getElementById(`comments-count-${post_id}`).textContent = `${data.comments?.length || 0} commentaires`;
@@ -528,6 +537,38 @@
                 alert('Erreur lors de la publication: ' + error.message);
             }
         });
+
+        /* createPostForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('Soumission du formulaire de publication');
+            const formData = new FormData();
+            const content = postInput.value.trim();
+            if (!content) {
+                alert('Le contenu du post est requis');
+                return;
+            }
+            formData.append('content', content);
+            // Ne pas ajouter selectedPostMediaFile pour tester
+            console.log('Données envoyées à /posts.php:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value instanceof File ? value.name : value}`);
+            }
+            try {
+                await fetchApi('/posts.php', 'POST', formData, true);
+                postInput.value = '';
+                selectedPostMediaFile = null;
+                selectedEmoji = '';
+                selectedLocation = '';
+                selectedLatLng = null;
+                document.getElementById('postMediaPreview')?.remove();
+                document.getElementById('postEmojiPreview')?.remove();
+                document.getElementById('postLocationPreview')?.remove();
+                fetchPosts();
+            } catch (error) {
+                console.error('Erreur lors de la publication:', error);
+                alert('Erreur lors de la publication: ' + error.message);
+            }
+        });*/
 
         // Exposer les variables pour les autres fonctions
         window.postCreationState = {
@@ -750,10 +791,30 @@
         navigateTo('/chat');
     });
 
-    document.getElementById('logout')?.addEventListener('click', async () => {
+    document.getElementById('go-to-notifications')?.addEventListener('click', () => {
+        console.log('Clic sur le bouton notifications, redirection vers /notifications');
+        navigateTo('/notification');
+    });
+
+    document.getElementById('go-to-profile')?.addEventListener('click', () => {
+        console.log('Clic sur le bouton profile, redirection vers /profile');
+        navigateTo('/profile');
+    });
+
+    document.getElementById('go-to-settings')?.addEventListener('click', () => {
+        console.log('Clic sur le bouton settings, redirection vers /settings');
+        navigateTo('/settings');
+    });
+
+    document.getElementById('go-to-dashboard')?.addEventListener('click', () => {
+        console.log('Clic sur le bouton dashboard, redirection vers /dashboard');
+        navigateTo('/admin');
+    });
+
+    document.getElementById('go-to-logout')?.addEventListener('click', async () => {
         console.log('Clic sur le bouton logout');
         try {
-            await fetchApi('/logout', 'POST');
+            await fetchApi('/logout.php', 'POST');
             localStorage.removeItem('token');
             localStorage.removeItem('user_id');
             navigateTo('/login');

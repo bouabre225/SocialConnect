@@ -28,24 +28,27 @@
         
         <!-- Actions utilisateur -->
         <div class="col-lg-4 col-md-5 d-flex justify-content-end user-actions">
-            <button class="action-btn menu-toggle d-md-none">
-                <i class="bi bi-list"></i>
-            </button>
             <div class="d-none d-md-flex align-items-center action-buttons">
-                <button class="action-btn" title="Menu">
-                    <i class="bi bi-list"></i>
-                </button>
                 <button class="action-btn" id="go-to-chat" title="Messenger">
                     <i class="bi bi-chat-dots-fill"></i>
                 </button>
-                <button class="action-btn" title="Notifications">
+                <button class="action-btn" id="go-to-notifications" title="Notifications">
                     <i class="bi bi-bell-fill"></i>
                 </button>
-                <button class="action-btn" title="Logout">
+                <button class="action-btn" id="go-to-profile" title="Profil">
+                    <i class="bi bi-person-fill"></i>
+                </button>
+                <button class="action-btn" id="go-to-settings" title="Settings">
+                    <i class="bi bi-gear-fill"></i>
+                </button>
+                <button class="action-btn" id="go-to-logout" title="Logout">
                     <i class="bi bi-box-arrow-right"></i>
                 </button>
-                <div class="user-avatar" title="Profil"></div>
             </div>
+            <!-- Acceder au dashboard -->
+            <button class="action-btn" id="go-to-dashboard" title="Dashboard">
+                <i class="bi bi-house-door-fill"></i>
+            </button>
             <div class="user-avatar d-md-none"></div>
         </div>
     </div>

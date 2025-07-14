@@ -1,8 +1,7 @@
 <?php
 require_once 'config.php';
 
-session_start();
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; 
+
 
 try {
     
@@ -122,3 +121,5 @@ function jsonResponse($data, $status = 200) {
     echo json_encode($data);
     exit;
 }
+
+?>

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     const updateProfileBtn = document.getElementById('update-profile-btn');
     const updateProfileModal = document.getElementById('update-profile-modal');
     const closeModalBtns = document.querySelectorAll('.close-modal');
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function loadProfileData() {
         try {
-            const response = await fetch('api/profile.php');
+            const response = await fetch('http://localhost:8001/api/profile.php');
             const data = await response.json();
             if (data.success) {
                 updateProfileUI(data.user);
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadPosts() {
         try {
-            const response = await fetch('api/profile.php?posts=true');
+            const response = await fetch('http://localhost:8001/api/profile.php?posts=true');
             const data = await response.json();
             if (data.success) {
                 renderPosts(data.posts);
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('api/create_post.php', {
+            const response = await fetch('http://localhost:8001/users/posts.php', {
                 method: 'POST',
                 body: formData
             });
