@@ -1,5 +1,5 @@
 <?php
-require_once '../../api/config.php';
+require_once '../config.php';
 require_once '../../vendor/autoload.php'; // Composer pour JWT
 require_once '../../api/users/common.php';
 

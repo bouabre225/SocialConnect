@@ -2,7 +2,7 @@
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
-require_once '../../api/config.php';
+require_once '../config.php';
 require_once '../../vendor/autoload.php'; // Composer pour JWT
 
 class Chat implements MessageComponentInterface {

@@ -1,5 +1,6 @@
 <?php
 require_once 'common.php';
+require '../config.php';
 
 // Définition de l'origine autorisée
 define('API', 'http://localhost:8000');

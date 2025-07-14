@@ -1,6 +1,7 @@
 <?php
 
 require_once '../../api/users/common.php';
+require '../config.php';
 
 $currentUserId = $_SESSION['user_id'];
 $profileUserId = isset($_GET['id']) ? (int)$_GET['id'] : $currentUserId;

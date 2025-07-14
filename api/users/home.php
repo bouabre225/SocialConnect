@@ -1,6 +1,6 @@
 <?php
 require_once 'common.php';
-include '../../api/config.php';
+require '../config.php';
 // Configuration des en-têtes CORS
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: http://localhost:8000');

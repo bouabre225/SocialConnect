@@ -1,13 +1,11 @@
 <?php
-//require_once '../../api/cors.php';
-
+//require '/api/config.php';
 include __DIR__ . '/../../vendor/autoload.php';
 // Inclure le chargeur automatique de Composer pour JWT
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 //use \Exception;
-//require '/xampp/htdocs/ReseauSocial/api/config.php';
-define('JWT_SECRET_KEY1', 'ta-cle-super-secrete'); //voila ce que j'ai fais 
+define('JWT_SECRET_KEY1', 'ta-cle-super-secrete'); 
 
 
 // Clé secrète pour JWT
@@ -123,8 +121,18 @@ function handFileUpload($file, $uploadDir = './uploads/') {
 // Fonction pour récupérer un utilisateur par ID
 function getUserById($userId) {
     global $pdo;
+    if (!$pdo) {
+        error_log("Erreur: \$pdo est null dans getUserById");
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Erreur de connexion à la base de données']);
+        exit;
+    }
     $stmt = $pdo->prepare('SELECT id, username, CONCAT(firstname, " ", lastname) AS full_name, avatar_url FROM users WHERE id = ?');
     $stmt->execute([$userId]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($user && $user['avatar_url']) {
+        $user['avatar_url'] = 'http://localhost:8000/uploads/' . basename($user['avatar_url']);
+    }
+    return $user;
 }
 ?>

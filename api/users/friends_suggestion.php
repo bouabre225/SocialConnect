@@ -1,6 +1,8 @@
 <?php
+require '../config.php';
 
 require_once '../../api/users/common.php';
+
 
 define('API', 'http://localhost:8000');
 
