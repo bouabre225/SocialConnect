@@ -1,7 +1,7 @@
 <!-- Header -->
 <header class="header">
     <div class="header-content">
-        <a href="#" class="app-logo">
+        <a href="#" data-url="/home" class="app-logo">
             <i class="fas fa-comment-dots"></i>
             <span>Social Connect</span>
         </a>
@@ -152,7 +152,7 @@
         </div>
         
         <div class="typing-indicator" id="typing-indicator">
-            <i class="fas fa-pencil-alt"></i> Sarah est en train d'écrire...
+            <i class="fas fa-pencil-alt"></i> Quelqu'un est en train d'écrire...
         </div>
         
         <div class="messages-list" id="messages-list">
@@ -192,6 +192,41 @@
             <button type="submit" class="send-btn" id="send-btn">
                 <i class="fas fa-paper-plane"></i>
             </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modale pour créer une nouvelle conversation -->
+<div id="new-conversation-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Nouvelle conversation</h2>
+            <button id="new-conversation-close" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="new-conversation-form">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Type de conversation</label>
+                <select id="conversation-type" class="mt-1 block w-full border-gray-300 rounded-md p-2">
+                    <option value="private">Privée</option>
+                    <option value="group">Groupe</option>
+                </select>
+            </div>
+            <div id="group-name-field" class="mb-4 hidden">
+                <label class="block text-sm font-medium text-gray-700">Nom du groupe</label>
+                <input type="text" id="group-name" class="mt-1 block w-full border-gray-300 rounded-md p-2" placeholder="Entrez le nom du groupe">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Participants</label>
+                <select id="conversation-participants" multiple class="mt-1 block w-full border-gray-300 rounded-md p-2 h-32">
+                    <!-- Les utilisateurs seront chargés dynamiquement -->
+                </select>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" id="new-conversation-cancel" class="btn btn-secondary mr-2">Annuler</button>
+                <button type="submit" id="new-conversation-submit" class="btn btn-primary">Créer</button>
+            </div>
         </form>
     </div>
 </div>

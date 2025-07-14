@@ -96,7 +96,7 @@ $server = \Ratchet\Server\IoServer::factory(
             new Chat()
         )
     ),
-    8080
+    8002
 );
 $server->run();
 

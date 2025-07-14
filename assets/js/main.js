@@ -165,39 +165,51 @@ function router() {
                         break;
                     case '/chat':
                         console.log('Chat ouvert');
+                        checkAuth();
                         break;
                     case '/profile':
                         console.log('Profile ouvert');
+                        checkAuth();
                         break;
                     case '/settings':
                         console.log('Settings ouvert');
+                        checkAuth();
                         break;
                     case '/notification':
                         console.log('Notification ouvert');
+                        checkAuth();
                         break;
                     case '/moderator':
                         console.log('Dashboard modérateur ouvert');
+                        checkAuth();
                         break;
                     case '/admin':
                         console.log('Admin ouvert');
+                        checkAuth();
                         break;
                     case '/dashboard-admin':
                         console.log('Dashboard admin ouvert');
+                        checkAuth();
                         break;
                     case '/settings-admin':
                         console.log('Settings admin ouvert');
+                        checkAuth();
                         break;
                     case '/statistiques':
                         console.log('Statistiques ouvert');
+                        checkAuth();
                         break;
                     case '/articles':
                         console.log('Articles ouvert');
+                        checkAuth();
                         break;
                     case '/signalements':
                         console.log('Signalements ouvert');
+                        checkAuth();
                         break;
                     case '/roles':
                         console.log('Roles ouvert');
+                        checkAuth();
                         break;
                 }
             })
