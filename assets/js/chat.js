@@ -1,228 +1,478 @@
-
-
-let currentUser = null;
-let currentConversationId = null;
-let ws = null;
-
-document.addEventListener('DOMContentLoaded', () => {
-    checkAuth();
-});
-
-// Vérifier l'authentification
-async function checkAuth() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        setTimeout(() => {
-            history.pushState(null, '', '/login');
-            router();
-        }, 1200);
-        return;
-    }
-    try {
-        const response = await fetch(`${API_URL}/auth/check`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await response.json();
-        if (response.ok && data.status === 'success') {
-            currentUser = data.user;
-            initWebSocket();
-            fetchConversations();
-        } else {
-            setTimeout(() => {
-                history.pushState(null, '', '/login');
-                router();
-            }, 1200);
-        }
-    } catch (error) {
-        console.error('Erreur d\'authentification:', error);
-        setTimeout(() => {
-            history.pushState(null, '', '/login');
-            router();
-        }, 1200);
-    }
-}
-
-// Initialiser WebSocket
-function initWebSocket() {
-    ws = new WebSocket(WS_URL);
-    ws.onopen = () => {
-        console.log('Connecté au WebSocket');
-        ws.send(JSON.stringify({ token: localStorage.getItem('token'), action: 'join' }));
-    };
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.status === 'success' && data.conversation_id === currentConversationId) {
-            displayMessage(data.message, 'received');
-            markAsRead(data.message.id);
-        }
-    };
-    ws.onclose = () => console.log('WebSocket déconnecté');
-    ws.onerror = (error) => console.error('Erreur WebSocket:', error);
-}
-
-// Récupérer les conversations
-async function fetchConversations() {
-    try {
-        const response = await fetch(`${API_URL}/conversations`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        });
-        const data = await response.json();
-        if (data.status === 'success') {
-            const conversationsList = document.getElementById('conversations-list');
-            conversationsList.innerHTML = '';
-            data.conversations.forEach(conv => {
-                const convItem = document.createElement('div');
-                convItem.className = 'conversation-item d-flex justify-content-between align-items-center';
-                convItem.innerHTML = `
-                    <div>
-                        <strong>${conv.name || conv.participants.join(', ')}</strong>
-                        <small class="d-block text-muted">${conv.type === 'group' ? 'Groupe' : 'Privé'} - ${conv.last_message?.content || 'Aucun message'}</small>
-                    </div>
-                    <span class="badge bg-primary rounded-pill">${conv.unread_count || 0}</span>
-                `;
-                convItem.addEventListener('click', () => {
-                    currentConversationId = conv.id;
-                    document.getElementById('chat-title').textContent = conv.name || conv.participants.join(', ');
-                    document.getElementById('chat-status').textContent = 'En ligne';
-                    fetchMessages(conv.id);
-                });
-                conversationsList.appendChild(convItem);
-            });
-        }
-    } catch (error) {
-        console.error('Erreur lors de la récupération des conversations:', error);
-    }
-}
-
-// Récupérer les messages d'une conversation
-async function fetchMessages(conversationId) {
-    try {
-        const response = await fetch(`${API_URL}/messages?conversation_id=${conversationId}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        });
-        const data = await response.json();
-        if (data.status === 'success') {
-            const messagesList = document.getElementById('messages-list');
-            messagesList.innerHTML = '';
-            data.messages.forEach(msg => {
-                displayMessage(msg, msg.sender_id === currentUser.id ? 'sent' : 'received');
-            });
-            markAsReadAll(conversationId);
-            messagesList.scrollTop = messagesList.scrollHeight;
-        }
-    } catch (error) {
-        console.error('Erreur lors de la récupération des messages:', error);
-    }
-}
-
-// Afficher un message
-function displayMessage(message, type) {
+(function () {
+    // Variables
+    const API_URL = 'http://localhost:8001/users';
+    const WS_URL = 'ws://localhost:8002';
+    const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    const settingsClose = document.getElementById('settings-close');
+    const emojiBtn = document.getElementById('emoji-btn');
+    const emojiPanel = document.getElementById('emoji-panel');
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
     const messagesList = document.getElementById('messages-list');
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `message-item ${type} shadow-sm`;
-    msgDiv.innerHTML = `
-        <div class="d-flex justify-content-between">
-            <strong>${message.username}</strong>
-            <small class="text-muted">${new Date(message.created_at).toLocaleString()}</small>
-        </div>
-        <div class="mt-1">${message.content}</div>
-        ${message.media_url ? `<img src="${message.media_url}" class="img-fluid mt-2" style="max-width: 250px; border-radius: 8px;" />` : ''}
-        <small class="text-muted">${message.status || 'envoyé'}</small>
-    `;
-    messagesList.appendChild(msgDiv);
-    messagesList.scrollTop = messagesList.scrollHeight;
-}
+    const conversationsList = document.getElementById('conversations-list');
+    const newConversationBtn = document.getElementById('new-conversation-btn');
+    const newConversationModal = document.getElementById('new-conversation-modal');
+    const newConversationClose = document.getElementById('new-conversation-close');
+    const newConversationForm = document.getElementById('new-conversation-form');
+    const newConversationCancel = document.getElementById('new-conversation-cancel');
+    const conversationType = document.getElementById('conversation-type');
+    const groupNameField = document.getElementById('group-name-field');
+    const groupName = document.getElementById('group-name');
+    const conversationParticipants = document.getElementById('conversation-participants');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const chatTitle = document.getElementById('chat-title');
+    const chatStatus = document.getElementById('chat-status');
+    const searchInput = document.getElementById('search-input');
 
-// Envoyer un message
-document.getElementById('message-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!currentConversationId) {
-        alert('Veuillez sélectionner une conversation');
-        return;
-    }
-    const content = document.getElementById('message-input').value.trim();
-    if (!content && !document.getElementById('media-input').files.length) return;
+    let currentConversation = null;
+    let ws = null;
+    let token = localStorage.getItem('token') || '';
+    let user_id = localStorage.getItem('user_id') || null;
+    let failedAttempts = 0;
+    const maxAttempts = 3;
 
-    const formData = new FormData();
-    formData.append('conversation_id', currentConversationId);
-    formData.append('content', content);
-    if (document.getElementById('media-input').files[0]) {
-        formData.append('media', document.getElementById('media-input').files[0]);
+    // Fonction pour naviguer vers une page
+    function navigateTo(path) {
+        console.log(`Redirection vers ${path}`);
+        window.location.href = path;
     }
 
-    try {
-        const response = await fetch(`${API_URL1}/message`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-            body: formData
-        });
-        const data = await response.json();
-        if (data.status === 'success') {
-            const message = {
-                id: data.message_id,
-                content: content,
-                created_at: new Date().toISOString(),
-                username: currentUser.username,
-                avatar_url: currentUser.avatar_url,
-                status: 'envoyé',
-                media_url: data.media_url || null
-            };
-            ws.send(JSON.stringify({ token: localStorage.getItem('token'), conversation_id: currentConversationId, message }));
-            document.getElementById('message-input').value = '';
-            document.getElementById('media-input').value = '';
-            displayMessage(message, 'sent');
+    // Fonction fetchApi
+    async function fetchApi(endpoint, method = 'GET', body = null, isFormData = false) {
+        if (failedAttempts >= maxAttempts) {
+            console.error('Nombre maximum de tentatives atteint, redirection vers /login');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user_id');
+            navigateTo('/login');
+            return null;
         }
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi du message:', error);
-        alert('Erreur lors de l\'envoi du message');
-    }
-});
 
-// Marquer un message comme lu
-async function markAsRead(messageId) {
-    try {
-        await fetch(`${API_URL1}/message/${messageId}/read`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        const headers = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        if (body && !isFormData) headers['Content-Type'] = 'application/json';
+
+        const options = { method, headers };
+        if (body) {
+            options.body = isFormData ? body : JSON.stringify(body);
+        }
+
+        try {
+            console.log(`Requête API vers: ${API_URL}${endpoint}`, options);
+            const response = await fetch(`${API_URL}${endpoint}`, options);
+            console.log(`Réponse reçue pour ${endpoint}: ${response.status} ${response.statusText}`);
+            if (response.status === 401) {
+                failedAttempts++;
+                console.error(`Erreur 401: Token invalide, tentative ${failedAttempts}/${maxAttempts}`);
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                navigateTo('/login');
+                throw new Error('Token invalide');
+            }
+            if (!response.ok) {
+                failedAttempts++;
+                const error = await response.json().catch(() => null);
+                console.error('Détails de l\'erreur serveur:', error);
+                throw new Error(error?.message || `Erreur HTTP ${response.status}`);
+            }
+            failedAttempts = 0;
+            const text = await response.text();
+            try {
+                return JSON.parse(text);
+            } catch (jsonError) {
+                console.error(`Erreur de parsing JSON pour ${endpoint}:`, jsonError, 'Contenu brut:', text);
+                throw new Error('Réponse du serveur non valide');
+            }
+        } catch (err) {
+            console.error(`Erreur sur l'API : ${endpoint}`, err);
+            throw err;
+        }
+    }
+
+    // Vérifier l'authentification
+    async function checkAuth() {
+        console.log('Démarrage de checkAuth:', new Date().toISOString());
+        if (!token) {
+            console.log('Aucun token trouvé, redirection vers /login');
+            navigateTo('/login');
+            return false;
+        }
+
+        try {
+            const response = await fetchApi('/home.php');
+            if (response.status === 'success') {
+                console.log('Utilisateur authentifié:', response);
+                user_id = response.user?.id || localStorage.getItem('user_id');
+                if (user_id) localStorage.setItem('user_id', user_id);
+                return true;
+            } else {
+                console.error('Erreur lors de l\'authentification:', response);
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                navigateTo('/login');
+                return false;
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'authentification:', error);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user_id');
+            navigateTo('/login');
+            return false;
+        }
+    }
+
+    // Récupérer la liste des utilisateurs pour la sélection des participants
+    async function fetchUsers() {
+        try {
+            const data = await fetchApi('/users.php');
+            if (data.status === 'success' && Array.isArray(data.users)) {
+                return data.users;
+            } else {
+                console.error('Réponse invalide de /users.php:', data);
+                return [];
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des utilisateurs:', error);
+            return [];
+        }
+    }
+
+    // Remplir le sélecteur de participants
+    async function populateParticipants() {
+        const users = await fetchUsers();
+        conversationParticipants.innerHTML = '';
+        users.forEach(user => {
+            if (user.id !== parseInt(user_id)) { // Exclure l'utilisateur connecté
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = user.username;
+                conversationParticipants.appendChild(option);
+            }
         });
-    } catch (error) {
-        console.error('Erreur lors du marquage comme lu:', error);
     }
-}
 
-// Marquer tous les messages comme lus
-async function markAsReadAll(conversationId) {
-    try {
-        await fetch(`${API_URL1}/messages/${conversationId}/read`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    // Afficher/masquer le champ de nom de groupe
+    function toggleGroupNameField() {
+        groupNameField.classList.toggle('hidden', conversationType.value !== 'group');
+    }
+
+    // Créer une nouvelle conversation
+    async function createConversation() {
+        const type = conversationType.value;
+        const name = type === 'group' ? groupName.value.trim() : null;
+        const participantIds = Array.from(conversationParticipants.selectedOptions).map(option => parseInt(option.value));
+
+        if (type === 'private' && participantIds.length !== 1) {
+            alert('Veuillez sélectionner exactement un participant pour une conversation privée.');
+            return;
+        }
+        if (type === 'group' && !name) {
+            alert('Veuillez entrer un nom pour le groupe.');
+            return;
+        }
+        if (participantIds.length === 0) {
+            alert('Veuillez sélectionner au moins un participant.');
+            return;
+        }
+
+        try {
+            const response = await fetchApi('/conversations.php', 'POST', {
+                type,
+                name,
+                participants: participantIds
+            });
+            if (response.status === 'success') {
+                newConversationModal.classList.add('hidden');
+                newConversationForm.reset();
+                await fetchConversations();
+            } else {
+                alert('Erreur lors de la création de la conversation : ' + (response.message || 'Erreur inconnue'));
+            }
+        } catch (error) {
+            alert('Erreur lors de la création de la conversation : ' + error.message);
+        }
+    }
+
+    // Initialiser WebSocket
+    function initWebSocket() {
+        ws = new WebSocket(WS_URL);
+
+        ws.onopen = () => {
+            console.log('Connexion WebSocket établie');
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.status === 'success') {
+                if (currentConversation && data.conversation_id === currentConversation.id) {
+                    currentConversation.messages.push({
+                        id: data.message.id,
+                        sender: data.message.username,
+                        content: data.message.content,
+                        time: new Date(data.message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        sent: data.message.sender_id === user_id
+                    });
+                    renderMessages();
+                }
+                fetchConversations();
+            } else if (data.status === 'error') {
+                console.error('Erreur WebSocket:', data.message);
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('Connexion WebSocket fermée. Tentative de reconnexion...');
+            setTimeout(initWebSocket, 5000);
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket:', error);
+        };
+    }
+
+    // Initialiser l'application
+    async function init() {
+        const authResult = await checkAuth();
+        if (!authResult) return;
+
+        initWebSocket();
+        await fetchConversations();
+        await populateParticipants();
+        setupEventListeners();
+    }
+
+    // Récupérer les conversations depuis l'API
+    async function fetchConversations() {
+        try {
+            const data = await fetchApi('/conversations.php');
+            if (data.status === 'success' && Array.isArray(data.conversations)) {
+                renderConversations(data.conversations);
+                return data.conversations;
+            } else {
+                console.error('Réponse invalide de /conversations.php:', data);
+                return [];
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des conversations:', error);
+            return [];
+        }
+    }
+
+    // Récupérer les messages d'une conversation
+    async function fetchMessages(conversationId) {
+        try {
+            const data = await fetchApi(`/conversations.php?conversation_id=${conversationId}`);
+            if (data.status === 'success' && Array.isArray(data.messages)) {
+                return data.messages.map(message => ({
+                    id: message.id,
+                    sender: message.username,
+                    content: message.content,
+                    time: new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    sent: message.sender_id === user_id
+                }));
+            } else {
+                console.error('Réponse invalide pour les messages:', data);
+                return [];
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des messages:', error);
+            return [];
+        }
+    }
+
+    // Rendre la liste des conversations
+    function renderConversations(conversations) {
+        conversationsList.innerHTML = '';
+        if (!conversations || conversations.length === 0) {
+            conversationsList.innerHTML = '<div class="text-center py-5 text-muted">Aucune conversation disponible</div>';
+            return;
+        }
+
+        conversations.forEach(conversation => {
+            const conversationItem = document.createElement('div');
+            conversationItem.className = 'conversation-item';
+            conversationItem.dataset.id = conversation.id;
+
+            if (currentConversation && currentConversation.id === conversation.id) {
+                conversationItem.classList.add('active');
+            }
+
+            conversationItem.innerHTML = `
+                <div class="conversation-item-avatar" style="background: ${getRandomColor()}">${conversation.name.charAt(0)}</div>
+                <div class="conversation-item-content">
+                    <div class="conversation-item-name">${conversation.name}</div>
+                    <div class="conversation-item-message">${conversation.last_message || 'Aucun message'}</div>
+                </div>
+                <div class="conversation-item-time">${conversation.last_message_time || ''}</div>
+                ${conversation.unread_count > 0 ? `<div class="conversation-item-badge">${conversation.unread_count}</div>` : ''}
+            `;
+
+            conversationItem.addEventListener('click', async () => {
+                conversation.messages = await fetchMessages(conversation.id);
+                setCurrentConversation(conversation);
+            });
+
+            conversationsList.appendChild(conversationItem);
         });
-    } catch (error) {
-        console.error('Erreur lors du marquage de tous comme lus:', error);
-    }
-}
 
-// Nouvelle conversation
-document.getElementById('new-conversation-btn').addEventListener('click', () => {
-    const participant = prompt('Entrez l\'ID ou le nom de l\'utilisateur :');
-    if (participant) {
-        fetch(`${API_URL1}/conversations`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify({ participant })
-        }).then(response => response.json())
-          .then(data => {
-              if (data.status === 'success') fetchConversations();
-          })
-          .catch(error => console.error('Erreur lors de la création:', error));
+        // Sélectionner la première conversation au démarrage
+        if (conversations.length > 0 && !currentConversation) {
+            conversations[0].messages = fetchMessages(conversations[0].id);
+            setCurrentConversation(conversations[0]);
+        }
     }
-});
 
-// Attacher un média
-document.getElementById('attach-media-btn').addEventListener('click', () => {
-    document.getElementById('media-input').click();
-});
+    // Définir la conversation actuelle
+    async function setCurrentConversation(conversation) {
+        currentConversation = conversation;
+        chatTitle.textContent = conversation.name;
+        chatStatus.textContent = conversation.online ? 'En ligne' : 'Hors ligne';
+
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('active');
+            if (parseInt(item.dataset.id) === conversation.id) {
+                item.classList.add('active');
+            }
+        });
+
+        renderMessages();
+
+        try {
+            await fetchApi(`/conversations.php?conversation_id=${conversation.id}&action=mark-read`, 'POST');
+            fetchConversations();
+        } catch (error) {
+            console.error('Erreur lors du marquage des messages comme lus:', error);
+        }
+    }
+
+    // Rendre les messages de la conversation actuelle
+    function renderMessages() {
+        messagesList.innerHTML = '';
+
+        if (!currentConversation) {
+            messagesList.innerHTML = '<div class="text-center py-5 text-muted">Sélectionnez une conversation pour commencer à discuter</div>';
+            return;
+        }
+
+        currentConversation.messages.forEach(message => {
+            const messageItem = document.createElement('div');
+            messageItem.className = `message-item ${message.sent ? 'sent' : 'received'}`;
+
+            messageItem.innerHTML = `
+                <div class="message-header">
+                    <div class="message-sender">${message.sender}</div>
+                    <div class="message-time">${message.time}</div>
+                </div>
+                <div class="message-content">${message.content}</div>
+                <div class="message-actions">
+                    <button class="message-action-btn"><i class="far fa-thumbs-up"></i></button>
+                    <button class="message-action-btn"><i class="far fa-comment"></i></button>
+                    <button class="message-action-btn"><i class="fas fa-reply"></i></button>
+                </div>
+            `;
+
+            messagesList.appendChild(messageItem);
+        });
+
+        scrollToBottom();
+    }
+
+    // Faire défiler jusqu'en bas
+    function scrollToBottom() {
+        messagesList.scrollTop = messagesList.scrollHeight;
+    }
+
+    // Générer une couleur aléatoire pour l'avatar
+    function getRandomColor() {
+        const colors = ['#4a6fa5', '#ff7e5f', '#6b8cba', '#3a5784', '#28a745', '#ffc107', '#17a2b8', '#6c757d'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    // Configurer les écouteurs d'événements
+    function setupEventListeners() {
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+
+        settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsPanel.classList.toggle('show');
+        });
+
+        settingsClose.addEventListener('click', () => {
+            settingsPanel.classList.remove('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!settingsPanel.contains(e.target) && e.target !== settingsBtn) {
+                settingsPanel.classList.remove('show');
+            }
+        });
+
+        emojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            emojiPanel.classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!emojiPanel.contains(e.target) && e.target !== emojiBtn) {
+                emojiPanel.classList.remove('show');
+            }
+        });
+
+        document.querySelectorAll('.emoji-item').forEach(emoji => {
+            emoji.addEventListener('click', () => {
+                messageInput.value += emoji.dataset.emoji;
+                messageInput.focus();
+            });
+        });
+
+        // Gestion de la modale pour nouvelle conversation
+        newConversationBtn.addEventListener('click', () => {
+            newConversationModal.classList.remove('hidden');
+            toggleGroupNameField();
+        });
+
+        newConversationClose.addEventListener('click', () => {
+            newConversationModal.classList.add('hidden');
+            newConversationForm.reset();
+        });
+
+        newConversationCancel.addEventListener('click', () => {
+            newConversationModal.classList.add('hidden');
+            newConversationForm.reset();
+        });
+
+        conversationType.addEventListener('change', toggleGroupNameField);
+
+        newConversationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await createConversation();
+        });
+
+        // Gestion de la recherche
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                const name = item.querySelector('.conversation-item-name').textContent.toLowerCase();
+                item.style.display = name.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+
+    // Afficher l'indicateur de saisie
+    function showTypingIndicator() {
+        typingIndicator.style.display = 'block';
+        scrollToBottom();
+    }
+
+    // Cacher l'indicateur de saisie
+    function hideTypingIndicator() {
+        typingIndicator.style.display = 'none';
+    }
+
+    // Initialiser l'application
+    init();
+})();
