@@ -18,7 +18,7 @@ const routes = {
     '/utilisateurs': '/vues/admin/utilisateurs.html',   
     '/articles': '/vues/admin/articles.html',
     '/signalements': '/vues/admin/signalements.html',
-    '/roles': '/vues/admin/gestion_des_roles.html'
+    '/roles': '/vues/admin/gestion_des_roles.html',
 };
 
 // Variable pour éviter les boucles infinies
@@ -100,7 +100,7 @@ async function loadView(url) {
         '/vues/admin/utilisateurs.html': '../../assets/js/utilisateurs.js',
         '/vues/admin/articles.html': '../../assets/js/articles.js',
         '/vues/admin/signalements.html': '../../assets/js/signalements.js',
-        '/vues/admin/gestion_des_roles.html': '../../assets/js/roles.js',
+
     };
 
     const apiMap = {
