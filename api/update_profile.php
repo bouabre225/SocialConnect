@@ -1,13 +1,17 @@
 <?php
 require_once 'config.php';
 
+// Récupérer les données de la requête
 $data = json_decode(file_get_contents('php://input'), true);
 session_start();
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; 
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; // Utiliser 1 pour test, remplacer par session en prod
 
-+    jsonResponse(['success' => false, 'message' => 'Mot de passe actuel requis'], 400);
+// Vérifier d'abord le mot de passe
+if (empty($data['current_password'])) {
+    jsonResponse(['success' => false, 'message' => 'Mot de passe actuel requis'], 400);
 }
 
+// Vérifier le mot de passe (simplifié ici, à adapter selon ton système)
 $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -15,6 +19,7 @@ if (!$user || !password_verify($data['current_password'], $user['password'])) {
     jsonResponse(['success' => false, 'message' => 'Mot de passe incorrect'], 401);
 }
 
+// Préparer les données pour la mise à jour
 $updateData = [
     'firstname' => $data['firstname'] ?? '',
     'lastname' => $data['lastname'] ?? '',
@@ -26,6 +31,7 @@ $updateData = [
     'user_id' => $user_id
 ];
 
+// Gestion de l'upload de la photo de profil
 $avatar_url = null;
 if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == UPLOAD_ERR_OK) {
     $upload_dir = 'uploads/';
@@ -40,7 +46,7 @@ if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == UPLOAD_E
     }
 }
 
-
+// Gestion de l'upload de la photo de couverture
 $cover_url = null;
 if (isset($_FILES['cover_pic']) && $_FILES['cover_pic']['error'] == UPLOAD_ERR_OK) {
     $upload_dir = 'uploads/';
@@ -62,7 +68,7 @@ try {
         SET 
             firstname = :firstname,
             lastname = :lastname,
-            birthdate = :birthdate,
+ +           birthdate = :birthdate,
             city = :city,
             profession = :profession,
             relationship_status = :relationship_status,
@@ -93,7 +99,7 @@ try {
             'user_id' => $user_id
         ]);
     } else {
-
+        // Créer un nouveau profil
         $stmt = $pdo->prepare("
             INSERT INTO profiles (user_id, bio, avatar_url, created_at, updated_at) 
             VALUES (?, ?, ?, NOW(), NOW())
@@ -107,6 +113,7 @@ try {
     jsonResponse(['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()], 500);
 }
 
+// Fonction utilitaire pour renvoyer une réponse JSON
 function jsonResponse($data, $status = 200) {
     header('Content-Type: application/json');
     http_response_code($status);
