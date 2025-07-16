@@ -5,7 +5,7 @@ require_once 'config.php';
 // Récupérer les données de la requête
 $data = json_decode(file_get_contents('php://input'), true);
 session_start();
-//$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; // Utiliser 1 pour test, remplacer par session en prod
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; // Utiliser 1 pour test, remplacer par session en prod
 
 // Vérifier d'abord le mot de passe
 if (empty($data['current_password'])) {
@@ -69,7 +69,7 @@ try {
         SET 
             firstname = :firstname,
             lastname = :lastname,
-            birthdate = :birthdate,
+ +           birthdate = :birthdate,
             city = :city,
             profession = :profession,
             relationship_status = :relationship_status,
