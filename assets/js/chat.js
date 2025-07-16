@@ -32,6 +32,7 @@
     let token = localStorage.getItem('token') || '';
     let user_id = localStorage.getItem('user_id') || null;
     let failedAttempts = 0;
+    let typingTimeout = null;
     const maxAttempts = 3;
 
     // Fonction pour naviguer vers une page
@@ -195,7 +196,53 @@
         }
     }
 
-    // Initialiser WebSocket
+    // Envoyer un message
+    async function sendMessage(content) {
+        if (!currentConversation) {
+            alert('Veuillez sélectionner une conversation.');
+            return;
+        }
+        if (!content.trim()) {
+            alert('Le message ne peut pas être vide.');
+            return;
+        }
+
+        try {
+            // Envoyer via API
+            const response = await fetchApi(`/messages.php?conversation_id=${currentConversation.id}`, 'POST', {
+                content: content
+            });
+            if (response.status === 'success') {
+                // Envoyer via WebSocket
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        action: 'message',
+                        conversation_id: currentConversation.id,
+                        message: {
+                            id: response.message_id,
+                            sender_id: user_id,
+                            username: 'Vous', // À remplacer par le vrai username si nécessaire
+                            content: content,
+                            created_at: new Date().toISOString(),
+                            avatar_url: null
+                        }
+                    }));
+                }
+                messageInput.value = '';
+                currentConversation.messages = await fetchMessages(currentConversation.id);
+                renderMessages();
+            } else {
+                alert('Erreur lors de l\'envoi du message : ' + (response.message || 'Erreur inconnue'));
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'envoi du message:', error);
+            alert('Erreur lors de l\'envoi du message : ' + error.message);
+        }
+    }
+
+    
+
+   // Initialiser WebSocket
     function initWebSocket() {
         ws = new WebSocket(WS_URL);
 
@@ -205,22 +252,22 @@
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.status === 'success') {
-                if (currentConversation && data.conversation_id === currentConversation.id) {
-                    currentConversation.messages.push({
-                        id: data.message.id,
-                        sender: data.message.username,
-                        content: data.message.content,
-                        time: new Date(data.message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                        sent: data.message.sender_id === user_id
-                    });
-                    renderMessages();
-                }
-                fetchConversations();
-            } else if (data.status === 'error') {
-                console.error('Erreur WebSocket:', data.message);
+        if (data.status === 'success' && data.action === 'message') {
+            if (currentConversation && data.conversation_id === currentConversation.id) {
+                currentConversation.messages.push({
+                    id: data.message.id,
+                    sender: data.message.username,
+                    content: data.message.content,
+                    time: new Date(data.message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    sent: data.message.sender_id === parseInt(user_id)
+                });
+                renderMessages();
             }
-        };
+            fetchConversations();
+        } else if (data.status === 'error') {
+            console.error('Erreur WebSocket:', data.message);
+        }
+    };
 
         ws.onclose = () => {
             console.log('Connexion WebSocket fermée. Tentative de reconnexion...');
@@ -230,7 +277,22 @@
         ws.onerror = (error) => {
             console.error('Erreur WebSocket:', error);
         };
-    }
+}
+
+// Polling fallback for messages
+function startPolling() {
+    setInterval(async () => {
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            console.log('WebSocket non connecté, polling pour les messages...');
+            if (currentConversation) {
+                currentConversation.messages = await fetchMessages(currentConversation.id);
+                renderMessages();
+            }
+            await fetchConversations();
+        }
+    }, 30000); // Poll every 30 seconds
+}
+
 
     // Initialiser l'application
     async function init() {
@@ -238,6 +300,7 @@
         if (!authResult) return;
 
         initWebSocket();
+        startPolling();
         await fetchConversations();
         await populateParticipants();
         setupEventListeners();
@@ -263,14 +326,14 @@
     // Récupérer les messages d'une conversation
     async function fetchMessages(conversationId) {
         try {
-            const data = await fetchApi(`/conversations.php?conversation_id=${conversationId}`);
+            const data = await fetchApi(`/messages.php?conversation_id=${conversationId}`);
             if (data.status === 'success' && Array.isArray(data.messages)) {
                 return data.messages.map(message => ({
                     id: message.id,
                     sender: message.username,
                     content: message.content,
                     time: new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    sent: message.sender_id === user_id
+                    sent: message.sender_id === parseInt(user_id)
                 }));
             } else {
                 console.error('Réponse invalide pour les messages:', data);
@@ -283,7 +346,7 @@
     }
 
     // Rendre la liste des conversations
-    function renderConversations(conversations) {
+    async function renderConversations(conversations) {
         conversationsList.innerHTML = '';
         if (!conversations || conversations.length === 0) {
             conversationsList.innerHTML = '<div class="text-center py-5 text-muted">Aucune conversation disponible</div>';
@@ -299,10 +362,14 @@
                 conversationItem.classList.add('active');
             }
 
+            // Gérer le cas où name est null ou undefined
+            const displayName = conversation.name || (conversation.participants ? conversation.participants.split(',')[0] : 'Conversation sans nom');
+            const avatarInitial = displayName.charAt(0).toUpperCase();
+
             conversationItem.innerHTML = `
-                <div class="conversation-item-avatar" style="background: ${getRandomColor()}">${conversation.name.charAt(0)}</div>
+                <div class="conversation-item-avatar" style="background: ${getRandomColor()}">${avatarInitial}</div>
                 <div class="conversation-item-content">
-                    <div class="conversation-item-name">${conversation.name}</div>
+                    <div class="conversation-item-name">${displayName}</div>
                     <div class="conversation-item-message">${conversation.last_message || 'Aucun message'}</div>
                 </div>
                 <div class="conversation-item-time">${conversation.last_message_time || ''}</div>
@@ -316,10 +383,14 @@
 
             conversationsList.appendChild(conversationItem);
         });
-
         // Sélectionner la première conversation au démarrage
+        /*if (conversations.length > 0 && !currentConversation) {
+            conversations[0].messages =  fetchMessages(conversations[0].id);
+            setCurrentConversation(conversations[0]);
+        }*/
+       // Sélectionner la première conversation au démarrage
         if (conversations.length > 0 && !currentConversation) {
-            conversations[0].messages = fetchMessages(conversations[0].id);
+            conversations[0].messages = await fetchMessages(conversations[0].id); // Ajoute await
             setCurrentConversation(conversations[0]);
         }
     }
@@ -327,7 +398,7 @@
     // Définir la conversation actuelle
     async function setCurrentConversation(conversation) {
         currentConversation = conversation;
-        chatTitle.textContent = conversation.name;
+        chatTitle.textContent = conversation.name || (conversation.participants ? conversation.participants.split(',')[0] : 'Conversation sans nom');
         chatStatus.textContent = conversation.online ? 'En ligne' : 'Hors ligne';
 
         document.querySelectorAll('.conversation-item').forEach(item => {
@@ -340,7 +411,7 @@
         renderMessages();
 
         try {
-            await fetchApi(`/conversations.php?conversation_id=${conversation.id}&action=mark-read`, 'POST');
+            await fetchApi(`/messages.php?conversation_id=${conversation.id}&action=mark-read`, 'POST');
             fetchConversations();
         } catch (error) {
             console.error('Erreur lors du marquage des messages comme lus:', error);
@@ -348,6 +419,7 @@
     }
 
     // Rendre les messages de la conversation actuelle
+    /*
     function renderMessages() {
         messagesList.innerHTML = '';
 
@@ -377,7 +449,47 @@
         });
 
         scrollToBottom();
-    }
+    }*/
+        function renderMessages() {
+            messagesList.innerHTML = '';
+
+        
+            if (!currentConversation) {
+                messagesList.innerHTML = '<div class="text-center py-5 text-muted">Sélectionnez une conversation pour commencer à discuter</div>';
+                return;
+            }
+        
+            // Vérifie si messages est un tableau
+            if (!Array.isArray(currentConversation.messages)) {
+                console.error('currentConversation.messages n\'est pas un tableau:', currentConversation.messages);
+                messagesList.innerHTML = '<div class="text-center py-5 text-muted">Aucun message disponible</div>';
+                return;
+            }
+        
+            currentConversation.messages.forEach(message => {
+                const messageItem = document.createElement('div');
+                messageItem.className = `message-item ${message.sent ? 'sent' : 'received'}`;
+        
+                messageItem.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-sender">${message.sender}</div>
+                        <div class="message-time">${message.time}</div>
+                    </div>
+                    <div class="message-content">${message.content}</div>
+                    <div class="message-actions">
+                        <button class="message-action-btn"><i class="far fa-thumbs-up"></i></button>
+                        <button class="message-action-btn"><i class="far fa-comment"></i></button>
+                        <button class="message-action-btn"><i class="fas fa-reply"></i></button>
+                    </div>
+                `;
+        
+                messagesList.appendChild(messageItem);
+
+            });
+        
+            scrollToBottom();
+
+        }
 
     // Faire défiler jusqu'en bas
     function scrollToBottom() {
@@ -388,6 +500,24 @@
     function getRandomColor() {
         const colors = ['#4a6fa5', '#ff7e5f', '#6b8cba', '#3a5784', '#28a745', '#ffc107', '#17a2b8', '#6c757d'];
         return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    // Show typing indicator
+    function showTypingIndicator() {
+        typingIndicator.style.display = 'block';
+        scrollToBottom();
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                action: 'typing',
+                conversation_id: currentConversation?.id,
+                user_id: user_id
+            }));
+        }
+    }
+
+    // Hide typing indicator
+    function hideTypingIndicator() {
+        typingIndicator.style.display = 'none';
     }
 
     // Configurer les écouteurs d'événements
@@ -451,6 +581,29 @@
             e.preventDefault();
             await createConversation();
         });
+
+        // Gestion de l'envoi de message
+        messageForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = messageInput.value.trim();
+            if (content) {
+                await sendMessage(content);
+                clearTimeout(typingTimeout);
+                hideTypingIndicator();
+            }
+        });
+
+        // Typing indicator event
+        messageInput.addEventListener('input', () => {
+            if (messageInput.value.trim()) {
+                showTypingIndicator();
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(hideTypingIndicator, 3000);
+            } else {
+                hideTypingIndicator();
+            }
+        });
+
 
         // Gestion de la recherche
         searchInput.addEventListener('input', () => {

@@ -1,4 +1,5 @@
 <?php
+//websocket.php 
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
@@ -13,6 +14,7 @@ class Chat implements MessageComponentInterface {
         $this->clients = new \SplObjectStorage;
         global $pdo;
         $this->pdo = $pdo;
+        echo "Serveur WebSocket démarré\n";
     }
 
     public function onOpen(ConnectionInterface $conn) {
@@ -21,61 +23,38 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
-        $data = json_decode($msg, true);
-        if (!isset($data['token']) || !isset($data['conversation_id']) || !isset($data['content'])) {
-            return;
-        }
-
-        // Vérifier le token JWT
-        $secretKey = 'JWT_SECRET_KEY';
         try {
-            $decoded = \Firebase\JWT\JWT::decode($data['token'], new \Firebase\JWT\Key($secretKey, 'HS256'));
-            $user_id = $decoded->user_id;
-
-            // Vérifier si l'utilisateur est dans la conversation
-            $stmt = $this->pdo->prepare('SELECT 1 FROM conversation_participants WHERE conversation_id = ? AND user_id = ?');
-            $stmt->execute([$data['conversation_id'], $user_id]);
-            if (!$stmt->fetch()) {
+            $data = json_decode($msg, true);
+            if (!$data || !isset($data['action']) || !isset($data['conversation_id']) || !isset($data['message'])) {
                 return;
             }
 
-            // Insérer le message
-            $stmt = $this->pdo->prepare('INSERT INTO messages (conversation_id, sender_id, content, media_type) VALUES (?, ?, ?, ?)');
-            $stmt->execute([$data['conversation_id'], $user_id, $data['content'], 'text']);
-            $message_id = $this->pdo->lastInsertId();
+            if ($data['action'] === 'message') {
+                $conversation_id = $data['conversation_id'];
+                $message = $data['message'];
 
-            // Mettre à jour le statut pour tous les participants
-            $stmt = $this->pdo->prepare('SELECT user_id FROM conversation_participants WHERE conversation_id = ?');
-            $stmt->execute([$data['conversation_id']]);
-            $participants = $stmt->fetchAll(PDO::FETCH_COLUMN);
-            foreach ($participants as $participant_id) {
-                $status = $participant_id == $user_id ? 'sent' : 'delivered';
-                $stmt = $this->pdo->prepare('INSERT INTO message_status (message_id, user_id, status) VALUES (?, ?, ?)');
-                $stmt->execute([$message_id, $participant_id, $status]);
-            }
+                // Vérifier les participants de la conversation
+                $stmt = $this->pdo->prepare('SELECT user_id FROM conversation_participants WHERE conversation_id = ?');
+                $stmt->execute([$conversation_id]);
+                $participants = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-            // Récupérer les détails du message
-            $stmt = $this->pdo->prepare('
-                SELECT m.id, m.content, m.created_at, u.username, u.avatar_url  
-                FROM messages m
-                JOIN users u ON m.sender_id = u.id
-                WHERE m.id = ?
-            ');
-            $stmt->execute([$message_id]);
-            $message = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // Envoyer le message à tous les participants connectés
-            foreach ($this->clients as $client) {
-                if ($client !== $from) {
-                    $client->send(json_encode([
-                        'status' => 'success',
-                        'message' => $message,
-                        'conversation_id' => $data['conversation_id']
-                    ]));
+                // Diffuser le message à tous les participants connectés (sauf l'expéditeur)
+                foreach ($this->clients as $client) {
+                    $stmt = $this->pdo->prepare('SELECT 1 FROM conversation_participants WHERE conversation_id = ? AND user_id = ?');
+                    $stmt->execute([$conversation_id, $client->user_id ?? 0]);
+                    if ($stmt->fetch() && $client !== $from) {
+                        $client->send(json_encode([
+                            'status' => 'success',
+                            'action' => 'message',
+                            'conversation_id' => $conversation_id,
+                            'message' => $message
+                        ]));
+                    }
                 }
             }
         } catch (Exception $e) {
-            $from->send(json_encode(['status' => 'error', 'message' => 'Token invalide']));
+            error_log("Erreur WebSocket: " . $e->getMessage());
+            $from->send(json_encode(['status' => 'error', 'message' => 'Erreur lors du traitement du message']));
         }
     }
 
@@ -85,7 +64,7 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        echo "Erreur : {$e->getMessage()}\n";
+        error_log("Erreur WebSocket: {$e->getMessage()}");
         $conn->close();
     }
 }
@@ -98,10 +77,7 @@ $server = \Ratchet\Server\IoServer::factory(
     ),
     8002
 );
+
 $server->run();
-
-
-
-
 
 ?>
