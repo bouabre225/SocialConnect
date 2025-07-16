@@ -121,6 +121,9 @@ try{
                 $stmt = $pdo->prepare('SELECT username FROM users WHERE id = ?');
                 $stmt->execute([$user->user_id]);
                 $current_user = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (!$other_user || !$current_user) {
+                    jsonResponse(['status' => 'error', 'message' => 'Utilisateur introuvable'], 404);
+                }
                 $name = $current_user['username'] . ' - ' . $other_user['username'];
             }
     
