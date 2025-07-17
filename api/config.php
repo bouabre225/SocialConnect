@@ -19,10 +19,10 @@ session_start();
 
 
 // Configuration de la base de données
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'social_network');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'nue.domcloud.co');
+define('DB_NAME', 'flippant_fault_buf_db');
+define('DB_USER', 'flippant-fault-buf');
+define('DB_PASS', 'UqF+)988-W8vu7aYWe');
 
 // Clé secrète
 define('JWT_SECRET_KEY', 'ta-cle-super-secrete'); //voila ce que j'ai fais 
