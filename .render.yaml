@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: mon-api-php
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
