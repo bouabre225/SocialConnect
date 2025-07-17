@@ -5,3 +5,5 @@ vendor
 
 # Ignore les fichiers de la base de données
 *.sql
+*.sql
+
