@@ -381,7 +381,7 @@ fr: {
                 setTimeout(() => {
                     showSuccessNotification(translations[currentLanguage].delete_account_success);
                     setTimeout(() => {
-                        window.location.href = '/';
+                        navigate('/home');
                     }, 2000);
                 }, 2000);
             }
