@@ -35,7 +35,7 @@ function displayMessage(message, type, containerId) {
             document.getElementById('loaderForgot').style.display = 'block';
 
             try {
-                const response = await fetch(`${API_URL2}/forgot_password.php`, {
+                const response = await fetch(`${API_URL3}forgot_password.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

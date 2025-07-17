@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/../../config/config.php';
+require '../config.php';
 
 // Vérification de l'authentification
 if (!isset($_SESSION['user_id'])) {

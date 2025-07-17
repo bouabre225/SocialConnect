@@ -30,7 +30,7 @@ document.getElementById('resetForm').addEventListener('submit', async (e) => {
     }
 
     try {
-        const response = await fetch(`${API_URL2}/reset_password.php?token=${token}`, {
+        const response = await fetch(`${API_URL3}reset_password.php?token=${token}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password })

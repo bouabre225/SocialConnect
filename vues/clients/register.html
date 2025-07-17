@@ -343,8 +343,8 @@
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                <input type="password" class="form-control password-field" name="password" placeholder="Mot de passe" required />
-                                <button type="button" class="btn btn-outline-secondary toggle-password">
+                                <input type="password" id="password" class="form-control password-field" name="password" placeholder="Mot de passe" required />
+                                <button type="button" id="togglePassword" class="btn btn-outline-secondary toggle-password">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
@@ -353,7 +353,7 @@
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                <input type="password" class="form-control" name="confirm_password" placeholder="Confirmer le mot de passe" required />
+                                <input type="password" id="confirm_password" class="form-control" name="confirm_password" placeholder="Confirmer le mot de passe" required />
                             </div>
                         </div>
                     </div>
@@ -363,9 +363,13 @@
                         <span id="registerSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
                     </button>
                 </form>
+
+                <div id="loaderReg" class="text-center my-3" style="display:none;">
+                    <div class="spinner-border text-success"></div>
+                </div>
                 
                 <div class="text-center mt-4">
-                    <p class="small">Déjà membre ? <button data-url="/login" class="login-link text-decoration-none border-0">Connectez-vous ici</button></p>
+                    <p class="small">Déjà membre ? <a href="#" data-url="/login" class="login-link text-decoration-none">Connectez-vous ici</a></p>
                 </div>
             </div>
     </div>

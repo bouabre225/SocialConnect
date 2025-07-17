@@ -1,24 +1,238 @@
-<div class="container-fluid">
-    <div class="row">
-        <!-- Liste des conversations -->
-        <div class="col-md-4 col-lg-3 d-none d-md-block border-end">
-            <div class="chat-sidebar p-3">
-                <h3 class="mb-3">Conversations</h3>
-                <div class="conversations-list"></div>
+<!-- Header -->
+<header class="header">
+    <div class="header-content">
+        <a href="#" data-url="/chat" class="app-logo">
+            <i class="fas fa-comment-dots"></i>
+            <span>Social Connect</span>
+        </a>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="Rechercher une conversation...">
+        </div>
+        <div class="nav-icons">
+            <div class="nav-icon hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="nav-icon" id="notifications-btn">
+                <a href="#" data-url="/notification">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </a>
+            </div>
+            <div class="nav-icon" id="settings-btn">
+                <a href="#" data-url="/settings">
+                    <i class="fas fa-cog"></i>
+                </a>
+            </div>
+            <div class="profile-icon">
+                <a href="#" data-url="/profile">
+                    <img src="https://i.pravatar.cc/40?img=5" alt="Profile">
+                </a>
             </div>
         </div>
-        <!-- Zone de messages -->
-        <div class="col-md-8 col-lg-9">
-            <div class="chat-main p-3">
-                <div class="chat-header d-flex align-items-center border-bottom p-2">
-                    <h4 id="chat-title">Sélectionnez une conversation</h4>
+    </div>
+</header>
+
+<!-- Settings Panel -->
+<div class="settings-panel" id="settings-panel">
+    <div class="settings-header">
+        <div class="settings-title">Paramètres</div>
+        <button class="settings-close" id="settings-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="settings-group">
+        <div class="settings-group-title">
+            <i class="fas fa-moon"></i>
+            <span>Apparence</span>
+        </div>
+        <div class="settings-option">
+            <label class="settings-label">Mode sombre</label>
+            <label class="settings-switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="settings-slider"></span>
+            </label>
+        </div>
+        <div class="settings-option">
+            <label class="settings-label">Taille de police</label>
+            <select class="settings-select" id="font-size-select">
+                <option value="small">Petite</option>
+                <option value="medium" selected>Moyenne</option>
+                <option value="large">Grande</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <div class="settings-group">
+        <div class="settings-group-title">
+            <i class="fas fa-comment-alt"></i>
+            <span>Messages</span>
+        </div>
+        <div class="settings-option">
+            <label class="settings-label">Messages éphémères</label>
+            <label class="settings-switch">
+                <input type="checkbox" id="ephemeral-toggle">
+                <span class="settings-slider"></span>
+            </label>
+        </div>
+        <div class="settings-option">
+            <label class="settings-label">Confirmation de lecture</label>
+            <label class="settings-switch">
+                <input type="checkbox" id="read-receipts-toggle" checked>
+                <span class="settings-slider"></span>
+            </label>
+        </div>
+        <div class="settings-option">
+            <label class="settings-label">Langue de traduction</label>
+            <select class="settings-select" id="translate-lang-select">
+                <option value="fr">Français</option>
+                <option value="en">Anglais</option>
+                <option value="es">Espagnol</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <div class="settings-group">
+        <div class="settings-group-title">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
+        </div>
+        <div class="settings-option">
+            <label class="settings-label">Activer les notifications</label>
+            <label class="settings-switch">
+                <input type="checkbox" id="notifications-toggle" checked>
+                <span class="settings-slider"></span>
+            </label>
+        </div>
+        <div class="settings-option">
+            <label class="settings-label">Son des messages</label>
+            <label class="settings-switch">
+                <input type="checkbox" id="message-sound-toggle" checked>
+                <span class="settings-slider"></span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<!-- Main Container -->
+<div class="main-container">
+    <!-- Sidebar -->
+    <div class="chat-sidebar-container" id="sidebar">
+        <div class="chat-sidebar">
+            <h3><i class="fas fa-comments"></i> Conversations</h3>
+            <div class="conversations-list" id="conversations-list">
+                <!-- Conversations will be loaded here -->
+            </div>
+            <button class="btn btn-primary new-conversation-btn" id="new-conversation-btn">
+                <i class="fas fa-plus"></i> Nouvelle conversation
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Main -->
+    <div class="chat-main">
+        <div class="chat-header">
+            <div class="chat-header-content">
+                <div class="chat-header-avatar">SM</div>
+                <div class="chat-header-info">
+                    <div class="chat-title" id="chat-title">Sélectionnez une conversation</div>
+                    <div class="chat-status" id="chat-status">En ligne</div>
                 </div>
-                <div class="messages-list" style="height: 70vh; overflow-y: auto;"></div>
-                <form class="message-form mt-3 d-flex gap-2">
-                    <input type="text" class="form-control" id="message-input" placeholder="Écrire un message...">
-                    <button type="submit" class="btn btn-primary">Envoyer</button>
-                </form>
+            </div>
+            <div class="chat-actions">
+                <button class="chat-action-btn" id="call-btn">
+                    <i class="fas fa-phone"></i>
+                </button>
+                <button class="chat-action-btn" id="video-btn">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="chat-action-btn" id="info-btn">
+                    <i class="fas fa-info-circle"></i>
+                </button>
             </div>
         </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            <i class="fas fa-pencil-alt"></i> Quelqu'un est en train d'écrire...
+        </div>
+        
+        <div class="messages-list" id="messages-list">
+            <!-- Messages will be loaded here -->
+        </div>
+        
+        <form class="message-form" id="message-form">
+            <div class="message-input-container">
+                <button type="button" class="emoji-btn" id="emoji-btn">
+                    <i class="far fa-smile"></i>
+                </button>
+                <input type="text" id="message-input" placeholder="Écrire un message...">
+                <div class="emoji-panel" id="emoji-panel">
+                    <div class="emoji-grid">
+                        <button type="button" class="emoji-item" data-emoji="😊">😊</button>
+                        <button type="button" class="emoji-item" data-emoji="😂">😂</button>
+                        <button type="button" class="emoji-item" data-emoji="❤️">❤️</button>
+                        <button type="button" class="emoji-item" data-emoji="👍">👍</button>
+                        <button type="button" class="emoji-item" data-emoji="👎">👎</button>
+                        <button type="button" class="emoji-item" data-emoji="😢">😢</button>
+                        <button type="button" class="emoji-item" data-emoji="😮">😮</button>
+                        <button type="button" class="emoji-item" data-emoji="😡">😡</button>
+                        <button type="button" class="emoji-item" data-emoji="🔥">🔥</button>
+                        <button type="button" class="emoji-item" data-emoji="💯">💯</button>
+                                                    <button type="button" class="emoji-item" data-emoji="🎉">🎉</button>
+                        <button type="button" class="emoji-item" data-emoji="🤔">🤔</button>
+                        <button type="button" class="emoji-item" data-emoji="👏">👏</button>
+                        <button type="button" class="emoji-item" data-emoji="🙏">🙏</button>
+                        <button type="button" class="emoji-item" data-emoji="😎">😎</button>
+                        <button type="button" class="emoji-item" data-emoji="🥳">🥳</button>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="attachment-btn" id="attachment-btn">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <button type="submit" class="send-btn" id="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modale pour créer une nouvelle conversation -->
+<div id="new-conversation-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Nouvelle conversation</h2>
+            <button id="new-conversation-close" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="new-conversation-form">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Type de conversation</label>
+                <select id="conversation-type" class="mt-1 block w-full border-gray-300 rounded-md p-2">
+                    <option value="private">Privée</option>
+                    <option value="group">Groupe</option>
+                </select>
+            </div>
+            <div id="group-name-field" class="mb-4 hidden">
+                <label class="block text-sm font-medium text-gray-700">Nom du groupe</label>
+                <input type="text" id="group-name" class="mt-1 block w-full border-gray-300 rounded-md p-2" placeholder="Entrez le nom du groupe">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Participants</label>
+                <select id="conversation-participants" multiple class="mt-1 block w-full border-gray-300 rounded-md p-2 h-32">
+                    <!-- Les utilisateurs seront chargés dynamiquement -->
+                </select>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" id="new-conversation-cancel" class="btn btn-secondary mr-2">Annuler</button>
+                <button type="submit" id="new-conversation-submit" class="btn btn-primary">Créer</button>
+            </div>
+        </form>
     </div>
 </div>

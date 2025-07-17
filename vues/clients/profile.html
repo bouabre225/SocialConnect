@@ -1,8 +1,10 @@
 <!-- Header -->
 <header class="header">
     <div class="header-content">
-        <div class="logo">
-            <i class="fab fa-facebook"></i> SocialConnect
+        <div class="app-logo">
+            <a href="#" data-url="/home" class="active">
+            <i class="fas fa-globe"></i> SocialConnect
+            </a>
         </div>
         <div class="search-bar">
             <i class="fas fa-search"></i>
@@ -10,25 +12,25 @@
         </div>
         <div class="nav-icons">
             <div class="nav-icon">
+                <a href="#" data-url="/home" class="active">
                 <i class="fas fa-home"></i>
+                </a>
             </div>
             <div class="nav-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <div class="nav-icon">
-                <i class="fas fa-store"></i>
-            </div>
-            <div class="nav-icon">
-                <i class="fas fa-user-friends"></i>
-            </div>
-            <div class="nav-icon">
+                <a href="#" data-url="/notification">
                 <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+                </a>
             </div>
             <div class="nav-icon">
+                <a href="#" data-url="/chat">
                 <i class="fas fa-comment-dots"></i>
+                </a>
             </div>
-            <div class="profile-icon">
-                <div></div>
+            <div class="profile-icon" id="header-profile-icon">
+                <a href="#" data-url="/profile">
+                <i class="fas fa-user"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -39,9 +41,9 @@
     <!-- Left Sidebar -->
     <div class="left-sidebar">
         <div class="sidebar-card">
-            <div class="sidebar-item">
+            <div class="sidebar-title">
                 <i class="fas fa-user"></i>
-                <span>Jean Dupont</span>
+                <span id="sidebar-username"></span>
             </div>
             <div class="sidebar-item">
                 <i class="fas fa-user-friends"></i>
@@ -60,40 +62,49 @@
                 <span>Watch</span>
             </div>
             <div class="sidebar-item">
-                <i class="fas fa-history"></i>
-                <span>Souvenirs</span>
-            </div>
-            <div class="sidebar-item">
                 <i class="fas fa-bookmark"></i>
                 <span>Enregistrés</span>
             </div>
-            <div class="sidebar-item">
-                <i class="fas fa-calendar"></i>
-                <span>Événements</span>
-            </div>
-            <div class="sidebar-item">
-                <i class="fas fa-flag"></i>
-                <span>Pages</span>
-            </div>
-            <div class="sidebar-item">
-                <i class="fas fa-chevron-down"></i>
-                <span>Voir plus</span>
-            </div>
         </div>
-        
         <div class="sidebar-card">
-            <div class="sidebar-title">Vos raccourcis</div>
-            <div class="sidebar-item">
-                <div style="background-color: #e4e6eb; width: 36px; height: 36px; border-radius: 8px;"></div>
-                <span>Groupe de développement</span>
+            <div class="sidebar-title">
+                <i class="fas fa-info-circle"></i>
+                À propos de moi
             </div>
-            <div class="sidebar-item">
-                <div style="background-color: #e4e6eb; width: 36px; height: 36px; border-radius: 8px;"></div>
-                <span>Photographie</span>
+            <div class="info-item">
+                <div class="info-icon">📅</div>
+                <div>
+                    <div>Date de naissance</div>
+                    <div id="birthdate"></div>
+                </div>
             </div>
-            <div class="sidebar-item">
-                <div style="background-color: #e4e6eb; width: 36px; height: 36px; border-radius: 8px;"></div>
-                <span>Voyages</span>
+            <div class="info-item">
+                <div class="info-icon">�</div>
+                <div>
+                    <div>Pays</div>
+                    <div id="country"></div>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">🏙️</div>
+                <div>
+                    <div>Ville</div>
+                    <div id="city"></div>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">💼</div>
+                <div>
+                    <div>Profession</div>
+                    <div id="profession"></div>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">❤️</div>
+                <div>
+                    <div>Statut relationnel</div>
+                    <div id="relationship"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -102,20 +113,20 @@
     <div class="profile-content">
         <!-- Profile Header -->
         <div class="profile-header">
-            <div class="cover-photo">
-                <div class="edit-icon">
-                    <i class="fas fa-camera"></i>
-                </div>
-            </div>
-            <div class="profile-picture">
-                <i class="fas fa-user"></i>
-                <div class="edit-icon">
+            <div class="cover-photo" id="cover-photo">
+                <div class="edit-icon" id="edit-cover-btn">
                     <i class="fas fa-camera"></i>
                 </div>
             </div>
             <div class="profile-info">
-                <h1 class="profile-name">Jean Dupont</h1>
-                <div class="friend-count">120 amis</div>
+                <div class="profile-picture" id="profile-picture">
+                    <i class="fas fa-user"></i>
+                    <div class="edit-icon" id="edit-avatar-btn">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <h1 class="profile-name" id="profile-name"></h1>
+                <div class="friend-count" id="friend-count">0 amis</div>
                 <div class="action-buttons">
                     <button class="btn btn-primary">
                         <i class="fas fa-plus"></i> Ajouter à la story
@@ -127,30 +138,29 @@
                         <i class="fas fa-ellipsis-h"></i>
                     </button>
                 </div>
-            </div>
-            <div class="profile-nav">
-                <div class="nav-item active">Publications</div>
-                <div class="nav-item">À propos</div>
-                <div class="nav-item">Amis</div>
-                <div class="nav-item">Photos</div>
-                <div class="nav-item">Vidéos</div>
-                <div class="nav-item">Vérifications</div>
+                <div class="profile-nav">
+                    <div class="nav-item active">Publications</div>
+                    <div class="nav-item">À propos</div>
+                    <div class="nav-item">Amis</div>
+                    <div class="nav-item">Photos</div>
+                    <div class="nav-item">Vidéos</div>
+                </div>
             </div>
         </div>
 
         <!-- Create Post -->
-        <div class="create-post">
-            <div class="user-avatar">
+        <div class="create-post" id="create-post">
+            <div class="user-avatar" id="create-post-avatar">
                 <i class="fas fa-user"></i>
             </div>
             <div class="create-post-input" id="create-post-input">
-                Quoi de neuf, Jean ?
+                Quoi de neuf ?
             </div>
         </div>
 
         <!-- Posts Container -->
         <div id="posts-container">
-            <!-- Posts will be loaded here dynamically -->
+            <!-- Posts will be loaded dynamically -->
         </div>
     </div>
 
@@ -163,14 +173,25 @@
                 </div>
                 <div>
                     <strong>Anniversaires</strong>
-                    <div>C'est l'anniversaire de <strong>Emma Petit</strong> aujourd'hui</div>
+                    <div id="birthdays-list">Aucun anniversaire aujourd'hui</div>
                 </div>
             </div>
         </div>
-        
+        <div class="sidebar-card">
+            <div class="sidebar-title">
+                <i class="fas fa-heart"></i>
+                Centres d'intérêt
+            </div>
+            <div class="tags" id="profile-interests">
+                <!-- Interests will be loaded dynamically -->
+            </div>
+        </div>
         <div class="sidebar-card">
             <div class="contacts-header">
-                <div class="sidebar-title">Contacts</div>
+                <div class="sidebar-title">
+                    <i class="fas fa-users"></i>
+                    Contacts
+                </div>
                 <div class="nav-icons">
                     <div class="nav-icon">
                         <i class="fas fa-video"></i>
@@ -183,38 +204,8 @@
                     </div>
                 </div>
             </div>
-            
             <div id="contacts-container">
-                <div class="contact-item">
-                    <div class="contact-avatar">
-                        <div class="online-status"></div>
-                    </div>
-                    <div class="contact-name">Alice Martin</div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-avatar">
-                        <div class="online-status"></div>
-                    </div>
-                    <div class="contact-name">Thomas Dubois</div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-avatar">
-                        <div class="online-status"></div>
-                    </div>
-                    <div class="contact-name">Sophie Laurent</div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-avatar">
-                        <div class="online-status"></div>
-                    </div>
-                    <div class="contact-name">Pierre Moreau</div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-avatar">
-                        <div class="online-status"></div>
-                    </div>
-                    <div class="contact-name">Julie Bernard</div>
-                </div>
+                <!-- Contacts will be loaded dynamically -->
             </div>
         </div>
     </div>
@@ -225,47 +216,144 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title">Modifier le profil</div>
-            <button class="close-modal">&times;</button>
+            <button class="close-modal">×</button>
         </div>
         <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">Prénom</label>
-                <input type="text" class="form-input" id="firstname" placeholder="Prénom">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Nom</label>
-                <input type="text" class="form-input" id="lastname" placeholder="Nom">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Date de naissance</label>
-                <input type="date" class="form-input" id="birthdate">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Ville</label>
-                <input type="text" class="form-input" id="city" placeholder="Ville">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Profession</label>
-                <input type="text" class="form-input" id="profession" placeholder="Profession">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Statut relationnel</label>
-                <select class="form-input" id="relationship-status">
-                    <option value="">Sélectionner</option>
-                    <option value="single">Célibataire</option>
-                    <option value="in_relationship">En couple</option>
-                    <option value="married">Marié(e)</option>
-                    <option value="complicated">C'est compliqué</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Bio</label>
-                <textarea class="form-textarea" id="bio" placeholder="Parlez un peu de vous..."></textarea>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Mot de passe actuel</label>
-                <input type="password" class="form-input" id="current-password" placeholder="Mot de passe actuel" required>
-            </div>
+            <form id="edit-profile-form">
+                <div class="form-group">
+                    <label class="form-label">Photo de profil</label>
+                    <div class="file is-centered has-name is-boxed">
+                        <label class="file-label">
+                            <input class="file-input" type="file" id="profile-pic" accept="image/*">
+                            <span class="file-cta">
+                                <span class="file-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                                <span class="file-label">Choisir une photo...</span>
+                            </span>
+                            <span class="file-name">Aucun fichier sélectionné</span>
+                        </label>
+                    </div>
+                    <img id="profile-pic-preview" class="profile-pic-preview" src="" alt="Preview">
+                    <p class="text-muted">Taille recommandée : 500x500 pixels (format carré)</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Photo de couverture</label>
+                    <div class="file is-centered has-name is-boxed">
+                        <label class="file-label">
+                            <input class="file-input" type="file" id="cover-pic" accept="image/*">
+                            <span class="file-cta">
+                                <span class="file-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                                <span class="file-label">Choisir une photo...</span>
+                            </span>
+                            <span class="file-name">Aucun fichier sélectionné</span>
+                        </label>
+                    </div>
+                    <p class="text-muted">Taille recommandée : 1200x400 pixels</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prénom</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" class="form-control" id="first-name" placeholder="Prénom" required>
+                    </div>
+                    <div class="error-message" id="first-name-error">Veuillez entrer un prénom valide.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" class="form-control" id="last-name" placeholder="Nom" required>
+                    </div>
+                    <div class="error-message" id="last-name-error">Veuillez entrer un nom valide.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pseudo</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-at"></i></span>
+                        <input type="text" class="form-control" id="username" placeholder="Pseudo" required>
+                    </div>
+                    <div class="error-message" id="username-error">Veuillez entrer un pseudo valide (minimum 3 caractères).</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date de naissance</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-birthday-cake"></i></span>
+                        <input type="date" class="form-control" id="birthdate" required>
+                    </div>
+                    <div class="error-message" id="birthdate-error">Veuillez sélectionner une date de naissance.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Âge</label>
+                    <input type="number" class="form-control" id="age" min="13" max="120" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Genre</label>
+                    <select class="form-select" id="gender">
+                        <option value="">Sélectionner</option>
+                        <option value="male">Homme</option>
+                        <option value="female">Femme</option>
+                        <option value="other">Autre</option>
+                        <option value="prefer-not-to-say">Préfère ne pas dire</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Situation matrimoniale</label>
+                    <select class="form-select" id="relationship-status">
+                        <option value="">Sélectionner</option>
+                        <option value="single">Célibataire</option>
+                        <option value="in-a-relationship">En couple</option>
+                        <option value="engaged">Fiancé(e)</option>
+                        <option value="married">Marié(e)</option>
+                        <option value="complicated">C'est compliqué</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Profession</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                        <input type="text" class="form-control" id="profession" placeholder="Votre métier">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pays</label>
+                    
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ville</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-city"></i></span>
+                        <input type="text" class="form-control" id="city" placeholder="Votre ville">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Adresse</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-home"></i></span>
+                        <input type="text" class="form-control" id="address" placeholder="Votre adresse">
+                    </div>
+                    <p class="text-muted">Seuls vos amis pourront voir cette information</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-textarea" id="bio" placeholder="Parlez un peu de vous..." maxlength="500"></textarea>
+                    <p class="text-muted"><span id="bio-counter">0</span>/500 caractères</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Centres d'intérêt</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-heart"></i></span>
+                        <input type="text" class="form-control" id="interests" placeholder="Sports, musique, voyages...">
+                    </div>
+                    <p class="text-muted">Séparez par des virgules</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mot de passe actuel</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="current-password" placeholder="Mot de passe actuel" required>
+                    </div>
+                    <div class="error-message" id="current-password-error">Veuillez entrer un mot de passe valide.</div>
+                </div>
+            </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-outline close-modal">Annuler</button>
@@ -279,28 +367,63 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title">Créer une publication</div>
-            <button class="close-modal">&times;</button>
+            <button class="close-modal">×</button>
         </div>
         <div class="modal-body">
             <div class="post-header">
-                <div class="post-avatar">
+                <div class="post-avatar" id="post-avatar">
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="post-user-info">
-                    <div class="post-username">Jean Dupont</div>
+                    <div class="post-username" id="post-username"></div>
                 </div>
             </div>
             <div class="form-group">
                 <textarea class="form-textarea" id="post-content" placeholder="Quoi de neuf ?"></textarea>
+                <div class="error-message" id="post-content-error">Veuillez entrer du contenu pour votre publication.</div>
             </div>
             <div class="form-group">
-                <button class="btn btn-outline" style="width: 100%;">
-                    <i class="fas fa-image"></i> Photo/Video
-                </button>
+                <div class="file is-centered has-name is-boxed">
+                    <label class="file-label">
+                        <input class="file-input" type="file" id="post-media" accept="image/*">
+                        <span class="file-cta">
+                            <span class="file-icon"><i class="fas fa-image"></i></span>
+                            <span class="file-label">Photo</span>
+                        </span>
+                        <span class="file-name">Aucun fichier sélectionné</span>
+                    </label>
+                </div>
+                <img id="post-media-preview" class="post-image" src="" alt="Preview" style="display: none;">
             </div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" id="publish-post-btn">Publier</button>
+        </div>
+    </div>
+</div>
+
+<!-- Password Verification Modal -->
+<div class="modal" id="password-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Confirmer votre mot de passe</div>
+            <button class="close-modal">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="password-form">
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="password" placeholder="Entrez votre mot de passe" required>
+                    </div>
+                    <div class="error-message" id="password-error">Mot de passe incorrect.</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline close-modal">Annuler</button>
+            <button class="btn btn-primary" id="verify-password-btn">Continuer</button>
         </div>
     </div>
 </div>

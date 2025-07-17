@@ -12,15 +12,6 @@
         
         <!-- Navigation principale -->
         <div class="col-lg-4 col-md-2 d-none d-md-flex justify-content-center nav-buttons">
-            <button class="nav-btn active" title="Accueil">
-                <i class="bi bi-house-door-fill"></i>
-            </button>
-            <button class="nav-btn" title="Amis">
-                <i class="bi bi-people-fill"></i>
-            </button>
-            <button class="nav-btn" title="Watch">
-                <i class="bi bi-camera-reels-fill"></i>
-            </button>
             <button class="nav-btn" title="Marketplace">
                 <i class="bi bi-shop-fill"></i>
             </button>
@@ -28,22 +19,27 @@
         
         <!-- Actions utilisateur -->
         <div class="col-lg-4 col-md-5 d-flex justify-content-end user-actions">
-            <button class="action-btn menu-toggle d-md-none">
-                <i class="bi bi-list"></i>
-            </button>
             <div class="d-none d-md-flex align-items-center action-buttons">
-                <button class="action-btn" title="Menu">
-                    <i class="bi bi-list"></i>
-                </button>
                 <button class="action-btn" id="go-to-chat" title="Messenger">
                     <i class="bi bi-chat-dots-fill"></i>
                 </button>
-                <button class="action-btn" title="Notifications">
+                <button class="action-btn" id="go-to-notifications" title="Notifications">
                     <i class="bi bi-bell-fill"></i>
                 </button>
-                <div class="user-avatar" title="Profil"></div>
+                <button class="action-btn" id="go-to-profile" title="Profil">
+                    <i class="bi bi-person-fill"></i>
+                </button>
+                <button class="action-btn" id="go-to-settings" title="Settings">
+                    <i class="bi bi-gear-fill"></i>
+                </button>
+                <button class="action-btn" id="go-to-logout" title="Logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
             </div>
-            <div class="user-avatar d-md-none"></div>
+            <!-- Acceder au dashboard -->
+            <button class="action-btn" id="go-to-dashboard" title="Dashboard">
+                <i class="bi bi-house-door-fill"></i>
+            </button>
         </div>
     </div>
 </div>

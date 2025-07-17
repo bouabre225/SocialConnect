@@ -1,6 +1,4 @@
-
-
-document.addEventListener('DOMContentLoaded', function() {
+//document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.toggle-password').forEach(button => {
         button.addEventListener('click', function() {
             const inputGroup = this.closest('.input-group');
@@ -23,13 +21,22 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-
+            const loginSpinner = document.getElementById('loginSpinner');
+            
+            loginSpinner.classList.remove('d-none');
+            
+            
+            setTimeout(() => {
+                loginSpinner.classList.add('d-none');
+                
+            
+                //alert('Fonctionnalité de connexion à implémenter');
+            }, 1500);
             const submitButton = this.querySelector('button[type="submit"]');
-            const loginText = submitButton.querySelector('#loginText');
             const spinner = submitButton.querySelector('#loginSpinner');
 
             submitButton.disabled = true;
-            if (loginText) loginText.classList.add('d-none');
+            if (spinner) spinner.classList.remove('d-none');
             if (spinner) spinner.classList.remove('d-none');
             if (loginMessage) loginMessage.innerHTML = '';
 
@@ -39,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             try {
-                const response = await fetch('http://localhost/ReseauSocial/api/login.php', {
+                const response = await fetch(API_URL3 + 'login.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
@@ -47,8 +54,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    
-                    window.location.href = "dashboard.html";
+                    localStorage.setItem('token', data.token); // Stocker le token JWT
+                    localStorage.setItem('user-id', data.user_id); // Stocker les données utilisateur
+                    setTimeout(() => {
+                        history.pushState(null, '', '/dashboard-admin');
+                        router();
+                    }, 1200);                
                 } else {
             
                     if (loginMessage) loginMessage.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
@@ -57,12 +68,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (loginMessage) loginMessage.innerHTML = `<div class="alert alert-danger">Erreur réseau ou serveur.</div>`;
             } finally {
                 submitButton.disabled = false;
-                if (loginText) loginText.classList.remove('d-none');
                 if (spinner) spinner.classList.add('d-none');
             }
+                // Initialisation Google Translate
+                if (typeof google !== 'undefined' && google.translate) {
+                    googleTranslateElementInit();
+                }
         });
     }
-});
+//});
 
 function googleTranslateElementInit() {
     new google.translate.TranslateElement({
@@ -193,24 +207,5 @@ document.addEventListener('DOMContentLoaded', function() {
             this.querySelector('i').classList.toggle('bi-eye');
             this.querySelector('i').classList.toggle('bi-eye-slash');
         });
-    });
-    
-
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const loginText = document.getElementById('loginText');
-        const loginSpinner = document.getElementById('loginSpinner');
-        
-        loginText.classList.add('d-none');
-        loginSpinner.classList.remove('d-none');
-        
-        
-        setTimeout(() => {
-            loginText.classList.remove('d-none');
-            loginSpinner.classList.add('d-none');
-            
-        
-            alert('Fonctionnalité de connexion à implémenter');
-        }, 1500);
     });
 });
