@@ -1,16 +1,23 @@
-# Utilise l’image officielle PHP avec Apache
 FROM php:8.2-apache
 
-# Copie les fichiers dans le dossier du serveur
+# Installer extensions PHP
+RUN docker-php-ext-install pdo pdo_mysql mysqli
+
+# Activer les modules Apache nécessaires
+RUN a2enmod rewrite headers
+
+# Copier tout le projet dans le conteneur
 COPY . /var/www/html/
 
-# Active les modules Apache si besoin (ex: rewrite)
-RUN a2enmod rewrite
+# Créer le dossier upload (il ne doit PAS exister localement ou être vide)
+RUN mkdir -p /var/www/html/views/clients/upload
 
-# Dépendances (facultatif, si tu utilises MySQL par exemple)
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Donner les bons droits pour les fichiers
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 775 /var/www/html/views/clients/upload
 
-# Droits corrects
-RUN chown -R www-data:www-data /var/www/html
+# Appliquer configuration personnalisée Apache (si tu en as une)
+COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
+CMD ["apache2-foreground"]
