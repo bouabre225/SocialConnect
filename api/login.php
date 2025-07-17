@@ -36,11 +36,11 @@ if (!file_exists('config.php')) {
 require_once 'config.php';
 error_log("config.php chargé");
 
-if (!file_exists('users/common.php')) {
+if (!file_exists('../api/users/common.php')) {
     error_log("Erreur : common.php introuvable");
     jsonResponse(['status' => 'error', 'message' => 'Erreur de configuration : fichier common.php introuvable'], 500);
 }
-require_once 'users/common.php';
+require_once '../api/users/common.php';
 error_log("common.php chargé");
 
 if (!file_exists('../vendor/autoload.php')) {
@@ -125,7 +125,6 @@ try {
                     'status' => $user['status']
                 ]
             ];
-            
             jsonResponse($response, 200);
         }
     }

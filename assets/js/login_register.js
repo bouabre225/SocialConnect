@@ -65,11 +65,11 @@ async function loginUser(formData) {
             if (data.status === 'success') {
                 localStorage.setItem('token', data.user.token); // Stocker le token JWT
                 localStorage.setItem('user', JSON.stringify(data.user)); // Stocker les données utilisateur
-                if (document.getElementById('rememberMe')?.checked) {
+                /*if (document.getElementById('rememberMe')?.checked) {
                     localStorage.setItem('rememberedEmail', formData.email);
                 } else {
                     localStorage.removeItem('rememberedEmail');
-                }
+                }*/
                 console.log('Connexion réussie, redirection vers /home');
                 navigateTo('/home');
             } else {

@@ -814,10 +814,27 @@
     document.getElementById('go-to-logout')?.addEventListener('click', async () => {
         console.log('Clic sur le bouton logout');
         try {
-            await fetchApi('/logout.php', 'POST');
-            localStorage.removeItem('token');
-            localStorage.removeItem('user_id');
-            navigateTo('/login');
+            const formData = {
+                token: localStorage.getItem('token')
+            };  
+            const response = await fetch('http://localhost:8001/logout.php', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            const data = await response.json();
+            console.log('Réponse de logout.php :', data);
+            if (data.status === 'success') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                navigateTo('/login');
+            } else {
+                throw new Error(data.message);
+            }
         } catch (error) {
             console.error('Erreur lors de la déconnexion:', error);
             localStorage.removeItem('token');

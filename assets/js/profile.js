@@ -49,12 +49,15 @@
         try {
             const response = await fetch(`${API_URL}/profile.php`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
-                    'Authorization': `Bearer ${getToken()}`
+                    'Authorization': `Bearer ${getToken()}`,
+                    'Accept': 'application/json'
                 }
             });
             const data = await response.json();
-            if (data.success) {
+            console.log('Réponse de /api/profile.php:', JSON.stringify(data, null, 2)); // Débogage
+            if (data.status === 'success' && data.user) {
                 updateProfileUI(data.user);
                 profileData = data.user;
                 localStorage.setItem('profileData', JSON.stringify(profileData));
@@ -67,48 +70,88 @@
     }
 
     function updateProfileUI(user) {
-        document.querySelector('.profile-name').textContent = `${user.firstname} ${user.lastname}`;
-        document.querySelector('.friend-count').textContent = `${user.friend_count || 0} amis`;
-        document.getElementById('first-name').value = user.firstname || '';
-        document.getElementById('last-name').value = user.lastname || '';
-        document.getElementById('username').value = user.username || '';
-        document.getElementById('birthdate').value = user.birthdate || '';
-        document.getElementById('city').value = user.city || '';
-        document.getElementById('profession').value = user.profession || '';
-        document.getElementById('relationship-status').value = user.relationship_status || '';
-        document.getElementById('bio').value = user.bio || '';
-        document.getElementById('sidebar-username').textContent = user.username || '';
-        document.getElementById('post-username').textContent = user.username || 'Utilisateur';
-        document.getElementById('birthdate').textContent = user.birthdate || '';
-        document.getElementById('city').textContent = user.city || '';
-        document.getElementById('profession').textContent = user.profession || '';
-        document.getElementById('relationship').textContent = user.relationship_status || '';
+        if (!user) {
+            console.error('Aucun utilisateur fourni pour updateProfileUI');
+            return;
+        }
+        const profileName = document.querySelector('.profile-name');
+        if (profileName) {
+            profileName.textContent = `${user.firstname || ''} ${user.lastname || ''}`;
+        } else {
+            console.warn('Élément .profile-name introuvable');
+        }
+        const friendCount = document.querySelector('.friend-count');
+        if (friendCount) {
+            friendCount.textContent = `${user.friend_count || 0} amis`;
+        } else {
+            console.warn('Élément .friend-count introuvable');
+        }
+        const fields = [
+            { id: 'first-name', value: user.firstname, isInput: true },
+            { id: 'last-name', value: user.lastname, isInput: true },
+            { id: 'username', value: user.username, isInput: true },
+            { id: 'birthdate', value: user.birthdate, isInput: true },
+            { id: 'city', value: user.city, isInput: true },
+            { id: 'profession', value: user.profession, isInput: true },
+            { id: 'relationship-status', value: user.relationship_status, isInput: true },
+            { id: 'bio', value: user.bio, isInput: true },
+            { id: 'sidebar-username', value: user.username, isInput: false },
+            { id: 'post-username', value: user.username || 'Utilisateur', isInput: false },
+            { id: 'birthdate-text', value: user.birthdate, isInput: false }, // ID unique
+            { id: 'city-text', value: user.city, isInput: false }, // ID unique
+            { id: 'profession-text', value: user.profession, isInput: false }, // ID unique
+            { id: 'relationship-text', value: user.relationship_status, isInput: false } // ID unique
+        ];
+        fields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                if (field.isInput) {
+                    element.value = field.value || '';
+                } else {
+                    element.textContent = field.value || '';
+                }
+            } else {
+                console.warn(`Élément ${field.id} introuvable`);
+            }
+        });
+    
         if (user.profilePic) {
-            document.getElementById('profile-picture').innerHTML = `<img src="${user.profilePic}" alt="Profile Picture">`;
-            document.getElementById('create-post-avatar').innerHTML = `<img src="${user.profilePic}" alt="Avatar">`;
-            document.getElementById('post-avatar').innerHTML = `<img src="${user.profilePic}" alt="Avatar">`;
-            document.getElementById('header-profile-icon').innerHTML = `<img src="${user.profilePic}" alt="Profile Icon">`;
+            const elements = [
+                { id: 'profile-picture', html: `<img src="${user.profilePic}" alt="Profile Picture">` },
+                { id: 'create-post-avatar', html: `<img src="${user.profilePic}" alt="Avatar">` },
+                { id: 'post-avatar', html: `<img src="${user.profilePic}" alt="Avatar">` },
+                { id: 'header-profile-icon', html: `<img src="${user.profilePic}" alt="Profile Icon">` }
+            ];
+            elements.forEach(el => {
+                const element = document.getElementById(el.id);
+                if (element) {
+                    element.innerHTML = el.html;
+                }
+            });
         }
-        if (user.coverPic) {
-            document.getElementById('cover-photo').style.backgroundImage = `url(${user.coverPic})`;
+    
+        const coverPhoto = document.getElementById('cover-photo');
+        if (coverPhoto && user.coverPic) {
+            coverPhoto.style.backgroundImage = `url(${user.coverPic})`;
         }
-        if (user.interests) {
-            const interestsContainer = document.getElementById('profile-interests');
+    
+        const interestsContainer = document.getElementById('profile-interests');
+        if (interestsContainer && user.interests) {
             interestsContainer.innerHTML = user.interests
                 .split(',')
                 .map(tag => tag.trim())
                 .map(tag => `<span class="tag">${tag}</span>`)
                 .join('');
         }
-
-        // Mettre à jour les images
-        const profilePic = document.getElementById('profile-pic-preview');
-        if (profilePic && profileData.profilePic) {
-            profilePic.src = profileData.profilePic;
+    
+        const profilePicPreview = document.getElementById('profile-pic-preview');
+        if (profilePicPreview && user.profilePic) {
+            profilePicPreview.src = user.profilePic;
         }
-        const coverPic = document.getElementById('cover-pic-preview');
-        if (coverPic && profileData.coverPic) {
-            coverPic.src = profileData.coverPic;
+    
+        const coverPicPreview = document.getElementById('cover-pic-preview');
+        if (coverPicPreview && user.coverPic) {
+            coverPicPreview.src = user.coverPic;
         }
     }
 
@@ -672,8 +715,9 @@
         }
 
         try {
-            const response = await fetch(`${API_URL4}/verify_password.php`, {
+            const response = await fetch(`${API_URL4}verify_password.php`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${getToken()}`

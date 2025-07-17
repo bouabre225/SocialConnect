@@ -1,23 +1,22 @@
 <?php
 // verify_password.php
 ob_start();
-require_once '../../api/users/common.php';
-require_once '../config.php';
+require_once '../api/users/common.php';
+require_once '../api/config.php';
+
+// Configuration des en-têtes CORS
+define('API', 'http://localhost:8000');
 
 // Configuration des en-têtes CORS
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: http://localhost:8000');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Origin: ' . API);
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
-header('Access-Control-Max-Age: 86400');
-error_log("En-têtes CORS configurés pour verify_password.php");
 
-// Gérer la requête OPTIONS (preflight)
+// Gérer la requête OPTIONS (pour CORS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    error_log("Requête OPTIONS reçue");
     http_response_code(200);
-    ob_clean();
     exit();
 }
 
@@ -40,7 +39,7 @@ try {
 
     if (password_verify($data['password'], $user['password'])) {
         ob_clean();
-        echo json_encode(['status' => 'success', 'message' => 'Mot de passe valide']);
+        echo json_encode(['status' => 'success', 'message' => 'Mot de passe correct']);
     } else {
         ob_clean();
         http_response_code(401);
