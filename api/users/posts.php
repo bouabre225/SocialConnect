@@ -63,8 +63,8 @@ if ($method === 'POST') {
     try {
         $stmt = $pdo->prepare('
             SELECT p.*, u.username, CONCAT(u.firstname, " ", u.lastname) AS full_name, u.avatar_url,
-                   (SELECT COUNT(*) FROM likes WHERE post_id = p.id) AS likes_count,
-                   (SELECT COUNT(*) FROM comments WHERE post_id = p.id) AS comments_count
+                (SELECT COUNT(*) FROM likes WHERE post_id = p.id) AS likes_count,
+                (SELECT COUNT(*) FROM comments WHERE post_id = p.id) AS comments_count
             FROM posts p
             JOIN users u ON p.user_id = u.id
             ORDER BY p.created_at DESC

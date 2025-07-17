@@ -12,7 +12,7 @@ define('JWT_SECRET_KEY1', 'ta-cle-super-secrete');
 // Clé secrète pour JWT
 $secretKey = JWT_SECRET_KEY1;
 
-$data = json_decode(file_get_contents('php://input'), true);
+//$data = json_decode(file_get_contents('php://input'), true);
 
 // Fonction pour vérifier le token JWT
 function getAuthorizationHeader() {
@@ -93,7 +93,7 @@ function handFileUpload($file, $uploadDir = './uploads/') {
         exit;
     }
 
-    $maxSize = 5 * 4024 * 4024;
+    $maxSize = 5 * 1024 * 1024;
     if ($file['size'] > $maxSize) {
         http_response_code(400);
         header('Content-Type: application/json');
@@ -133,8 +133,18 @@ function getUserById($userId) {
     $stmt->execute([$userId]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user && $user['avatar_url']) {
-        $user['avatar_url'] = 'http://localhost:8000/uploads/' . basename($user['avatar_url']);
+        $user['avatar_url'] = 'http://localhost:8001/uploads/' . basename($user['avatar_url']);
     }
     return $user;
+}
+function getUserData($userId, $pdo) {
+    $stmt = $pdo->prepare("
+        SELECT u.*, p.* 
+        FROM users u 
+        LEFT JOIN profiles p ON u.id = p.user_id 
+        WHERE u.id = ?
+    ");
+    $stmt->execute([$userId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 ?>

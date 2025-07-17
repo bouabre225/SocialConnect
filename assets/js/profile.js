@@ -1,4 +1,4 @@
-    document.addEventListener('DOMContentLoaded', () => {
+    //document.addEventListener('DOMContentLoaded', () => {
     const updateProfileBtn = document.getElementById('update-profile-btn');
     const updateProfileModal = document.getElementById('update-profile-modal');
     const closeModalBtns = document.querySelectorAll('.close-modal');
@@ -47,10 +47,17 @@
     
     async function loadProfileData() {
         try {
-            const response = await fetch('http://localhost:8001/api/profile.php');
+            const response = await fetch(`${API_URL}/profile.php`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            });
             const data = await response.json();
             if (data.success) {
                 updateProfileUI(data.user);
+                profileData = data.user;
+                localStorage.setItem('profileData', JSON.stringify(profileData));
             } else {
                 console.error('Erreur de chargement du profil:', data.message);
             }
@@ -93,11 +100,26 @@
                 .map(tag => `<span class="tag">${tag}</span>`)
                 .join('');
         }
+
+        // Mettre à jour les images
+        const profilePic = document.getElementById('profile-pic-preview');
+        if (profilePic && profileData.profilePic) {
+            profilePic.src = profileData.profilePic;
+        }
+        const coverPic = document.getElementById('cover-pic-preview');
+        if (coverPic && profileData.coverPic) {
+            coverPic.src = profileData.coverPic;
+        }
     }
 
     async function loadPosts() {
         try {
-            const response = await fetch('http://localhost:8001/api/profile.php?posts=true');
+            const response = await fetch(`${API_URL}/profile.php?posts=true`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            });
             const data = await response.json();
             if (data.success) {
                 renderPosts(data.posts);
@@ -169,7 +191,7 @@
 
     async function loadComments(postId) {
         try {
-            const response = await fetch(`api/profile.php?comments=true&post_id=${postId}`);
+            const response = await fetch(`${API_URL}/profile.php?comments=true&post_id=${postId}`);
             const data = await response.json();
             if (data.success) {
                 renderComments(postId, data.comments);
@@ -203,29 +225,65 @@
     }
 
     async function updateProfile() {
-        const formData = {
-            firstname: document.getElementById('first-name').value,
-            lastname: document.getElementById('last-name').value,
-            username: document.getElementById('username').value,
-            birthdate: document.getElementById('birthdate').value,
-            city: document.getElementById('city').value,
-            profession: document.getElementById('profession').value,
-            relationship_status: document.getElementById('relationship-status').value,
-            bio: document.getElementById('bio').value,
-            current_password: document.getElementById('current-password').value,
-            interests: document.getElementById('interests').value
-        };
+       // e.preventDefault();
+        if (!validateForm()) return;
+
+        const saveBtn = document.getElementById('save-profile-btn');
+        saveBtn.classList.add('is-loading');
+
+        const formData = new FormData();
+        formData.append('firstname', document.getElementById('first-name').value.trim());
+        formData.append('lastname', document.getElementById('last-name').value.trim());
+        formData.append('username', document.getElementById('username').value.trim());
+        formData.append('birthdate', document.getElementById('birthdate').value);
+        formData.append('city', document.getElementById('city').value.trim());
+        formData.append('profession', document.getElementById('profession').value.trim());
+        formData.append('relationship_status', document.getElementById('relationship-status').value);
+        formData.append('bio', document.getElementById('bio').value.trim());
+        formData.append('interests', document.getElementById('interests').value.trim());
+        formData.append('gender', document.getElementById('gender').value);
+        formData.append('country', document.getElementById('country').value);
+        formData.append('address', document.getElementById('address').value.trim());
+        formData.append('current_password', document.getElementById('current-password').value);
+        if (document.getElementById('profile-pic').files[0]) {
+            formData.append('profile_pic', document.getElementById('profile-pic').files[0]);
+        }
+        if (document.getElementById('cover-pic').files[0]) {
+            formData.append('cover_pic', document.getElementById('cover-pic').files[0]);
+        }
 
         try {
-            const response = await fetch('api/update_profile.php', {
+            const response = await fetch(`${API_URL}/update-profile.php`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: formData
             });
             const data = await response.json();
             if (data.success) {
-                alert('Profil mis à jour avec succès!');
+                console.log('Profil mis à jour avec succès!');
                 closeModal(updateProfileModal);
+                profileData.firstName = document.getElementById('first-name').value.trim();
+                profileData.lastName = document.getElementById('last-name').value.trim();
+                profileData.username = document.getElementById('username').value.trim();
+                profileData.birthdate = document.getElementById('birthdate').value;
+                profileData.city = document.getElementById('city').value.trim();
+                profileData.profession = document.getElementById('profession').value.trim();
+                profileData.relationship = document.getElementById('relationship-status').value;
+                profileData.bio = document.getElementById('bio').value.trim();
+                profileData.interests = document.getElementById('interests').value.trim();
+                profileData.gender = document.getElementById('gender').value;
+                profileData.country = document.getElementById('country').value;
+                profileData.address = document.getElementById('address').value.trim();
+                if (document.getElementById('profile-pic').files[0]) {
+                    profileData.profilePic = URL.createObjectURL(document.getElementById('profile-pic').files[0]);
+                }
+                if (document.getElementById('cover-pic').files[0]) {
+                    profileData.coverPic = URL.createObjectURL(document.getElementById('cover-pic').files[0]);
+                }
+                localStorage.setItem('profileData', JSON.stringify(profileData));
+                loadProfile();
                 loadProfileData();
             } else {
                 alert('Erreur: ' + data.message);
@@ -233,7 +291,14 @@
         } catch (error) {
             console.error('Erreur:', error);
             alert('Une erreur est survenue lors de la mise à jour du profil');
+        } finally {
+            saveBtn.classList.remove('is-loading');
         }
+    }
+
+    // Fonction pour obtenir le token depuis localStorage
+    function getToken() {
+        return localStorage.getItem('token');
     }
 
     async function createPost() {
@@ -250,8 +315,11 @@
         }
 
         try {
-            const response = await fetch('http://localhost:8001/users/posts.php', {
-                method: 'POST',
+            const response = await fetch(`${API_URL}/posts.php`, {
+                method: 'POST', 
+                headers: {
+                    'Authorization': `Bearer ${getToken()}` 
+                },
                 body: formData
             });
             const data = await response.json();
@@ -260,11 +328,11 @@
                 document.getElementById('post-content').value = '';
                 loadPosts();
             } else {
-                alert('Erreur: ' + data.message);
+                console.log('Erreur: ' + data.message);
             }
         } catch (error) {
             console.error('Erreur:', error);
-            alert('Une erreur est survenue lors de la création de la publication');
+            console.log('Une erreur est survenue lors de la création de la publication');
         }
     }
 
@@ -522,7 +590,7 @@
     });
 
     const profileForm = document.getElementById('edit-profile-form');
-    profileForm.addEventListener('submit', function(e) {
+    profileForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         if (!validateForm()) return;
 
@@ -551,26 +619,95 @@
         }
         formData.append('current_password', document.getElementById('current-password').value);
 
-        setTimeout(() => {
+        try {
+            const response = await fetch(`${API_URL}/update-profile.php`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: formData
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                alert('Profil mis à jour avec succès !');
+                closeModal(updateProfileModal);
+                profileData.firstName = document.getElementById('first-name').value.trim();
+                profileData.lastName = document.getElementById('last-name').value.trim();
+                profileData.username = document.getElementById('username').value.trim();
+                profileData.birthdate = document.getElementById('birthdate').value;
+                profileData.city = document.getElementById('city').value.trim();
+                profileData.profession = document.getElementById('profession').value.trim();
+                profileData.relationship = document.getElementById('relationship-status').value;
+                profileData.bio = document.getElementById('bio').value.trim();
+                profileData.interests = document.getElementById('interests').value.trim();
+                profileData.gender = document.getElementById('gender').value;
+                profileData.country = document.getElementById('country').value;
+                profileData.address = document.getElementById('address').value.trim();
+                if (document.getElementById('profile-pic').files[0]) {
+                    profileData.profilePic = URL.createObjectURL(document.getElementById('profile-pic').files[0]);
+                }
+                if (document.getElementById('cover-pic').files[0]) {
+                    profileData.coverPic = URL.createObjectURL(document.getElementById('cover-pic').files[0]);
+                }
+                localStorage.setItem('profileData', JSON.stringify(profileData));
+                loadProfile();
+                loadProfileData();
+            } else {
+                alert('Erreur: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors de la mise à jour du profil');
+        } finally {
             saveBtn.classList.remove('is-loading');
-            closeModal(updateProfileModal);
-            alert('Profil mis à jour avec succès !');
-            profileData.firstName = document.getElementById('first-name').value.trim();
-            profileData.lastName = document.getElementById('last-name').value.trim();
-            profileData.username = document.getElementById('username').value.trim();
-            profileData.birthdate = document.getElementById('birthdate').value;
-            profileData.age = document.getElementById('age').value;
-            profileData.gender = document.getElementById('gender').value;
-            profileData.relationship = document.getElementById('relationship-status').value;
-            profileData.profession = document.getElementById('profession').value.trim();
-            profileData.country = document.getElementById('country').value;
-            profileData.city = document.getElementById('city').value.trim();
-            profileData.address = document.getElementById('address').value.trim();
-            profileData.bio = document.getElementById('bio').value.trim();
-            profileData.interests = document.getElementById('interests').value.trim();
-            loadProfile();
-            loadProfileData();
-        }, 1500);
+        }
+    });
+
+    // Vérification du mot de passe
+    document.getElementById('verify-password-btn').addEventListener('click', async function() {
+        const password = document.getElementById('password').value;
+        if (!password) {
+            document.getElementById('password-error').style.display = 'block';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL4}/verify_password.php`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ password })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                closeModal(document.getElementById('password-modal'));
+                openModal(updateProfileModal);
+                document.getElementById('first-name').value = profileData.firstName || '';
+                document.getElementById('last-name').value = profileData.lastName || '';
+                document.getElementById('username').value = profileData.username || '';
+                document.getElementById('birthdate').value = profileData.birthdate || '';
+                document.getElementById('city').value = profileData.city || '';
+                document.getElementById('profession').value = profileData.profession || '';
+                document.getElementById('relationship-status').value = profileData.relationship_status || '';
+                document.getElementById('bio').value = profileData.bio || '';
+                document.getElementById('interests').value = profileData.interests || '';
+                document.getElementById('gender').value = profileData.gender || '';
+                document.getElementById('country').value = profileData.country || '';
+                document.getElementById('address').value = profileData.address || '';
+                document.getElementById('profile-pic').value = profileData.profilePic || '';
+                document.getElementById('cover-pic').value = profileData.coverPic || '';
+                document.getElementById('current-password').value = profileData.currentPassword || '';
+            } else {
+                document.getElementById('password-error').style.display = 'block';
+                document.getElementById('password-error').textContent = data.message;
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            document.getElementById('password-error').style.display = 'block';
+            document.getElementById('password-error').textContent = 'Une erreur est survenue';
+        }
     });
 
     publishPostBtn.addEventListener('click', function(e) {
@@ -630,8 +767,11 @@
 
     async function likePost(postId) {
         try {
-            const response = await fetch(`api/profile.php?like=true&post_id=${postId}`, {
-                method: 'POST'
+            const response = await fetch(`${API_URL}/profile.php?like=true&post_id=${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
             });
             const data = await response.json();
             if (data.success) {
@@ -652,9 +792,12 @@
     async function submitComment(postId, content) {
         if (!content.trim()) return;
         try {
-            const response = await fetch(`api/profile.php?comment=true`, {
+            const response = await fetch(`${API_URL}/profile.php?comment=true`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
                 body: JSON.stringify({ post_id: postId, content })
             });
             const data = await response.json();
@@ -668,8 +811,11 @@
 
     async function likeComment(commentId) {
         try {
-            const response = await fetch(`api/profile.php?like_comment=true&comment_id=${commentId}`, {
-                method: 'POST'
+            const response = await fetch(`${API_URL}/profile.php?like_comment=true&comment_id=${commentId}`, {
+                method: 'POST', 
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
             });
             const data = await response.json();
             if (data.success) {
@@ -685,9 +831,12 @@
         const replyContent = prompt('Répondez au commentaire :');
         if (!replyContent) return;
         try {
-            const response = await fetch(`api/profile.php?reply=true`, {
+            const response = await fetch(`${API_URL}/profile.php?reply=true`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
                 body: JSON.stringify({ post_id: postId, comment_id: commentId, content: replyContent })
             });
             const data = await response.json();
@@ -713,4 +862,4 @@
     loadContacts();
     loadPostsLocal();
     loadProfileData();
-});
+//});

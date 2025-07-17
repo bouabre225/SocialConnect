@@ -226,7 +226,7 @@ fr: {
     }, 3000);
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+//document.addEventListener('DOMContentLoaded', function() {
     changeLanguage(currentLanguage);
 
     const menuItems = document.querySelectorAll('.settings-menu-item');
@@ -393,4 +393,4 @@ fr: {
         themeToggle.querySelector('i').classList.add('bi-moon');
         themeToggle.querySelector('i').classList.remove('bi-sun');
     }
-});
+//});
