@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 require '../config.php';
 require_once '../../api/users/common.php';
 
-define('API', 'http://localhost:8000');
+define('API', 'https://endearing-strudel-046558.netlify.app');
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: http://localhost:8000');

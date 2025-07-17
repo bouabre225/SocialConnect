@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-define('API', 'http://localhost:8000');
+define('API', 'https://endearing-strudel-046558.netlify.app');
 
 // Autoriser toutes les origines (en dev uniquement)
 header("Access-Control-Allow-Origin: " . API);

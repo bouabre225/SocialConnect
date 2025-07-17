@@ -3,7 +3,7 @@ require_once 'common.php';
 require '../config.php';
 
 // Définition de l'origine autorisée
-define('API', 'http://localhost:8000');
+define('API', 'https://endearing-strudel-046558.netlify.app');
 
 // Configuration des en-têtes CORS
 header('Content-Type: application/json; charset=utf-8');

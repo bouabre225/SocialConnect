@@ -10,7 +10,7 @@ require_once 'config.php';
 require_once '../api/users/common.php'; // Vérifie qu'un utilisateur est connecté
 
 // Définition de l'origine autorisée
-define('API', 'http://localhost:8000');
+define('API', 'https://endearing-strudel-046558.netlify.app');
 
 // Configuration des en-têtes CORS
 header('Content-Type: application/json; charset=utf-8');

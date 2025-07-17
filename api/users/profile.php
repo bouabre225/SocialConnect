@@ -5,7 +5,7 @@ require_once '../../api/users/common.php';
 require_once '../config.php';
 
 // Définir l'URL de l'API pour correspondre au port utilisé par le frontend
-define('API', 'http://localhost:8000');
+define('API', 'https://endearing-strudel-046558.netlify.app');
 
 // Configuration des en-têtes CORS
 header('Content-Type: application/json; charset=utf-8');

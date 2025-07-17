@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
 // Définition de l'origine autorisée
-define('API', 'http://localhost:8000');
+define('API', 'https://endearing-strudel-046558.netlify.app');
 
 // Configuration des en-têtes CORS
 header('Content-Type: application/json; charset=utf-8');
