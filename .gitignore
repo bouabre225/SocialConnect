@@ -1,8 +1,12 @@
 # Ignore les fichiers de configuration
 config.php
 config/phpmailer.php
-vendor
-
+/api
+/vendor
+/composer.json
+/composer.lock
+/package-lock.json
+/node_modules
 # Ignore les fichiers de la base de données
 *.sql
 
