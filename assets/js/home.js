@@ -817,7 +817,7 @@
             const formData = {
                 token: localStorage.getItem('token')
             };  
-            const response = await fetch('https://socialconnect-94gz.onrender.com/logout.php', {
+            const response = await fetch('https://socialconnect-94gz.onrender.com/api/logout.php', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
