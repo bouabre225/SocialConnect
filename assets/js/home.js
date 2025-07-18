@@ -128,7 +128,7 @@
         }
         contactsList.innerHTML = '';
         try {
-            const data = await fetchApi(`${API_URL}/friends.php?status=accepted`);
+            const data = await fetchApi('/friends.php?status=accepted');
             console.log('Amis récupérés:', data);
             if (data.status === 'success' && Array.isArray(data.friends)) {
                 if (data.friends.length === 0) {
@@ -165,7 +165,7 @@
         }
         suggestionsList.innerHTML = '';
         try {
-            const data = await fetchApi(`${API_URL}/friends_suggestion.php`);
+            const data = await fetchApi('/friends_suggestion.php');
             console.log('Suggestions récupérées:', data);
             if (data.status === 'success' && Array.isArray(data.suggestions)) {
                 if (data.suggestions.length === 0) {
@@ -224,7 +224,7 @@
         }
         storiesScroll.innerHTML = '';
         try {
-            const data = await fetchApi(`${API_URL}/stories.php`);
+            const data = await fetchApi('/stories.php');
             console.log('Stories récupérées:', data);
             if (data.status === 'success' && Array.isArray(data.stories)) {
                 if (data.stories.length === 0) {
@@ -262,7 +262,7 @@
                             `;
                             storyItem.addEventListener('click', async () => {
                                 try {
-                                    await fetchApi(`${API_URL}/stories.php?story_id=${story.story_id}`, 'POST');
+                                    await fetchApi('/stories.php?story_id=${story.story_id}', 'POST');
                                 } catch (error) {
                                     console.error('Erreur lors de l\'enregistrement de la vue de story:', error);
                                 }
@@ -322,7 +322,7 @@
             if (emojiInput.value.trim()) formData.append('emoji_content', emojiInput.value.trim());
 
             try {
-                await fetchApi(`${API_URL}/stories.php`, 'POST', formData, true);
+                await fetchApi('/stories.php', 'POST', formData, true);
                 modal.style.display = 'none';
                 fetchStories();
             } catch (error) {
@@ -340,7 +340,7 @@
         }
         feedPosts.innerHTML = '';
         try {
-            const data = await fetchApi(`${API_URL}/posts.php`);
+            const data = await fetchApi('/posts.php');
             //console.log('Posts récupérés:', JSON.stringify(data, null, 2));
             if (data.status === 'success' && Array.isArray(data.posts)) {
                 if (data.posts.length === 0) {
@@ -437,7 +437,7 @@
                             const content = input.value.trim();
                             if (content) {
                                 try {
-                                    await fetchApi(`${API_URL}/comments.php`, 'POST', { post_id: post.id, content });
+                                    await fetchApi('/comments.php', 'POST', { post_id: post.id, content });
                                     input.value = '';
                                     loadComments(post.id, commentsList);
                                 } catch (error) {
@@ -453,7 +453,7 @@
                             }
                             try {
                                 console.log("postId:", post_id); // Débogage
-                                const data = await fetchApi(`${API_URL}/posts_comments.php?post_id=${post_id}`);
+                                const data = await fetchApi('/posts_comments.php?post_id=${post_id}');
                                 console.log('Commentaires récupérés pour post', post_id, ':', data);
                                 commentsList.innerHTML = '';
                                 document.getElementById(`comments-count-${post_id}`).textContent = `${data.comments?.length || 0} commentaires`;
