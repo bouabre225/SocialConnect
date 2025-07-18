@@ -270,5 +270,5 @@ function showNotification(message, type = 'info') {
     }, 3500);
 }
 
-
-document.addEventListener('DOMContentLoaded', renderReports);
+renderReports();
+//document.addEventListener('DOMContentLoaded', renderReports);

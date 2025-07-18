@@ -258,5 +258,5 @@ function showNotification(message, type = 'info') {
         }, 500);
     }, 3500);
 }
-
-document.addEventListener('DOMContentLoaded', renderArticles);
+renderArticles();
+//document.addEventListener('DOMContentLoaded', renderArticles);

@@ -300,7 +300,7 @@ function showNotification(message, type) {
     }, 5000);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+//document.addEventListener('DOMContentLoaded', function() {
     renderUsers();
     
     document.querySelectorAll('.btn-action').forEach(btn => {
@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0) scale(1)';
         });
     });
-});
+//});
 
 document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && e.key === 'd') {

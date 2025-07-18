@@ -1,7 +1,7 @@
 (function () {
     // Variables
-    const API_URL = 'http://localhost:8001/users';
-    const WS_URL = 'ws://localhost:8002';
+    const API_URL = 'https://socialconnect-94gz.onrender.com/api/users';
+    const WS_URL = 'ws://socialconnect-94gz.onrender.com:8002';
     const hamburger = document.getElementById('hamburger');
     const sidebar = document.getElementById('sidebar');
     const settingsBtn = document.getElementById('settings-btn');

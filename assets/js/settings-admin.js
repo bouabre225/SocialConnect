@@ -77,11 +77,11 @@ function showLanguageSelector() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+//document.addEventListener('DOMContentLoaded', function() {
     initThemeToggle();
     
     document.querySelector('.fade-in').style.opacity = '1';
-});
+//});
 
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {

@@ -317,7 +317,7 @@ function showNotification(message, type) {
 }
 
 
-document.addEventListener('DOMContentLoaded', function() {
+//document.addEventListener('DOMContentLoaded', function() {
     renderRoles();
     
     document.querySelectorAll('.btn-action').forEach(btn => {
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0) scale(1)';
         });
     });
-});
+//});
 
 
 document.addEventListener('keydown', function(e) {
