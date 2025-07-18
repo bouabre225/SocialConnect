@@ -23,7 +23,7 @@ try {
     $update = $pdo->prepare("UPDATE users SET status = 'active', activation_token = NULL WHERE activation_token = ?");
     $update->execute([$token]);
 
-    header('Location: http://localhost:8000/login?activated=1');
+    header('Location: https://social8connect.netlify.app/login?activated=1');
     exit;
     
 } catch (Exception $e) {

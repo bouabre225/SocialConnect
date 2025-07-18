@@ -121,7 +121,7 @@ try {
         
         // Contenu
         $mail->isHTML(true);
-        $activation_link = "http://localhost/ReseauSocial/api/activate.php?token=" . $activation_token;
+        $activation_link = "https://social8connect.netlify.app/api/activate.php?token=" . $activation_token;
         $mail->CharSet = 'UTF-8';
         $mail->Encoding = 'base64';
         $mail->Subject = "Confirmation d'inscription - SocialConnect";
