@@ -36,10 +36,9 @@ Projet visant à développer une application web de type réseau social inspiré
 - **Frontend** : HTML, CSS, Bootstrap 5, JavaScript natif (AJAX via Fetch)
 - **Backend** : PHP natif (API REST)
 - **Base de données** : MySQL
-- **Temps réel (optionnel)** : Node.js (sockets.io)
 - **Hébergement** :
-  - Backend : InfinityFree
-  - Frontend : Netlify / Vercel / InfinityFree
+  - Backend : (https://socialconnect-94gz.onrender.com)
+  - Frontend : Netlify 
 
 ---
 
@@ -67,25 +66,21 @@ Projet visant à développer une application web de type réseau social inspiré
    git clone https://github.com/bouabre225/socialconnect.git
 
 
-2. Importer la base de données via le fichier `socialconnect.sql`
 
-3. Modifier le fichier `api/config.php` avec vos identifiants MySQL
 
-4. Héberger le dossier sur un serveur PHP (InfinityFree ou local)
 
-5. Configurer les URLs dans le JS/AJAX et les pages PHP selon le serveur utilisé
 
 ## 🌐 Déploiement
 
-* **Frontend** : [Netlify](https://www.netlify.com) ou [Vercel](https://vercel.com)
-* **Backend** : [InfinityFree](https://infinityfree.net)
-
+* **Frontend** : social8connect.netlify.app
+* **Backend** : https://socialconnect-94gz.onrender.com
 ---
 
 ## 👥 Contributeurs
 
-* **Nom Prénom** (Chef de projet)
-* **Nom Prénom**
-* **Nom Prénom**
+* **Nom Prénom** KORE Ange
+* **Nom Prénom** LEGBANON Aurelle
+* **Nom Prénom** HESSOU Floriane
+* **Nom Prénom** DOSSA ferdinande 
 
 ```
