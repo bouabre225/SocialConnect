@@ -128,7 +128,7 @@
         }
         contactsList.innerHTML = '';
         try {
-            const data = await fetchApi('/friends.php?status=accepted');
+            const data = await fetchApi(`${API_URL}/friends.php?status=accepted`);
             console.log('Amis récupérés:', data);
             if (data.status === 'success' && Array.isArray(data.friends)) {
                 if (data.friends.length === 0) {
@@ -165,7 +165,7 @@
         }
         suggestionsList.innerHTML = '';
         try {
-            const data = await fetchApi('/friends_suggestion.php');
+            const data = await fetchApi(`${API_URL}/friends_suggestion.php`);
             console.log('Suggestions récupérées:', data);
             if (data.status === 'success' && Array.isArray(data.suggestions)) {
                 if (data.suggestions.length === 0) {
@@ -191,7 +191,7 @@
                         suggestionsList.appendChild(suggestionItem);
                         suggestionItem.querySelector('.suggestion-btn-primary').addEventListener('click', async () => {
                             try {
-                                await fetchApi('/friends.php', 'POST', { friend_id: suggestion.id });
+                                await fetchApi(`${API_URL}/friends.php`, 'POST', { friend_id: suggestion.id });
                                 suggestionItem.remove();
                             } catch (error) {
                                 console.error('Erreur lors de l\'ajout d\'ami:', error);
@@ -199,7 +199,7 @@
                         });
                         suggestionItem.querySelector('.suggestion-btn-secondary').addEventListener('click', async () => {
                             try {
-                                await fetchApi('/friends.php', 'DELETE',{ friend_id: suggestion.id});
+                                await fetchApi(`${API_URL}/friends.php`, 'DELETE',{ friend_id: suggestion.id});
                                 suggestionItem.remove();
                             } catch (error) {
                                 console.error('Erreur lors de la suppression d\'ami:', error);
@@ -224,7 +224,7 @@
         }
         storiesScroll.innerHTML = '';
         try {
-            const data = await fetchApi('/stories.php');
+            const data = await fetchApi(`${API_URL}/stories.php`);
             console.log('Stories récupérées:', data);
             if (data.status === 'success' && Array.isArray(data.stories)) {
                 if (data.stories.length === 0) {
@@ -262,7 +262,7 @@
                             `;
                             storyItem.addEventListener('click', async () => {
                                 try {
-                                    await fetchApi(`/stories/views/${story.story_id}.php`, 'POST');
+                                    await fetchApi(`${API_URL}/stories.php?story_id=${story.story_id}`, 'POST');
                                 } catch (error) {
                                     console.error('Erreur lors de l\'enregistrement de la vue de story:', error);
                                 }
@@ -322,7 +322,7 @@
             if (emojiInput.value.trim()) formData.append('emoji_content', emojiInput.value.trim());
 
             try {
-                await fetchApi('/stories.php', 'POST', formData, true);
+                await fetchApi(`${API_URL}/stories.php`, 'POST', formData, true);
                 modal.style.display = 'none';
                 fetchStories();
             } catch (error) {
@@ -340,7 +340,7 @@
         }
         feedPosts.innerHTML = '';
         try {
-            const data = await fetchApi('/posts.php');
+            const data = await fetchApi(`${API_URL}/posts.php`);
             //console.log('Posts récupérés:', JSON.stringify(data, null, 2));
             if (data.status === 'success' && Array.isArray(data.posts)) {
                 if (data.posts.length === 0) {
@@ -422,7 +422,7 @@
                         likeBtn.addEventListener('click', async () => {
                             try {
                                 const isLiked = likeBtn.classList.contains('liked');
-                                await fetchApi('/likes.php', isLiked ? 'DELETE' : 'POST', { post_id: post.id });
+                                await fetchApi(`${API_URL}/likes.php`, isLiked ? 'DELETE' : 'POST', { post_id: post.id });
                                 likeBtn.classList.toggle('liked');
                                 likesCount.textContent = isLiked ? parseInt(likesCount.textContent) - 1 : parseInt(likesCount.textContent) + 1;
                             } catch (error) {
@@ -437,7 +437,7 @@
                             const content = input.value.trim();
                             if (content) {
                                 try {
-                                    await fetchApi('/comments.php', 'POST', { post_id: post.id, content });
+                                    await fetchApi(`${API_URL}/comments.php`, 'POST', { post_id: post.id, content });
                                     input.value = '';
                                     loadComments(post.id, commentsList);
                                 } catch (error) {
@@ -453,7 +453,7 @@
                             }
                             try {
                                 console.log("postId:", post_id); // Débogage
-                                const data = await fetchApi(`/posts_comments.php?post_id=${post_id}`);
+                                const data = await fetchApi(`${API_URL}/posts_comments.php?post_id=${post_id}`);
                                 console.log('Commentaires récupérés pour post', post_id, ':', data);
                                 commentsList.innerHTML = '';
                                 document.getElementById(`comments-count-${post_id}`).textContent = `${data.comments?.length || 0} commentaires`;
@@ -522,7 +522,7 @@
 
             console.log('Données envoyées à /posts.php:', Object.fromEntries(formData));
             try {
-                await fetchApi('/posts.php', 'POST', formData, true);
+                await fetchApi(`${API_URL}/posts.php`, 'POST', formData, true);
                 postInput.value = '';
                 selectedPostMediaFile = null;
                 selectedEmoji = '';
@@ -817,7 +817,7 @@
             const formData = {
                 token: localStorage.getItem('token')
             };  
-            const response = await fetch('http://localhost:8001/logout.php', {
+            const response = await fetch('https://socialconnect-94gz.onrender.com/logout.php', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

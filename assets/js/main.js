@@ -21,6 +21,10 @@ const routes = {
     '/roles': '/vues/admin/gestion_des_roles.html',
 };
 
+
+const publicRoutes = ['/','/login', '/register', '/forgot', '/reset'];
+//const privateRoutes = ['/home', '/chat', '/profile', '/settings', '/notification', '/moderator', '/dashboard-admin', '/settings-admin', '/statistiques', '/utilisateurs', '/articles', '/signalements', '/roles'];
+
 // Variable pour éviter les boucles infinies
 let isRouting = false;
 
@@ -103,9 +107,6 @@ async function loadView(url) {
 
     };
 
-    const apiMap = {
-        '/vues/clients/home.html': '../../api/users/home.php',
-    };
 
     const cssPath = cssMap[url];
     if (cssPath) {
@@ -125,21 +126,40 @@ async function loadView(url) {
     });
 }
 
-// Fonction de vérification d'authentification (à adapter selon votre logique)
-function checkAuth() {
-    const token = localStorage.getItem('token'); // Corriger 'authToken' en 'token'
+// Fonction de vérification d'authentification
+async function checkAuth() {
+    const token = localStorage.getItem('token');
     if (!token) {
-        console.log('Utilisateur non authentifié');
-        // navigateTo('/login'); // Optionnel : rediriger si non authentifié
-    } else {
-        console.log('Utilisateur authentifié');
+        navigateTo('/login');
+        return { isAuthenticated: false };
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/home.php`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        if (response.ok && data.status === 'success') {
+            return { isAuthenticated: true, role: data.user?.role || 'user' };
+        } else {
+            localStorage.removeItem('token');
+            navigateTo('/login');
+            return { isAuthenticated: false };
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'authentification:', error);
+        localStorage.removeItem('token');
+        navigateTo('/login');
+        return { isAuthenticated: false };
     }
 }
 
 // Fonction de navigation sécurisée
 function navigateTo(path) {
     if (isRouting) return; // Évite les boucles infinies
-    
     if (window.location.pathname !== path) {
         history.pushState(null, '', path);
         router();
@@ -147,79 +167,79 @@ function navigateTo(path) {
 }
 
 // Fonction routeur principale
-function router() {
-    if (isRouting) return; // Évite les boucles infinies
+async function router() {
+    if (isRouting) return;
     isRouting = true;
 
     const path = window.location.pathname;
     const route = routes[path];
+    const adminRoutes = ['/admin', '/moderator', '/dashboard-admin', '/settings-admin', '/statistiques', '/utilisateurs', '/articles', '/signalements', '/roles'];
+
+    if (!publicRoutes.includes(path)) {
+        const auth = await checkAuth();
+        if (!auth.isAuthenticated) {
+            isRouting = false;
+            return;
+        }
+        if (adminRoutes.includes(path) && auth.role !== 'admin' && auth.role !== 'moderator') {
+            console.log('Accès non autorisé pour le rôle:', auth.role);
+            navigateTo('/home');
+            isRouting = false;
+            return;
+        }
+    }
 
     if (route) {
-        loadView(route)
-            .then(() => {
-                // Actions spécifiques par vue
-                switch (path) {
-                    case '/home':
-                        console.log('API_URL:', API_URL);
-                        checkAuth();
-                        break;
-                    case '/chat':
-                        console.log('Chat ouvert');
-                        checkAuth();
-                        break;
-                    case '/profile':
-                        console.log('Profile ouvert');
-                        checkAuth();
-                        break;
-                    case '/settings':
-                        console.log('Settings ouvert');
-                        checkAuth();
-                        break;
-                    case '/notification':
-                        console.log('Notification ouvert');
-                        checkAuth();
-                        break;
-                    case '/moderator':
-                        console.log('Dashboard modérateur ouvert');
-                        checkAuth();
-                        break;
-                    case '/admin':
-                        console.log('Admin ouvert');
-                        checkAuth();
-                        break;
-                    case '/dashboard-admin':
-                        console.log('Dashboard admin ouvert');
-                        checkAuth();
-                        break;
-                    case '/settings-admin':
-                        console.log('Settings admin ouvert');
-                        checkAuth();
-                        break;
-                    case '/statistiques':
-                        console.log('Statistiques ouvert');
-                        checkAuth();
-                        break;
-                    case '/articles':
-                        console.log('Articles ouvert');
-                        checkAuth();
-                        break;
-                    case '/signalements':
-                        console.log('Signalements ouvert');
-                        checkAuth();
-                        break;
-                    case '/roles':
-                        console.log('Roles ouvert');
-                        checkAuth();
-                        break;
-                }
-            })
-            .catch(err => {
-                console.error('Erreur lors du chargement de la vue :', err);
-                document.getElementById('app').innerHTML = '<h2>Erreur de chargement de la page.</h2>';
-            })
-            .finally(() => {
-                isRouting = false; // Permet de nouvelles navigations
-            });
+        try {
+            await loadView(route);
+            // Actions spécifiques par vue
+            switch (path) {
+                case '/home':
+                    console.log('API_URL:', API_URL);
+                    break;
+                case '/chat':
+                    console.log('Chat ouvert');
+                    break;
+                case '/profile':
+                    console.log('Profile ouvert');
+                    break;
+                case '/settings':
+                    console.log('Settings ouvert');
+                    break;
+                case '/notification':
+                    console.log('Notification ouvert');
+                    break;
+                case '/moderator':
+                    console.log('Dashboard modérateur ouvert');
+                    break;
+                case '/admin':
+                    console.log('Admin ouvert');
+                    break;
+                case '/dashboard-admin':
+                    console.log('Dashboard admin ouvert');
+                    break;
+                case '/settings-admin':
+                    console.log('Settings admin ouvert');
+                    break;
+                case '/statistiques':
+                    console.log('Statistiques ouvert');
+                    break;
+                case '/articles':
+                    console.log('Articles ouvert');
+                    break;
+                case '/signalements':
+                    console.log('Signalements ouvert');
+                    break;
+                case '/roles':
+                    console.log('Roles ouvert');
+                    break;
+            }
+        } catch (err) {
+            console.error('Erreur lors du chargement de la vue :', err);
+            document.getElementById('app').innerHTML = '<h2>Erreur de chargement de la page.</h2>';
+        } finally {
+            isRouting = false; // Permet de nouvelles navigations
+        }
     } else {
         // Gestion des routes non trouvées
         console.warn(`Route non trouvée : ${path}`);

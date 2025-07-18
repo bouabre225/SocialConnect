@@ -44,10 +44,41 @@
             closeModal(e.target);
         }
     });
+
+    async function checkAuth() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigateTo('/login');
+            return false;
+        }
+        try {
+            const response = await fetch(`${API_URL}/home.php`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            if (response.ok && data.status === 'success') {
+                return true;
+            } else {
+                localStorage.removeItem('token');
+                navigateTo('/login');
+                return false;
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'authentification:', error);
+            localStorage.removeItem('token');
+            navigateTo('/login');
+            return false;
+        }
+    }
     
     async function loadProfileData() {
+        const isAuthenticated = await checkAuth();
+        if (!isAuthenticated) return;
         try {
-            const response = await fetch(`${API_URL}/profile.php`, {
+            const response = await fetch(`${API_URL4}/profile.php`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
