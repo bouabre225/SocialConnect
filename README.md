@@ -72,13 +72,13 @@ Projet visant à développer une application web de type réseau social inspiré
 
 ## 🌐 Déploiement
 
-* **Frontend** : social8connect.netlify.app
+* **Frontend** : https://social8connect.netlify.app
 * **Backend** : https://socialconnect-94gz.onrender.com
 ---
 
 ## 👥 Contributeurs
 
-* **Nom Prénom** KORE Ange
+* **Nom Prénom** KORE Ange (chef du groupe)
 * **Nom Prénom** LEGBANON Aurelle
 * **Nom Prénom** HESSOU Floriane
 * **Nom Prénom** DOSSA ferdinande 
