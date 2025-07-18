@@ -6,13 +6,6 @@ error_reporting(E_ALL);
 require '../config.php';
 require_once '../../api/users/common.php';
 
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: http://localhost:8000');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
-header('Access-Control-Allow-Credentials: true');
-error_log("En-têtes CORS configurés");
-
 // Gérer la requête OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     error_log("Requête OPTIONS reçue");

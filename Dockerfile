@@ -3,21 +3,34 @@ FROM php:8.2-apache
 # Installer extensions PHP
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Activer les modules Apache nécessaires
+# Installer composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Installer modules Apache nécessaires
 RUN a2enmod rewrite headers
 
-# Copier tout le projet dans le conteneur
+# Copier les fichiers de l'application
 COPY . /var/www/html/
 
-# Créer le dossier upload (il ne doit PAS exister localement ou être vide)
+# Installer dépendances PHP
+WORKDIR /var/www/html
+RUN composer install
+
+# Créer dossier upload si absent
 RUN mkdir -p /var/www/html/views/clients/upload
 
-# Donner les bons droits pour les fichiers
+# Droits
 RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 775 /var/www/html/views/clients/upload
 
-# Appliquer configuration personnalisée Apache (si tu en as une)
+# Config Apache
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
+# Script d'entrée
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 EXPOSE 80
-CMD ["apache2-foreground"]
+EXPOSE 8002
+
+CMD ["/start.sh"]

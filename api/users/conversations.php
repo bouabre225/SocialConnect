@@ -7,14 +7,7 @@ error_reporting(E_ALL);
 require '../config.php';
 require_once '../../api/users/common.php';
 
-define('API', 'https://endearing-strudel-046558.netlify.app');
 
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: http://localhost:8000');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
-header('Access-Control-Allow-Credentials: true');
-error_log("En-têtes CORS configurés");
 
 // Gérer la requête OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

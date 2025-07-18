@@ -9,15 +9,6 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-// Configuration des en-têtes CORS
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: http://localhost:8000');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-CSRF-Token');
-header('Access-Control-Allow-Credentials: true');
-header('Vary: Origin');
-error_log("En-têtes CORS configurés pour /posts_comments.php");
-
 // Gérer la requête OPTIONS (preflight CORS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     error_log("Requête OPTIONS reçue pour /posts_comments.php");
