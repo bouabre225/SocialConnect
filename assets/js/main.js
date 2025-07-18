@@ -39,7 +39,7 @@ function loadScript(url, callback) {
     script.classList.add('dynamic');
     if (callback) script.onload = callback;
     script.onerror = () => {
-        console.warn(`Impossible de charger le script: ${url}`);
+        //.warn(`Impossible de charger le script: ${url}`);
         if (callback) callback();
     };
     document.body.appendChild(script);
@@ -49,7 +49,7 @@ function loadScript(url, callback) {
 async function loadView(url) {
     const app = document.getElementById('app'); // Correction: suppression du 'd' en trop
     if (!app) {
-        console.error('Élément #app introuvable.');
+        //.error('Élément #app introuvable.');
         return;
     }
 
@@ -59,7 +59,7 @@ async function loadView(url) {
         const view = await response.text();
         app.innerHTML = view;
     } catch (err) {
-        console.error(err);
+        //.error(err);
         app.innerHTML = '<h2>Erreur de chargement de la page.</h2>';
         return;
     }
@@ -143,14 +143,14 @@ async function checkAuth() {
         });
         const data = await response.json();
         if (response.ok && data.status === 'success') {
-            return { isAuthenticated: true, role: data.user?.role || 'user' };
+            return { isAuthenticated: true, role: data.user?.role || 'user' || 'moderator' || 'admin' };
         } else {
             localStorage.removeItem('token');
             navigateTo('/login');
             return { isAuthenticated: false };
         }
     } catch (error) {
-        console.error('Erreur lors de l\'authentification:', error);
+        //.error('Erreur lors de l\'authentification:', error);
         localStorage.removeItem('token');
         navigateTo('/login');
         return { isAuthenticated: false };
@@ -182,7 +182,7 @@ async function router() {
             return;
         }
         if (adminRoutes.includes(path) && auth.role !== 'admin' && auth.role !== 'moderator') {
-            console.log('Accès non autorisé pour le rôle:', auth.role);
+            //.log('Accès non autorisé pour le rôle:', auth.role);
             navigateTo('/home');
             isRouting = false;
             return;
@@ -195,54 +195,54 @@ async function router() {
             // Actions spécifiques par vue
             switch (path) {
                 case '/home':
-                    console.log('API_URL:', API_URL);
+                    //.log('API_URL:', API_URL);
                     break;
                 case '/chat':
-                    console.log('Chat ouvert');
+                    //.log('Chat ouvert');
                     break;
                 case '/profile':
-                    console.log('Profile ouvert');
+                    //.log('Profile ouvert');
                     break;
                 case '/settings':
-                    console.log('Settings ouvert');
+                    //.log('Settings ouvert');
                     break;
                 case '/notification':
-                    console.log('Notification ouvert');
+                    //.log('Notification ouvert');
                     break;
                 case '/moderator':
-                    console.log('Dashboard modérateur ouvert');
+                    //.log('Dashboard modérateur ouvert');
                     break;
                 case '/admin':
-                    console.log('Admin ouvert');
+                    //.log('Admin ouvert');
                     break;
                 case '/dashboard-admin':
-                    console.log('Dashboard admin ouvert');
+                    //.log('Dashboard admin ouvert');
                     break;
                 case '/settings-admin':
-                    console.log('Settings admin ouvert');
+                    //.log('Settings admin ouvert');
                     break;
                 case '/statistiques':
-                    console.log('Statistiques ouvert');
+                    //.log('Statistiques ouvert');
                     break;
                 case '/articles':
-                    console.log('Articles ouvert');
+                    //.log('Articles ouvert');
                     break;
                 case '/signalements':
-                    console.log('Signalements ouvert');
+                    //.log('Signalements ouvert');
                     break;
                 case '/roles':
-                    console.log('Roles ouvert');
+                    //.log('Roles ouvert');
                     break;
             }
         } catch (err) {
-            console.error('Erreur lors du chargement de la vue :', err);
+            //.error('Erreur lors du chargement de la vue :', err);
             document.getElementById('app').innerHTML = '<h2>Erreur de chargement de la page.</h2>';
         } finally {
             isRouting = false; // Permet de nouvelles navigations
         }
     } else {
         // Gestion des routes non trouvées
-        console.warn(`Route non trouvée : ${path}`);
+        //.warn(`Route non trouvée : ${path}`);
         document.getElementById('app').innerHTML = '<h2>Page introuvable.</h2>';
         isRouting = false;
     }

@@ -54,7 +54,7 @@ function displayMessage(message, type, containerId) {
                 }
 
             } catch (error) {
-                console.error(error);
+                //console.error(error);
                 document.getElementById('loaderForgot').style.display = 'none';
                 displayMessage('Une erreur réseau est survenue. Veuillez réessayer.', 'danger', messageContainer);
             }

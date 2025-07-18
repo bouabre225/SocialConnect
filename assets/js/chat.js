@@ -37,14 +37,14 @@
 
     // Fonction pour naviguer vers une page
     function navigateTo(path) {
-        console.log(`Redirection vers ${path}`);
+        //.log(`Redirection vers ${path}`);
         window.location.href = path;
     }
 
     // Fonction fetchApi
     async function fetchApi(endpoint, method = 'GET', body = null, isFormData = false) {
         if (failedAttempts >= maxAttempts) {
-            console.error('Nombre maximum de tentatives atteint, redirection vers /login');
+            //.error('Nombre maximum de tentatives atteint, redirection vers /login');
             localStorage.removeItem('token');
             localStorage.removeItem('user_id');
             navigateTo('/login');
@@ -61,12 +61,12 @@
         }
 
         try {
-            console.log(`Requête API vers: ${API_URL}${endpoint}`, options);
+            ////.log(`Requête API vers: ${API_URL}${endpoint}`, options);
             const response = await fetch(`${API_URL}${endpoint}`, options);
-            console.log(`Réponse reçue pour ${endpoint}: ${response.status} ${response.statusText}`);
+            ////.log(`Réponse reçue pour ${endpoint}: ${response.status} ${response.statusText}`);
             if (response.status === 401) {
                 failedAttempts++;
-                console.error(`Erreur 401: Token invalide, tentative ${failedAttempts}/${maxAttempts}`);
+                //.error(`Erreur 401: Token invalide, tentative ${failedAttempts}/${maxAttempts}`);
                 localStorage.removeItem('token');
                 localStorage.removeItem('user_id');
                 navigateTo('/login');
@@ -75,7 +75,7 @@
             if (!response.ok) {
                 failedAttempts++;
                 const error = await response.json().catch(() => null);
-                console.error('Détails de l\'erreur serveur:', error);
+                ////.error('Détails de l\'erreur serveur:', error);
                 throw new Error(error?.message || `Erreur HTTP ${response.status}`);
             }
             failedAttempts = 0;
@@ -83,20 +83,20 @@
             try {
                 return JSON.parse(text);
             } catch (jsonError) {
-                console.error(`Erreur de parsing JSON pour ${endpoint}:`, jsonError, 'Contenu brut:', text);
+                ////.error(`Erreur de parsing JSON pour ${endpoint}:`, jsonError, 'Contenu brut:', text);
                 throw new Error('Réponse du serveur non valide');
             }
         } catch (err) {
-            console.error(`Erreur sur l'API : ${endpoint}`, err);
+            //console.error(`Erreur sur l'API : ${endpoint}`, err);
             throw err;
         }
     }
 
     // Vérifier l'authentification
     async function checkAuth() {
-        console.log('Démarrage de checkAuth:', new Date().toISOString());
+        //console.log('Démarrage de checkAuth:', new Date().toISOString());
         if (!token) {
-            console.log('Aucun token trouvé, redirection vers /login');
+            //.log('Aucun token trouvé, redirection vers /login');
             navigateTo('/login');
             return false;
         }
@@ -104,19 +104,19 @@
         try {
             const response = await fetchApi('/home.php');
             if (response.status === 'success') {
-                console.log('Utilisateur authentifié:', response);
+                ////.log('Utilisateur authentifié:', response);
                 user_id = response.user?.id || localStorage.getItem('user_id');
                 if (user_id) localStorage.setItem('user_id', user_id);
                 return true;
             } else {
-                console.error('Erreur lors de l\'authentification:', response);
+                ////.error('Erreur lors de l\'authentification:', response);
                 localStorage.removeItem('token');
                 localStorage.removeItem('user_id');
                 navigateTo('/login');
                 return false;
             }
         } catch (error) {
-            console.error('Erreur lors de l\'authentification:', error);
+            ////.error('Erreur lors de l\'authentification:', error);
             localStorage.removeItem('token');
             localStorage.removeItem('user_id');
             navigateTo('/login');
@@ -131,11 +131,11 @@
             if (data.status === 'success' && Array.isArray(data.users)) {
                 return data.users;
             } else {
-                console.error('Réponse invalide de /users.php:', data);
+                ////.error('Réponse invalide de /users.php:', data);
                 return [];
             }
         } catch (error) {
-            console.error('Erreur lors de la récupération des utilisateurs:', error);
+            //console.error('Erreur lors de la récupération des utilisateurs:', error);
             return [];
         }
     }
@@ -235,7 +235,7 @@
                 alert('Erreur lors de l\'envoi du message : ' + (response.message || 'Erreur inconnue'));
             }
         } catch (error) {
-            console.error('Erreur lors de l\'envoi du message:', error);
+            //console.error('Erreur lors de l\'envoi du message:', error);
             alert('Erreur lors de l\'envoi du message : ' + error.message);
         }
     }
@@ -247,7 +247,7 @@
         ws = new WebSocket(WS_URL);
 
         ws.onopen = () => {
-            console.log('Connexion WebSocket établie');
+            //.log('Connexion WebSocket établie');
         };
 
         ws.onmessage = (event) => {
@@ -265,17 +265,17 @@
             }
             fetchConversations();
         } else if (data.status === 'error') {
-            console.error('Erreur WebSocket:', data.message);
+            //.error('Erreur WebSocket:', data.message);
         }
     };
 
         ws.onclose = () => {
-            console.log('Connexion WebSocket fermée. Tentative de reconnexion...');
+            //.log('Connexion WebSocket fermée. Tentative de reconnexion...');
             setTimeout(initWebSocket, 5000);
         };
 
         ws.onerror = (error) => {
-            console.error('Erreur WebSocket:', error);
+            ////.error('Erreur WebSocket:', error);
         };
 }
 
@@ -283,7 +283,7 @@
 function startPolling() {
     setInterval(async () => {
         if (!ws || ws.readyState !== WebSocket.OPEN) {
-            console.log('WebSocket non connecté, polling pour les messages...');
+            //.log('WebSocket non connecté, polling pour les messages...');
             if (currentConversation) {
                 currentConversation.messages = await fetchMessages(currentConversation.id);
                 renderMessages();
@@ -314,11 +314,11 @@ function startPolling() {
                 renderConversations(data.conversations);
                 return data.conversations;
             } else {
-                console.error('Réponse invalide de /conversations.php:', data);
+                ////.error('Réponse invalide de /conversations.php:', data);
                 return [];
             }
         } catch (error) {
-            console.error('Erreur lors de la récupération des conversations:', error);
+            ////.error('Erreur lors de la récupération des conversations:', error);
             return [];
         }
     }
@@ -336,11 +336,11 @@ function startPolling() {
                     sent: message.sender_id === parseInt(user_id)
                 }));
             } else {
-                console.error('Réponse invalide pour les messages:', data);
+                ////.error('Réponse invalide pour les messages:', data);
                 return [];
             }
         } catch (error) {
-            console.error('Erreur lors de la récupération des messages:', error);
+            ////.error('Erreur lors de la récupération des messages:', error);
             return [];
         }
     }
@@ -414,7 +414,7 @@ function startPolling() {
             await fetchApi(`/messages.php?conversation_id=${conversation.id}&action=mark-read`, 'POST');
             fetchConversations();
         } catch (error) {
-            console.error('Erreur lors du marquage des messages comme lus:', error);
+            //.error('Erreur lors du marquage des messages comme lus:', error);
         }
     }
 
@@ -461,7 +461,7 @@ function startPolling() {
         
             // Vérifie si messages est un tableau
             if (!Array.isArray(currentConversation.messages)) {
-                console.error('currentConversation.messages n\'est pas un tableau:', currentConversation.messages);
+                ////.error('currentConversation.messages n\'est pas un tableau:', currentConversation.messages);
                 messagesList.innerHTML = '<div class="text-center py-5 text-muted">Aucun message disponible</div>';
                 return;
             }

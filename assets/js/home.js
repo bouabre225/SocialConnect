@@ -7,7 +7,7 @@
     const DEFAULT_AVATAR = 'https://via.placeholder.com/40'; // Image par défaut
 
     async function checkAuth() {
-        console.log('Démarrage de checkAuth:', new Date().toISOString());
+        //console.log('Démarrage de checkAuth:', new Date().toISOString());
         if (isCheckingAuth) {
             console.log('Authentification déjà en cours, arrêt de la vérification');
             return false;
@@ -15,7 +15,7 @@
         isCheckingAuth = true;
 
         const token = localStorage.getItem('token');
-        console.log('Token récupéré:', token || 'Aucun token');
+            //console.log('Token récupéré:', token || 'Aucun token');
         if (!token) {
             console.log('Aucun token trouvé, redirection vers /login');
             isCheckingAuth = false;
@@ -24,16 +24,16 @@
         }
 
         try {
-            console.log(`Envoi de la requête à ${API_URL}/home.php`);
+            //console.log(`Envoi de la requête à ${API_URL}/home.php`);
             const response = await fetch(`${API_URL}/home.php`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log('Réponse reçue:', response.status, response.statusText);
+            //console.log('Réponse reçue:', response.status, response.statusText);
             const text = await response.text();
-            console.log('Contenu brut de la réponse:', text);
+            //console.log('Contenu brut de la réponse:', text);
             let data;
             try {
                 data = JSON.parse(text);
@@ -41,9 +41,9 @@
                 console.error('Erreur de parsing JSON:', jsonError, 'Contenu brut:', text);
                 throw new Error('Réponse du serveur non valide');
             }
-            console.log('Données reçues:', data);
+            //console.log('Données reçues:', data);
             if (response.ok && data.status === 'success') {
-                console.log('Utilisateur authentifié:', data);
+                //console.log('Utilisateur authentifié:', data);
                 isCheckingAuth = false;
                 failedAttempts = 0;
                 return true;
@@ -90,10 +90,10 @@
         try {
             //console.log(`Requête API vers: ${API_URL}${endpoint}`, options);
             const response = await fetch(`${API_URL}${endpoint}`, options);
-            console.log(`Réponse reçue pour ${endpoint}: ${response.status} ${response.statusText}`);
+            //console.log(`Réponse reçue pour ${endpoint}: ${response.status} ${response.statusText}`);
             if (response.status === 401) {
                 failedAttempts++;
-                console.error(`Erreur 401: Token invalide, tentative ${failedAttempts}/${maxAttempts}`);
+                //console.error(`Erreur 401: Token invalide, tentative ${failedAttempts}/${maxAttempts}`);
                 localStorage.removeItem('token');
                 navigateTo('/login');
                 throw new Error('Token invalide');
@@ -101,7 +101,7 @@
             if (!response.ok) {
                 failedAttempts++;
                 const error = await response.json().catch(() => null);
-                console.error('Détails de l\'erreur serveur:', error);
+                //console.error('Détails de l\'erreur serveur:', error);
                 throw new Error(error?.message || `Erreur HTTP ${response.status}`);
             }
             failedAttempts = 0;
@@ -110,26 +110,26 @@
             try {
                 return JSON.parse(text);
             } catch (jsonError) {
-                console.error(`Erreur de parsing JSON pour ${endpoint}:`, jsonError, 'Contenu brut:', text);
+                //console.error(`Erreur de parsing JSON pour ${endpoint}:`, jsonError, 'Contenu brut:', text);
                 throw new Error('Réponse du serveur non valide');
             }
         } catch (err) {
-            console.error(`Erreur sur l'API : ${endpoint}`, err);
+            //console.error(`Erreur sur l'API : ${endpoint}`, err);
             throw err;
         }
     }
 
     async function fetchContacts() {
-        console.log('Démarrage de fetchContacts');
+        //console.log('Démarrage de fetchContacts');
         const contactsList = document.querySelector('.contacts-list');
         if (!contactsList) {
-            console.warn('contacts-list introuvable dans le DOM');
+            //console.warn('contacts-list introuvable dans le DOM');
             return;
         }
         contactsList.innerHTML = '';
         try {
             const data = await fetchApi('/friends.php?status=accepted');
-            console.log('Amis récupérés:', data);
+            //console.log('Amis récupérés:', data);
             if (data.status === 'success' && Array.isArray(data.friends)) {
                 if (data.friends.length === 0) {
                     contactsList.innerHTML = '<p>Aucun contact disponible</p>';
@@ -149,24 +149,24 @@
                     });
                 }
             } else {
-                console.error('Réponse invalide de /friends.php:', data);
+                //console.error('Réponse invalide de /friends.php:', data);
             }
         } catch (error) {
-            console.error('Erreur lors de la récupération des contacts:', error);
+            //console.error('Erreur lors de la récupération des contacts:', error);
         }
     }
 
     async function fetchSuggestions() {
-        console.log('Démarrage de fetchSuggestions');
+        //console.log('Démarrage de fetchSuggestions');
         const suggestionsList = document.querySelector('.suggestions-list');
         if (!suggestionsList) {
-            console.warn('suggestions-list introuvable dans le DOM');
+            //console.warn('suggestions-list introuvable dans le DOM');
             return;
         }
         suggestionsList.innerHTML = '';
         try {
             const data = await fetchApi('/friends_suggestion.php');
-            console.log('Suggestions récupérées:', data);
+            //console.log('Suggestions récupérées:', data);
             if (data.status === 'success' && Array.isArray(data.suggestions)) {
                 if (data.suggestions.length === 0) {
                     suggestionsList.innerHTML = '<p>Aucune suggestion disponible</p>';

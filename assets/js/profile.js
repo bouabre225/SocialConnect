@@ -67,7 +67,7 @@
                     return false;
                 }
             } catch (error) {
-                console.error('Erreur lors de l\'authentification:', error);
+                //.error('Erreur lors de l\'authentification:', error);
                 localStorage.removeItem('token');
                 navigateTo('/login');
                 return false;
@@ -87,35 +87,35 @@
                     }
                 });
                 const data = await response.json();
-                console.log('Réponse de /api/profile.php:', JSON.stringify(data, null, 2)); // Débogage
+                //.log('Réponse de /api/profile.php:', JSON.stringify(data, null, 2)); // Débogage
                 if (data.status === 'success' && data.user) {
                     updateProfileUI(data.user);
                     profileData = data.user;
                     localStorage.setItem('profileData', JSON.stringify(profileData));
                 } else {
-                    console.error('Erreur de chargement du profil:', data.message);
+                    //.error('Erreur de chargement du profil:', data.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
             }
         }
     
         function updateProfileUI(user) {
             if (!user) {
-                console.error('Aucun utilisateur fourni pour updateProfileUI');
+                //.error('Aucun utilisateur fourni pour updateProfileUI');
                 return;
             }
             const profileName = document.querySelector('.profile-name');
             if (profileName) {
                 profileName.textContent = `${user.firstname || ''} ${user.lastname || ''}`;
             } else {
-                console.warn('Élément .profile-name introuvable');
+                //.warn('Élément .profile-name introuvable');
             }
             const friendCount = document.querySelector('.friend-count');
             if (friendCount) {
                 friendCount.textContent = `${user.friend_count || 0} amis`;
             } else {
-                console.warn('Élément .friend-count introuvable');
+                //.warn('Élément .friend-count introuvable');
             }
             const fields = [
                 { id: 'first-name', value: user.firstname, isInput: true },
@@ -142,7 +142,7 @@
                         element.textContent = field.value || '';
                     }
                 } else {
-                    console.warn(`Élément ${field.id} introuvable`);
+                    //.warn(`Élément ${field.id} introuvable`);
                 }
             });
         
@@ -198,10 +198,10 @@
                 if (data.success) {
                     renderPosts(data.posts);
                 } else {
-                    console.error('Erreur de chargement des publications:', data.message);
+                    //.error('Erreur de chargement des publications:', data.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
             }
         }
     
@@ -271,7 +271,7 @@
                     renderComments(postId, data.comments);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
             }
         }
     
@@ -336,7 +336,7 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    console.log('Profil mis à jour avec succès!');
+                    //.log('Profil mis à jour avec succès!');
                     closeModal(updateProfileModal);
                     profileData.firstName = document.getElementById('first-name').value.trim();
                     profileData.lastName = document.getElementById('last-name').value.trim();
@@ -363,7 +363,7 @@
                     //alert('Erreur: ' + data.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
                // alert('Une erreur est survenue lors de la mise à jour du profil');
             } finally {
                 saveBtn.classList.remove('is-loading');
@@ -402,11 +402,11 @@
                     document.getElementById('post-content').value = '';
                     loadPosts();
                 } else {
-                    console.log('Erreur: ' + data.message);
+                    //.log('Erreur: ' + data.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                console.log('Une erreur est survenue lors de la création de la publication');
+                //.error('Erreur:', error);
+                //.log('Une erreur est survenue lors de la création de la publication');
             }
         }
     
@@ -730,7 +730,7 @@
                     //alert('Erreur: ' + data.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
                 //alert('Une erreur est survenue lors de la mise à jour du profil');
             } finally {
                 saveBtn.classList.remove('is-loading');
@@ -779,7 +779,7 @@
                     document.getElementById('password-error').textContent = data.message;
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
                 document.getElementById('password-error').style.display = 'block';
                 document.getElementById('password-error').textContent = 'Une erreur est survenue';
             }
@@ -860,7 +860,7 @@
                     }
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
             }
         }
     
@@ -880,7 +880,7 @@
                     await loadComments(postId);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
             }
         }
     
@@ -898,7 +898,7 @@
                     likeCount.innerHTML = `<i class="far fa-thumbs-up"></i> (${data.likes})`;
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
             }
         }
     
@@ -919,7 +919,7 @@
                     await loadComments(postId);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
+                //.error('Erreur:', error);
             }
         }
     
@@ -928,7 +928,7 @@
             navigator.clipboard.writeText(postUrl).then(() => {
                 alert('Lien copié : ' + postUrl);
             }).catch(err => {
-                console.error('Erreur:', err);
+                //.error('Erreur:', err);
                 alert('Échec de la copie du lien');
             });
         }
