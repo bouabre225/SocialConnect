@@ -143,14 +143,22 @@ async function checkAuth() {
         });
         const data = await response.json();
         if (response.ok && data.status === 'success') {
-            return { isAuthenticated: true, role: data.user?.role || 'user' || 'moderator' || 'admin' };
+            const role = data.user?.role; // Récupérer le rôle directement
+            if (!role) {
+                console.warn('Rôle non défini dans la réponse de l\'API:', data);
+                localStorage.removeItem('token');
+                navigateTo('/login');
+                return { isAuthenticated: false };
+            }
+            return { isAuthenticated: true, role: role };
         } else {
+            console.error('Erreur de l\'API:', data);
             localStorage.removeItem('token');
             navigateTo('/login');
             return { isAuthenticated: false };
         }
     } catch (error) {
-        //.error('Erreur lors de l\'authentification:', error);
+        console.error('Erreur lors de l\'authentification:', error);
         localStorage.removeItem('token');
         navigateTo('/login');
         return { isAuthenticated: false };
@@ -177,12 +185,14 @@ async function router() {
 
     if (!publicRoutes.includes(path)) {
         const auth = await checkAuth();
+        console.log('Résultat de checkAuth:', auth); // Ajout de log
         if (!auth.isAuthenticated) {
+            console.log('Utilisateur non authentifié, redirection vers /login');
             isRouting = false;
             return;
         }
         if (adminRoutes.includes(path) && auth.role !== 'admin' && auth.role !== 'moderator') {
-            //.log('Accès non autorisé pour le rôle:', auth.role);
+            console.log('Accès non autorisé pour le rôle:', auth.role, 'Route demandée:', path);
             navigateTo('/home');
             isRouting = false;
             return;

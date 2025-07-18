@@ -806,9 +806,16 @@
         navigateTo('/settings');
     });
 
-    document.getElementById('go-to-dashboard')?.addEventListener('click', () => {
-        console.log('Clic sur le bouton dashboard, redirection vers /dashboard');
-        navigateTo('/admin');
+    document.getElementById('go-to-dashboard')?.addEventListener('click', async () => {
+        console.log('Clic sur le bouton dashboard');
+        const auth = await checkAuth();
+        console.log('Rôle utilisateur:', auth.role); // Débogage
+        if (auth.role === 'admin' || auth.role === 'moderator') {
+            navigateTo('/admin');
+        } else {
+            console.log('Accès non autorisé pour le rôle:', auth.role);
+            navigateTo('/home');
+        }
     });
 
     document.getElementById('go-to-logout')?.addEventListener('click', async () => {
