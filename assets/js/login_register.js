@@ -44,7 +44,7 @@ function handleError(error, container) {
 async function loginUser(formData) {
     console.log('Envoi de la requête de connexion avec :', formData);
     try {
-        const response = await fetch('http://localhost:8001/login.php', {
+        const response = await fetch('https://socialconnect-94gz.onrender.com/login.php', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -93,7 +93,7 @@ async function loginUser(formData) {
 async function registerUser(formData) {
     console.log('Envoi de la requête d\'inscription avec :', formData);
     try {
-        const response = await fetch('http://localhost:8001/register.php', {
+        const response = await fetch('https://socialconnect-94gz.onrender.com/register.php', {
             method: 'POST',
             credentials: 'include',
             headers: {
