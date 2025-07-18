@@ -1,6 +1,6 @@
 <?php
 
-require_once 'common.php';
+require_once '/api/users/common.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
