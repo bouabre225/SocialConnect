@@ -22,7 +22,7 @@ const routes = {
 };
 
 
-const publicRoutes = ['/','/login', '/register', '/forgot', '/reset'];
+const publicRoutes = ['/','/login', '/register', '/forgot', '/reset','/home', '/chat', '/profile', '/settings', '/notification', '/moderator', '/dashboard-admin', '/settings-admin', '/statistiques', '/utilisateurs', '/articles', '/signalements', '/roles'];
 //const privateRoutes = ['/home', '/chat', '/profile', '/settings', '/notification', '/moderator', '/dashboard-admin', '/settings-admin', '/statistiques', '/utilisateurs', '/articles', '/signalements', '/roles'];
 
 // Variable pour éviter les boucles infinies
