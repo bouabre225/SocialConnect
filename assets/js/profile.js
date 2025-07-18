@@ -188,7 +188,7 @@
     
         async function loadPosts() {
             try {
-                const response = await fetch(`${API_URL}/profile.php?posts=true`, {
+                const response = await fetch('https://socialconnect-94gz.onrender.com/api/profile.php?posts=true', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${getToken()}`
@@ -265,7 +265,7 @@
     
         async function loadComments(postId) {
             try {
-                const response = await fetch(`${API_URL}/profile.php?comments=true&post_id=${postId}`);
+                const response = await fetch('https://socialconnect-94gz.onrender.com/api/profile.php?comments=true&post_id=${postId}');
                 const data = await response.json();
                 if (data.success) {
                     renderComments(postId, data.comments);
@@ -327,7 +327,7 @@
             }
     
             try {
-                const response = await fetch(`${API_URL}/update-profile.php`, {
+                const response = await fetch('https://socialconnect-94gz.onrender.com/api/update_profile.php', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${getToken()}`
@@ -351,20 +351,20 @@
                     profileData.country = document.getElementById('country').value;
                     profileData.address = document.getElementById('address').value.trim();
                     if (document.getElementById('profile-pic').files[0]) {
-                        profileData.profilePic = URL.createObjectURL(document.getElementById('profile-pic').files[0]);
+                        profileData.avatar_url = URL.createObjectURL(document.getElementById('profile-pic').files[0]);
                     }
                     if (document.getElementById('cover-pic').files[0]) {
-                        profileData.coverPic = URL.createObjectURL(document.getElementById('cover-pic').files[0]);
+                        profileData.cover_url = URL.createObjectURL(document.getElementById('cover-pic').files[0]);
                     }
                     localStorage.setItem('profileData', JSON.stringify(profileData));
                     loadProfile();
                     loadProfileData();
                 } else {
-                    alert('Erreur: ' + data.message);
+                    //alert('Erreur: ' + data.message);
                 }
             } catch (error) {
                 console.error('Erreur:', error);
-                alert('Une erreur est survenue lors de la mise à jour du profil');
+               // alert('Une erreur est survenue lors de la mise à jour du profil');
             } finally {
                 saveBtn.classList.remove('is-loading');
             }
@@ -378,7 +378,7 @@
         async function createPost() {
             const content = document.getElementById('post-content').value.trim();
             if (!content) {
-                alert('Veuillez saisir du contenu pour votre publication');
+                //alert('Veuillez saisir du contenu pour votre publication');
                 return;
             }
     
@@ -389,7 +389,7 @@
             }
     
             try {
-                const response = await fetch(`${API_URL}/posts.php`, {
+                const response = await fetch('https://socialconnect-94gz.onrender.com/api/users/posts.php', {
                     method: 'POST', 
                     headers: {
                         'Authorization': `Bearer ${getToken()}` 
@@ -430,14 +430,14 @@
             document.getElementById('city').textContent = profileData.city || '';
             document.getElementById('profession').textContent = profileData.profession || '';
             document.getElementById('relationship').textContent = profileData.relationship || '';
-            if (profileData.profilePic) {
-                document.getElementById('profile-picture').innerHTML = `<img src="${profileData.profilePic}" alt="Profile Picture">`;
-                document.getElementById('create-post-avatar').innerHTML = `<img src="${profileData.profilePic}" alt="Avatar">`;
-                document.getElementById('post-avatar').innerHTML = `<img src="${profileData.profilePic}" alt="Avatar">`;
-                document.getElementById('header-profile-icon').innerHTML = `<img src="${profileData.profilePic}" alt="Profile Icon">`;
+            if (profileData.avatar_url) {
+                document.getElementById('profile-picture').innerHTML = `<img src="${profileData.avatar_url}" alt="Profile Picture">`;
+                document.getElementById('create-post-avatar').innerHTML = `<img src="${profileData.avatar_url}" alt="Avatar">`;
+                document.getElementById('post-avatar').innerHTML = `<img src="${profileData.avatar_url}" alt="Avatar">`;
+                document.getElementById('header-profile-icon').innerHTML = `<img src="${profileData.avatar_url}" alt="Profile Icon">`;
             }
-            if (profileData.coverPic) {
-                document.getElementById('cover-photo').style.backgroundImage = `url(${profileData.coverPic})`;
+            if (profileData.cover_url) {
+                document.getElementById('cover-photo').style.backgroundImage = `url(${profileData.cover_url})`;
             }
             if (profileData.interests) {
                 const interestsContainer = document.getElementById('profile-interests');
@@ -466,7 +466,7 @@
                 <div class="post animate__animated animate__fadeIn" data-post-id="${post.id || Date.now()}">
                     <div class="post-header">
                         <div class="post-avatar">
-                            ${profileData.profilePic ? `<img src="${profileData.profilePic}" alt="Avatar">` : '<i class="fas fa-user"></i>'}
+                            ${profileData.avatar_url ? `<img src="${profileData.avatar_url}" alt="Avatar">` : '<i class="fas fa-user"></i>'}
                         </div>
                         <div class="post-user">
                             <h4>${profileData.username || 'Utilisateur'}</h4>
@@ -653,8 +653,8 @@
                 document.getElementById('bio').value = profileData.bio || '';
                 document.getElementById('interests').value = profileData.interests || '';
                 bioCounter.textContent = profileData.bio ? profileData.bio.length : 0;
-                if (profileData.profilePic) {
-                    profilePicPreview.src = profileData.profilePic;
+                if (profileData.avatar_url) {
+                    profilePicPreview.src = profileData.avatar_url;
                     profilePicPreview.style.display = 'block';
                     profileFileName.textContent = 'Image chargée';
                 }
@@ -842,7 +842,7 @@
     
         async function likePost(postId) {
             try {
-                const response = await fetch(`${API_URL}/profile.php?like=true&post_id=${postId}`, {
+                const response = await fetch('https://socialconnect-94gz.onrender.com/api/profile.php?like=true&post_id=${postId}', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${getToken()}`
@@ -867,7 +867,7 @@
         async function submitComment(postId, content) {
             if (!content.trim()) return;
             try {
-                const response = await fetch(`${API_URL}/profile.php?comment=true`, {
+                const response = await fetch('https://socialconnect-94gz.onrender.com/api/profile.php?comment=true', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -886,7 +886,7 @@
     
         async function likeComment(commentId) {
             try {
-                const response = await fetch(`${API_URL}/profile.php?like_comment=true&comment_id=${commentId}`, {
+                const response = await fetch('https://socialconnect-94gz.onrender.com/api/profile.php?like_comment=true&comment_id=${commentId}', {
                     method: 'POST', 
                     headers: {
                         'Authorization': `Bearer ${getToken()}`
@@ -906,7 +906,7 @@
             const replyContent = prompt('Répondez au commentaire :');
             if (!replyContent) return;
             try {
-                const response = await fetch(`${API_URL}/profile.php?reply=true`, {
+                const response = await fetch('https://socialconnect-94gz.onrender.com/api/profile.php?reply=true', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
