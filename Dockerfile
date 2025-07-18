@@ -13,7 +13,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Copier composer.json depuis le bon dossier
-COPY api/users/composer.json ./composer.json
+COPY composer.json ./composer.json
 
 # Installer les dépendances PHP
 RUN composer install --no-interaction --prefer-dist --no-progress
