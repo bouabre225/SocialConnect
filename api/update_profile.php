@@ -1,11 +1,12 @@
 
 <?php
 require_once 'config.php';
+require_once '../api/users/common.php';
 
 // Récupérer les données de la requête
 $data = json_decode(file_get_contents('php://input'), true);
 session_start();
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; // Utiliser 1 pour test, remplacer par session en prod
+$user = authentificateToken();
 
 // Vérifier d'abord le mot de passe
 if (empty($data['current_password'])) {
@@ -14,7 +15,7 @@ if (empty($data['current_password'])) {
 
 // Vérifier le mot de passe (simplifié ici, à adapter selon ton système)
 $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
-$stmt->execute([$user_id]);
+$stmt->execute([$user->user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$user || !password_verify($data['current_password'], $user['password'])) {
     jsonResponse(['success' => false, 'message' => 'Mot de passe incorrect'], 401);
@@ -29,13 +30,13 @@ $updateData = [
     'profession' => $data['profession'] ?? null,
     'relationship_status' => $data['relationship_status'] ?? null,
     'bio' => $data['bio'] ?? null,
-    'user_id' => $user_id
+    'user_id' => $user->user_id
 ];
 
 // Gestion de l'upload de la photo de profil
 $avatar_url = null;
 if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == UPLOAD_ERR_OK) {
-    $upload_dir = 'uploads/';
+    $upload_dir = '../../Uploads/';
     if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
     
     $file_name = uniqid() . '_' . basename($_FILES['profile_pic']['name']);
@@ -50,7 +51,7 @@ if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == UPLOAD_E
 // Gestion de l'upload de la photo de couverture
 $cover_url = null;
 if (isset($_FILES['cover_pic']) && $_FILES['cover_pic']['error'] == UPLOAD_ERR_OK) {
-    $upload_dir = 'uploads/';
+    $upload_dir = '../../Uploads/';
     if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
     
     $file_name = uniqid() . '_' . basename($_FILES['cover_pic']['name']);
@@ -81,7 +82,7 @@ try {
 
     // Vérifier si un profil existe déjà
     $stmt = $pdo->prepare("SELECT id FROM profiles WHERE user_id = ?");
-    $stmt->execute([$user_id]);
+    $stmt->execute([$user->user_id]);
     $profileExists = $stmt->fetch();
 
     if ($profileExists) {
@@ -97,7 +98,7 @@ try {
         $stmt->execute([
             'bio' => $updateData['bio'],
             'avatar_url' => $avatar_url ?? null,
-            'user_id' => $user_id
+            'user_id' => $user->user_id
         ]);
     } else {
         // Créer un nouveau profil
@@ -105,7 +106,7 @@ try {
             INSERT INTO profiles (user_id, bio, avatar_url, created_at, updated_at) 
             VALUES (?, ?, ?, NOW(), NOW())
         ");
-        $stmt->execute([$user_id, $updateData['bio'], $avatar_url ?? null]);
+        $stmt->execute([$user->user_id, $updateData['bio'], $avatar_url ?? null]);
     }
 
     jsonResponse(['success' => true, 'message' => 'Profil mis à jour avec succès']);

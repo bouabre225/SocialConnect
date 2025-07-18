@@ -4,8 +4,6 @@ ob_start();
 require_once '../api/users/common.php';
 require_once '../api/config.php';
 
-
-
 // Gérer la requête OPTIONS (pour CORS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);

@@ -37,8 +37,8 @@ if ($method === 'GET') {
     try {
         $stmt = $pdo->prepare('
             SELECT m.id, m.content, m.media_url, m.media_type, m.created_at, 
-                   u.username, u.avatar_url,
-                   (SELECT status FROM message_status ms WHERE ms.message_id = m.id AND ms.user_id = ?) as status
+                u.username, u.avatar_url,
+                (SELECT status FROM message_status ms WHERE ms.message_id = m.id AND ms.user_id = ?) as status
             FROM messages m
             JOIN users u ON m.sender_id = u.id
             WHERE m.conversation_id = ?
