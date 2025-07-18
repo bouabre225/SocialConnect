@@ -191,7 +191,7 @@
                         suggestionsList.appendChild(suggestionItem);
                         suggestionItem.querySelector('.suggestion-btn-primary').addEventListener('click', async () => {
                             try {
-                                await fetchApi(`${API_URL}/friends.php`, 'POST', { friend_id: suggestion.id });
+                                await fetchApi(`/friends.php`, 'POST', { friend_id: suggestion.id });
                                 suggestionItem.remove();
                             } catch (error) {
                                 console.error('Erreur lors de l\'ajout d\'ami:', error);
@@ -262,7 +262,7 @@
                             `;
                             storyItem.addEventListener('click', async () => {
                                 try {
-                                    await fetchApi('/stories.php?story_id=${story.story_id}', 'POST');
+                                    await fetchApi(`/stories.php?story_id=${story.story_id}`, 'POST');
                                 } catch (error) {
                                     console.error('Erreur lors de l\'enregistrement de la vue de story:', error);
                                 }
@@ -453,7 +453,7 @@
                             }
                             try {
                                 console.log("postId:", post_id); // Débogage
-                                const data = await fetchApi('/posts_comments.php?post_id=${post_id}', 'GET');
+                                const data = await fetchApi(`/posts_comments.php?post_id=${post_id}`, 'GET');
                                 console.log('Commentaires récupérés pour post', post_id, ':', data);
                                 commentsList.innerHTML = '';
                                 document.getElementById(`comments-count-${post_id}`).textContent = `${data.comments?.length || 0} commentaires`;
