@@ -78,7 +78,7 @@
         const isAuthenticated = await checkAuth();
         if (!isAuthenticated) return;
         try {
-            const response = await fetch(`${API_URL4}/profile.php`, {
+            const response = await fetch('https://socialconnect-94gz.onrender.com/api/profile.php', {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
