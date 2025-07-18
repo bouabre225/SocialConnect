@@ -34,6 +34,13 @@ try {
             echo json_encode(['status' => 'error', 'message' => 'ID du post invalide ou manquant']);
             exit();
         }
+        // Vérifier si le post existe
+        $stmt = $pdo->prepare('SELECT id FROM posts WHERE id = ?');
+        $stmt->execute([$post_id]);
+        if (!$stmt->fetch()) {
+            error_log("Erreur: post_id $post_id non trouvé dans la table posts");
+            jsonResponse(['status' => 'error', 'message' => 'Post non trouvé'], 404);
+        }
     
         $stmt = $pdo->prepare('
             SELECT c.*, u.username, CONCAT(u.firstname, " ", u.lastname) AS full_name, u.avatar_url
@@ -45,18 +52,30 @@ try {
         $stmt->execute([$post_id]);
         $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Adapter les URLs des avatars
+        // Adapter les URLs des avatars pour l'environnement de production
+        $base_url = 'https://socialconnect-94gz.onrender.com/uploads/';
         foreach ($comments as &$comment) {
             if ($comment['avatar_url']) {
-                $comment['avatar_url'] = 'http://localhost:8001/uploads/' . basename($comment['avatar_url']);
+                $comment['avatar_url'] = $base_url . basename($comment['avatar_url']);
             } else {
                 $comment['avatar_url'] = null; // Ou une URL par défaut
             }
         }
+
+        jsonResponse(['status' => 'success', 'comments' => $comments]);
+    } else {
+        jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
     }
-    jsonResponse(['status' => 'success', 'comments' => $comments]);
 } catch (Exception $e) {
-    jsonResponse(['status' => 'error', 'message' => 'Erreur lors de la récupération des commentaires'], 500);
+    error_log("Erreur serveur dans /posts_comments.php: " . $e->getMessage());
+    jsonResponse(['status' => 'error', 'message' => 'Erreur serveur: ' . $e->getMessage()], 500);
+}
+
+function jsonResponse($data, $status = 200) {
+    header('Content-Type: application/json');
+    http_response_code($status);
+    echo json_encode($data);
+    exit;
 }
 
 ?>
