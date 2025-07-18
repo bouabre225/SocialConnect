@@ -1,6 +1,6 @@
 // home.js
 (function () {
-    //const API_URL = 'https://socialconnect-94gz.onrender.com/users';
+    const API_URL = 'https://socialconnect-94gz.onrender.com/users';
     let isCheckingAuth = false;
     let failedAttempts = 0;
     const maxAttempts = 3;
@@ -199,7 +199,7 @@
                         });
                         suggestionItem.querySelector('.suggestion-btn-secondary').addEventListener('click', async () => {
                             try {
-                                await fetchApi(`${API_URL}/friends.php`, 'DELETE',{ friend_id: suggestion.id});
+                                await fetchApi('/friends.php', 'DELETE',{ friend_id: suggestion.id});
                                 suggestionItem.remove();
                             } catch (error) {
                                 console.error('Erreur lors de la suppression d\'ami:', error);
@@ -422,7 +422,7 @@
                         likeBtn.addEventListener('click', async () => {
                             try {
                                 const isLiked = likeBtn.classList.contains('liked');
-                                await fetchApi(`${API_URL}/likes.php`, isLiked ? 'DELETE' : 'POST', { post_id: post.id });
+                                await fetchApi('/likes.php', isLiked ? 'DELETE' : 'POST', { post_id: post.id });
                                 likeBtn.classList.toggle('liked');
                                 likesCount.textContent = isLiked ? parseInt(likesCount.textContent) - 1 : parseInt(likesCount.textContent) + 1;
                             } catch (error) {
@@ -453,7 +453,7 @@
                             }
                             try {
                                 console.log("postId:", post_id); // Débogage
-                                const data = await fetchApi('/posts_comments.php?post_id=${post_id}');
+                                const data = await fetchApi('/posts_comments.php?post_id=${post_id}', 'GET');
                                 console.log('Commentaires récupérés pour post', post_id, ':', data);
                                 commentsList.innerHTML = '';
                                 document.getElementById(`comments-count-${post_id}`).textContent = `${data.comments?.length || 0} commentaires`;
@@ -522,7 +522,7 @@
 
             console.log('Données envoyées à /posts.php:', Object.fromEntries(formData));
             try {
-                await fetchApi(`${API_URL}/posts.php`, 'POST', formData, true);
+                await fetchApi('/posts.php', 'POST', formData, true);
                 postInput.value = '';
                 selectedPostMediaFile = null;
                 selectedEmoji = '';
