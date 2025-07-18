@@ -26,6 +26,12 @@ try {
     $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$user) {
+        ob_clean();
+        http_response_code(404);
+        echo json_encode(['status' => 'error', 'message' => 'Utilisateur non trouvé']);
+        exit;
+    }
 
     if (password_verify($data['password'], $user['password'])) {
         ob_clean();

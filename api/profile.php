@@ -1,8 +1,6 @@
 <?php
 require_once 'config.php';
 
-
-
 try {
     
     $stmt = $pdo->prepare("
@@ -23,7 +21,7 @@ try {
         jsonResponse(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
     }
 
-   
+
     $response = ['success' => true, 'user' => $user];
 
     if (isset($_GET['posts'])) {
