@@ -10,3 +10,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $csrf_token = bin2hex(random_bytes(32));
 $_SESSION['csrf_token'] = $csrf_token;
 echo json_encode(['csrf_token' => $csrf_token]);
+
+?>

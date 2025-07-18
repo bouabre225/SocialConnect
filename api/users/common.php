@@ -133,7 +133,7 @@ function getUserById($userId) {
     $stmt->execute([$userId]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user && $user['avatar_url']) {
-        $user['avatar_url'] = 'http://localhost:8001/uploads/' . basename($user['avatar_url']);
+        $user['avatar_url'] = 'https://socialconnect-94gz.onrender.com/uploads/' . basename($user['avatar_url']);
     }
     return $user;
 }

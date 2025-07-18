@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
-
+$API = 'https://socialconnect-94gz.onrender.com';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents('php://input'), true);
@@ -72,7 +72,7 @@ try {
         $friends = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($friends as &$friend) {
             if ($friend['avatar_url']) {
-                $friend['avatar_url'] = API . '/uploads/' . basename($friend['avatar_url']);
+                $friend['avatar_url'] = $API . '/uploads/' . basename($friend['avatar_url']);
             }
         }
         jsonResponse(['status' => 'success', 'friends' => $friends]);

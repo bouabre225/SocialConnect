@@ -96,3 +96,5 @@ jsonResponse([
     'status' => 'error',
     'message' => 'Action non valide'
 ], 400);
+
+?>

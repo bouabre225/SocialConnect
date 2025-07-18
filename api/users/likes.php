@@ -47,3 +47,5 @@ if ($method === 'POST') {
 } else {
     jsonResponse(['status' => 'error', 'message' => 'Méthode non autorisée'], 405);
 }   
+
+?>

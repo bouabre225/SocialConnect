@@ -40,7 +40,7 @@ if ($method === 'POST') {
     try {
         $stmt = $pdo->prepare(
             'INSERT INTO stories (user_id, media_url, media_type, emoji_content, expires_at) 
-             VALUES (?, ?, ?, ?, ?)'
+            VALUES (?, ?, ?, ?, ?)'
         );
         $stmt->execute([$user->user_id, $media_url, $media_type, $emoji_content, $expires_at]);
         jsonResponse(['status' => 'success', 'message' => 'Story créée', 'id' => $pdo->lastInsertId()], 201);

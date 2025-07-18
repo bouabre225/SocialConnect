@@ -53,3 +53,4 @@ echo json_encode(['status' => 'success', 'message' => 'Votre mot de passe a Ã©tÃ
 
 //header('Location: http://localhost/ReseauSocial/index.html');
 //exit();
+?>

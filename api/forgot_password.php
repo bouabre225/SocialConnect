@@ -59,7 +59,7 @@ try {
     $mail->CharSet = 'UTF-8';
     $mail->Subject = 'Réinitialisation de votre mot de passe - SocialConnect';
 
-    $reset_link = "http://localhost:8000/reset?token=$reset_token";
+    $reset_link = "https://socialconnect-94gz.onrender.com/reset?token=$reset_token";
     $mail->Body = "
         <html>
         <head>

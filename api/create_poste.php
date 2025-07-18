@@ -23,3 +23,4 @@ try {
 } catch (PDOException $e) {
     jsonResponse(['success' => false, 'message' => 'Erreur de base de données: ' . $e->getMessage()], 500);
 }
+?>
