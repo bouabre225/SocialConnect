@@ -181,7 +181,7 @@ async function router() {
 
     const path = window.location.pathname;
     const route = routes[path];
-    const adminRoutes = ['/admin', '/moderator', '/dashboard-admin', '/settings-admin', '/statistiques', '/utilisateurs', '/articles', '/signalements', '/roles'];
+    //const adminRoutes = ['/admin', '/moderator', '/dashboard-admin', '/settings-admin', '/statistiques', '/utilisateurs', '/articles', '/signalements', '/roles'];
 
     if (!publicRoutes.includes(path)) {
         const auth = await checkAuth();
@@ -191,12 +191,12 @@ async function router() {
             isRouting = false;
             return;
         }
-        if (adminRoutes.includes(path) && auth.role !== 'admin' && auth.role !== 'moderator') {
+        /*if (adminRoutes.includes(path) && auth.role !== 'admin' && auth.role !== 'moderator') {
             console.log('Accès non autorisé pour le rôle:', auth.role, 'Route demandée:', path);
             navigateTo('/home');
             isRouting = false;
             return;
-        }
+        }*/
     }
 
     if (route) {
