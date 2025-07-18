@@ -1,6 +1,6 @@
 // home.js
 (function () {
-    const API_URL = 'https://socialconnect-94gz.onrender.com/users';
+    //const API_URL = 'https://socialconnect-94gz.onrender.com/users';
     let isCheckingAuth = false;
     let failedAttempts = 0;
     const maxAttempts = 3;
