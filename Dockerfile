@@ -28,10 +28,10 @@ RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 775 /var/www/html/views/clients/upload
 
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+COPY api/users/start.sh api/users/start.sh
+RUN chmod +x api/users/start.sh
 
 EXPOSE 80
 EXPOSE 8002
 
-CMD ["/start.sh"]
+CMD ["api/users/start.sh"]
