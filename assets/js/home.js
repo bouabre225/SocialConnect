@@ -378,8 +378,8 @@
                             </div>
                             ${post.media_url ? 
                                 (post.media_type === 'video' ? 
-                                    `<video src="${API_URL}${post.media_url}" controls class="post-image"></video>` : 
-                                `<img src="${API_URL}${post.media_url}" alt="Post content" class="post-image">`
+                                    `<video src="}${post.media_url}" controls class="post-image"></video>` : 
+                                `<img src="${post.media_url}" alt="Post content" class="post-image">`
                                 ) : ''
                             }
                             <div class="post-stats">
