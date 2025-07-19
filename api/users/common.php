@@ -112,9 +112,11 @@ function handFileUpload($file, $uploadDir = './uploads/') {
         exit;
     }
 
+    $baseUrl = '/api/users/uploads/'; // Chemin relatif à la racine du domaine
+
     return [
         'name' => $fileName,
-        'url' => $uploadPath,
+        'url' => $baseUrl . $fileName,
         'type' => $mimeType,
         'size' => $file['size']
     ];
@@ -133,7 +135,7 @@ function getUserById($userId) {
     $stmt->execute([$userId]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user && $user['avatar_url']) {
-        $user['avatar_url'] = 'https://socialconnect-94gz.onrender.com/uploads/' . basename($user['avatar_url']);
+        $user['avatar_url'] = 'https://socialconnect-94gz.onrender.com/api/users/uploads/' . basename($user['avatar_url']);
     }
     return $user;
 }
