@@ -89,8 +89,8 @@ try {
 
     // Génération du token JWT
     $payload = [
-        'iss' => 'http://localhost:8001',
-        'aud' => 'http://localhost:8000',
+        'iss' => 'https://socialconnect-94gz.onrender.com',
+        'aud' => 'https://social8connect.netlify.app',
         'iat' => time(),
         'exp' => time() + (60 * 60 * 24), // Token valide pendant 24 heures
         'user_id' => $user['id'],
